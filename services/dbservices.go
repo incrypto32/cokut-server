@@ -7,7 +7,9 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"reflect"
 
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 
 	"go.mongodb.org/mongo-driver/mongo"
@@ -37,7 +39,7 @@ func ConnectMongo() *mongo.Database {
 		log.Fatal(err)
 	}
 	fmt.Println("Successfully connected to MongoDB")
-	db = client.Database("cokut")
+	db = client.Database("ecommerce")
 	GetCollections()
 	return db
 }
@@ -67,6 +69,40 @@ func Add(c *mongo.Collection, i interface{}) (id primitive.ObjectID, err error) 
 		fmt.Println("Insert Success")
 	}
 	return id, err
+
+}
+
+func GetAll(c *mongo.Collection, i interface{}) (cur *mongo.Cursor, err error) {
+
+	cur, err = c.Find(ctx, bson.D{})
+
+	return cur, err
+}
+
+func GetAll2(c *mongo.Collection, i interface{}) (l []interface{}, err error) {
+	typ := reflect.TypeOf(i)
+
+	cur, err := c.Find(ctx, bson.D{})
+
+	for cur.Next(ctx) {
+
+		i := reflect.New(typ).Interface()
+
+		if err = cur.Decode(i); err != nil {
+			fmt.Println(err)
+
+			return l, err
+		}
+
+		fmt.Println(i)
+
+		l = append(l, i)
+
+	}
+	defer cur.Close(ctx)
+	fmt.Println()
+	fmt.Println(l[0])
+	return l, err
 }
 
 // Print a model

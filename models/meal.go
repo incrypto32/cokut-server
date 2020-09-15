@@ -7,6 +7,7 @@ import (
 	"github.com/incrypt0/cokut-server/services"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type Meal struct {
@@ -37,7 +38,7 @@ func (m *Meal) Validate() error {
 func InsertMeal(m *Meal) (id primitive.ObjectID, err error) {
 
 	//  Getting the user colection
-	c := services.C.MealsCollection
+	var c *mongo.Collection = services.C.MealsCollection
 
 	// Basic Validation
 	if err = m.Validate(); err != nil {
@@ -60,4 +61,36 @@ func InsertMeal(m *Meal) (id primitive.ObjectID, err error) {
 	fmt.Println("_____Validated_____")
 	fmt.Println(services.PrintModel(m))
 	return services.Add(c, m)
+}
+
+// Insert a special item
+func InsertSpecial(id string) (result_id primitive.ObjectID, err error) {
+	var c *mongo.Collection = services.C.MealsCollection
+	rest := new(Restaurant)
+	mongoid, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		fmt.Println(err)
+		err = errors.New("An error occured")
+		return result_id, err
+	}
+	r := c.FindOneAndUpdate(ctx, bson.D{
+		{Key: "_id", Value: mongoid},
+	}, bson.M{"$set": bson.D{
+		{Key: "special", Value: true},
+	}})
+
+	if err = r.Err(); err != nil {
+		fmt.Println(err)
+		err = errors.New("An error occured")
+		return result_id, err
+	}
+
+	if err = r.Decode(rest); err != nil {
+		fmt.Println(err)
+
+		err = errors.New("An error occured")
+		return result_id, err
+	}
+	result_id = rest.ID
+	return result_id, err
 }
