@@ -3,7 +3,6 @@ package models
 import (
 	"errors"
 	"fmt"
-	"log"
 
 	"github.com/incrypt0/cokut-server/services"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -50,26 +49,7 @@ func InsertRestaurant(r *Restaurant) (id primitive.ObjectID, err error) {
 	return services.Add(c, r)
 }
 
-func GetAllRestaurants() (l []Restaurant, err error) {
+func GetAllRestaurants() (l []interface{}, err error) {
 
-	cur, err := services.GetAll(services.C.RestaurantsCollection, Restaurant{})
-
-	for cur.Next(ctx) {
-		rest := new(Restaurant)
-
-		if err = cur.Decode(rest); err != nil {
-			log.Println(err)
-			return l, errors.New("An Error Occured")
-		}
-
-		l = append(l, *rest)
-	}
-
-	defer cur.Close(ctx)
-	return l, err
-}
-
-func GetAllRestaurants2() (l []interface{}, err error) {
-
-	return services.GetAll2(services.C.RestaurantsCollection, Restaurant{})
+	return services.GetAll(services.C.RestaurantsCollection, Restaurant{})
 }

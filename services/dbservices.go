@@ -72,14 +72,7 @@ func Add(c *mongo.Collection, i interface{}) (id primitive.ObjectID, err error) 
 
 }
 
-func GetAll(c *mongo.Collection, i interface{}) (cur *mongo.Cursor, err error) {
-
-	cur, err = c.Find(ctx, bson.D{})
-
-	return cur, err
-}
-
-func GetAll2(c *mongo.Collection, i interface{}) (l []interface{}, err error) {
+func GetAll(c *mongo.Collection, i interface{}) (l []interface{}, err error) {
 	typ := reflect.TypeOf(i)
 
 	cur, err := c.Find(ctx, bson.D{})

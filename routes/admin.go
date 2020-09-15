@@ -11,41 +11,13 @@ import (
 
 func Admin(g *echo.Group) {
 	g.Use(models.AdminCheck())
-	g.POST("/addrest", addRest)
+	g.POST("/addrest", addRestaurant)
 	g.POST("/additem", addMeal)
 	g.POST("/addspecial", addSpecial)
-	g.GET("/allrest", GetRests)
+	g.GET("/allrest", getAllRestaurants)
 }
 
-// // Add restaurants
-// func addRestaurant(c echo.Context) (err error) {
-// 	r := new(models.Restaurant)
-
-// 	if err = c.Bind(r); err != nil {
-// 		fmt.Println(err)
-// 		return c.JSON(http.StatusExpectationFailed, echo.Map{
-// 			"success": false,
-// 			"msg":     "An Error Occured",
-// 		})
-// 	}
-
-// 	id, err := models.InsertRestaurant(r)
-
-// 	if err != nil {
-// 		fmt.Println(err)
-// 		return c.JSON(http.StatusExpectationFailed, echo.Map{
-// 			"success": false,
-// 			"msg":     err.Error(),
-// 		})
-// 	}
-
-// 	return c.JSON(http.StatusOK, echo.Map{
-// 		"success": true,
-// 		"msg":     "pwoliyeee",
-// 		"id":      id,
-// 	})
-// }
-
+// Add a meal to the db
 func addMeal(c echo.Context) (err error) {
 	r := new(models.Meal)
 	return Add(c, r, func(r models.Model) (primitive.ObjectID, error) {
@@ -53,13 +25,15 @@ func addMeal(c echo.Context) (err error) {
 	})
 }
 
-func addRest(c echo.Context) (err error) {
+// Add a single restaurant
+func addRestaurant(c echo.Context) (err error) {
 	r := new(models.Restaurant)
 	return Add(c, r, func(r models.Model) (primitive.ObjectID, error) {
 		return models.InsertRestaurant(r.(*models.Restaurant))
 	})
 }
 
+// Mark an Item Special
 func addSpecial(c echo.Context) (err error) {
 	m := map[string]interface{}{}
 
@@ -96,9 +70,10 @@ func addSpecial(c echo.Context) (err error) {
 
 }
 
-func GetRests(c echo.Context) (err error) {
+// Get all restaurants in the db
+func getAllRestaurants(c echo.Context) (err error) {
 
-	l, err := models.GetAllRestaurants2()
+	l, err := models.GetAllRestaurants()
 	fmt.Println()
 	fmt.Println(l)
 	if err != nil {
