@@ -16,6 +16,7 @@ func Api(g *echo.Group) {
 	g.Use(services.FireAuthMiddleware())
 	g.POST("/register", RegisterUser)
 	g.POST("/check", Check)
+
 }
 
 // Register a User

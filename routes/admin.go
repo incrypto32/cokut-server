@@ -14,6 +14,8 @@ func Admin(g *echo.Group) {
 	g.POST("/additem", addMeal)
 	g.POST("/addspecial", addSpecial)
 	g.GET("/allrest", getAllRestaurants)
+	g.GET("/getmeals", getMeals)
+	g.GET("/getspecials", getSpecials)
 }
 
 // Add a meal to the db
@@ -84,4 +86,67 @@ func getAllRestaurants(c echo.Context) (err error) {
 	}
 
 	return c.JSON(http.StatusOK, l)
+}
+
+func getMeals(c echo.Context) (err error) {
+
+	m := map[string]interface{}{}
+
+	if err = c.Bind(&m); err != nil {
+		fmt.Println(err)
+		return c.JSON(http.StatusInternalServerError, echo.Map{
+			"success": false,
+			"msg":     "An error occured",
+		})
+	}
+
+	if m["rid"] == nil {
+		return c.JSON(http.StatusInternalServerError, echo.Map{
+			"success": false,
+			"msg":     "An error occured",
+		})
+	}
+
+	l, err := models.GetMeals(m["rid"].(string))
+	fmt.Println()
+	fmt.Println(l)
+	if err != nil {
+		fmt.Println(err)
+		return c.JSON(http.StatusInternalServerError, echo.Map{
+			"success": false,
+			"msg":     "An error occured",
+		})
+	}
+
+	if len(l) <= 0 {
+		return c.JSON(http.StatusExpectationFailed, echo.Map{
+			"success": false,
+			"msg":     "Restaurant dont exist",
+		})
+	}
+	return c.JSON(http.StatusOK, l)
+
+}
+
+func getSpecials(c echo.Context) (err error) {
+	fmt.Println("____________Test 2___________")
+	l, err := models.GetSpecials()
+
+	fmt.Println(l)
+	if err != nil {
+		fmt.Println(err)
+		return c.JSON(http.StatusInternalServerError, echo.Map{
+			"success": false,
+			"msg":     "An error occured",
+		})
+	}
+
+	if len(l) <= 0 {
+		return c.JSON(http.StatusExpectationFailed, echo.Map{
+			"success": false,
+			"msg":     "Restaurant dont exist",
+		})
+	}
+	return c.JSON(http.StatusOK, l)
+
 }

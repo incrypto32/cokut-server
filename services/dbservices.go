@@ -95,6 +95,28 @@ func GetAll(c *mongo.Collection, i interface{}) (l []interface{}, err error) {
 
 	return l, err
 }
+func GetAllWithFilter(c *mongo.Collection, i interface{}) (l []interface{}, err error) {
+	typ := reflect.TypeOf(i)
+
+	cur, err := c.Find(ctx, i)
+
+	for cur.Next(ctx) {
+
+		i := reflect.New(typ).Interface()
+
+		if err = cur.Decode(i); err != nil {
+			fmt.Println(err)
+
+			return l, err
+		}
+
+		l = append(l, i)
+
+	}
+	defer cur.Close(ctx)
+
+	return l, err
+}
 
 // Print a model
 func PrintModel(u interface{}) string {

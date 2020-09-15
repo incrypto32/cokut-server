@@ -17,6 +17,7 @@ type Meal struct {
 	Price        float32            `json:"price,omitempty" bson:"price,omitempty" `
 	DisplayPrice float32            `json:"display_price,omitempty" bson:"display_price,omitempty"`
 	IsVeg        bool               `json:"isVeg,omitempty" bson:"isVegemail,omitempty"`
+	Special      bool               `json:"special,omitempty" bson:"special,omitempty"`
 }
 
 func (m *Meal) GetModelData() string {
@@ -93,4 +94,13 @@ func InsertSpecial(id string) (result_id primitive.ObjectID, err error) {
 	}
 	result_id = rest.ID
 	return result_id, err
+}
+
+func GetMeals(rid string) (l []interface{}, err error) {
+	return services.GetAllWithFilter(services.C.MealsCollection, Meal{RestID: rid})
+}
+
+func GetSpecials() (l []interface{}, err error) {
+	fmt.Println("Test 1")
+	return services.GetAllWithFilter(services.C.MealsCollection, Meal{Special: true})
 }
