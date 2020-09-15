@@ -35,7 +35,7 @@ func (m *Meal) Validate() error {
 }
 
 // Function to insert Meals into meals collection
-func InsertMeal(m *Meal) (id primitive.ObjectID, err error) {
+func InsertMeal(m *Meal) (id string, err error) {
 
 	//  Getting the user colection
 	var c *mongo.Collection = services.C.MealsCollection

@@ -28,13 +28,12 @@ type User struct {
 	Admin   bool               `json:"admin,omitempty" bson:"admin,omitempty"`
 }
 
+// Prints Model Data in String
 func (u *User) GetModelData() string {
 	return services.PrintModel(u)
 }
-func (u *User) String() string {
-	return services.PrintModel(u)
-}
 
+// Real Validation
 func (u *User) Validate() error {
 	fmt.Println("uid is : ", u.UID)
 	if (u.Name == "") || (len(u.Phone) < 10) || u.UID == "" {
@@ -43,6 +42,7 @@ func (u *User) Validate() error {
 	return nil
 }
 
+// Basic Validate
 func (u *User) ValidateBasic() error {
 
 	if (u.Name == "") || (len(u.Phone) < 10) {
@@ -51,6 +51,7 @@ func (u *User) ValidateBasic() error {
 	return nil
 }
 
+// User Existence Middleware
 func UserExistenceMiddleWare() echo.MiddlewareFunc {
 	handler := func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) (err error) {
@@ -82,7 +83,7 @@ func UserExistenceMiddleWare() echo.MiddlewareFunc {
 }
 
 // Function to insert users into userCollection
-func InsertUser(u *User) (id primitive.ObjectID, err error) {
+func InsertUser(u *User) (id string, err error) {
 	//  Getting the user colection
 	c := services.C.UserCollection
 
@@ -122,8 +123,7 @@ func InsertUser(u *User) (id primitive.ObjectID, err error) {
 	return services.Add(c, u)
 }
 
-// check User existence
-
+// Check User existence
 func CheckUser(phone string) bool {
 	var val bool = false
 	fmt.Println("CheckUser called with phone : ", phone)
@@ -142,40 +142,40 @@ func CheckUser(phone string) bool {
 
 // Admin check middleware
 func AdminCheck() echo.MiddlewareFunc {
-	return admincheck
-}
-func admincheck(next echo.HandlerFunc) echo.HandlerFunc {
-	return func(c echo.Context) error {
-		u := new(User)
-		uid := c.Request().Header.Get("Uid")
-		fmt.Println(uid)
+	return func(next echo.HandlerFunc) echo.HandlerFunc {
+		return func(c echo.Context) error {
+			u := new(User)
+			uid := c.Request().Header.Get("Uid")
+			fmt.Println(uid)
 
-		r := services.C.UserCollection.FindOne(ctx, bson.D{
-			{Key: "uid", Value: uid},
-		})
-
-		if r.Err() == mongo.ErrNoDocuments {
-			fmt.Println("no documents")
-			return c.JSON(http.StatusUnauthorized, echo.Map{
-				"success": false,
-				"msg":     "User Unauthorized",
+			r := services.C.UserCollection.FindOne(ctx, bson.D{
+				{Key: "uid", Value: uid},
 			})
-		}
 
-		if err := r.Decode(u); err != nil {
-			return c.JSON(http.StatusUnauthorized, echo.Map{
-				"success": false,
-				"msg":     "User Unauthorized",
-			})
-		}
-		if u.Admin {
-			return next(c)
-		} else {
-			return c.JSON(http.StatusUnauthorized, echo.Map{
-				"success": false,
-				"msg":     "User Unauthorized",
-			})
-		}
+			if r.Err() == mongo.ErrNoDocuments {
+				fmt.Println("no documents")
+				return c.JSON(http.StatusUnauthorized, echo.Map{
+					"success": false,
+					"msg":     "User Unauthorized",
+				})
+			}
 
+			if err := r.Decode(u); err != nil {
+				return c.JSON(http.StatusUnauthorized, echo.Map{
+					"success": false,
+					"msg":     "User Unauthorized",
+				})
+			}
+			if u.Admin {
+				return next(c)
+			} else {
+				return c.JSON(http.StatusUnauthorized, echo.Map{
+					"success": false,
+					"msg":     "User Unauthorized",
+				})
+			}
+
+		}
 	}
+
 }

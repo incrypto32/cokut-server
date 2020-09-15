@@ -6,11 +6,10 @@ import (
 
 	"github.com/incrypt0/cokut-server/models"
 	"github.com/labstack/echo/v4"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 // Add an item
-func Add(c echo.Context, r models.Model, f func(r models.Model) (primitive.ObjectID, error)) (err error) {
+func Add(c echo.Context, r models.Model, f func(r models.Model) (string, error)) (err error) {
 
 	if err = c.Bind(r); err != nil {
 		fmt.Println(err)

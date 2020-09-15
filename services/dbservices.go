@@ -20,6 +20,7 @@ type Collections struct {
 	UserCollection        *mongo.Collection
 	RestaurantsCollection *mongo.Collection
 	MealsCollection       *mongo.Collection
+	TestCollection        *mongo.Collection
 }
 
 var db *mongo.Database
@@ -27,7 +28,7 @@ var ctx context.Context
 var C *Collections
 
 func ConnectMongo() *mongo.Database {
-	fmt.Println("____Connecting to mongo db____")
+
 	var err error
 	var client *mongo.Client
 	ctx = context.Background()
@@ -38,7 +39,7 @@ func ConnectMongo() *mongo.Database {
 	if client, err = mongo.Connect(ctx, opts); err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println("Successfully connected to MongoDB")
+
 	db = client.Database("ecommerce")
 	GetCollections()
 	return db
@@ -50,26 +51,26 @@ func GetCollections() {
 		UserCollection:        db.Collection("users"),
 		RestaurantsCollection: db.Collection("restaurants"),
 		MealsCollection:       db.Collection("meals"),
+		TestCollection:        db.Collection("test"),
 	}
 }
 
 // Function to generally add anything to any collection
-func Add(c *mongo.Collection, i interface{}) (id primitive.ObjectID, err error) {
-	fmt.Println("______Add______")
+func Add(c *mongo.Collection, i interface{}) (id string, err error) {
+
 	result, err := c.InsertOne(ctx, i)
 	if err != nil {
 		return id, err
 	}
-	//  .........
+
 	if result.InsertedID == nil {
 		err = errors.New("An error occured please try again")
 		return id, err
 	} else {
-		id = result.InsertedID.(primitive.ObjectID)
-		fmt.Println("Insert Success")
+		id = result.InsertedID.(primitive.ObjectID).Hex()
 	}
-	return id, err
 
+	return id, err
 }
 
 func GetAll(c *mongo.Collection, i interface{}) (l []interface{}, err error) {
@@ -87,14 +88,11 @@ func GetAll(c *mongo.Collection, i interface{}) (l []interface{}, err error) {
 			return l, err
 		}
 
-		fmt.Println(i)
-
 		l = append(l, i)
 
 	}
 	defer cur.Close(ctx)
-	fmt.Println()
-	fmt.Println(l[0])
+
 	return l, err
 }
 

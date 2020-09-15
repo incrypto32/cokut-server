@@ -32,7 +32,7 @@ func (r *Restaurant) Validate() error {
 }
 
 // Function to insert users into userCollection
-func InsertRestaurant(r *Restaurant) (id primitive.ObjectID, err error) {
+func InsertRestaurant(r *Restaurant) (id string, err error) {
 	//  Getting the user colection
 	c := services.C.RestaurantsCollection
 

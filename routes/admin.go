@@ -6,7 +6,6 @@ import (
 
 	"github.com/incrypt0/cokut-server/models"
 	"github.com/labstack/echo/v4"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 func Admin(g *echo.Group) {
@@ -20,7 +19,7 @@ func Admin(g *echo.Group) {
 // Add a meal to the db
 func addMeal(c echo.Context) (err error) {
 	r := new(models.Meal)
-	return Add(c, r, func(r models.Model) (primitive.ObjectID, error) {
+	return Add(c, r, func(r models.Model) (string, error) {
 		return models.InsertMeal(r.(*models.Meal))
 	})
 }
@@ -28,7 +27,7 @@ func addMeal(c echo.Context) (err error) {
 // Add a single restaurant
 func addRestaurant(c echo.Context) (err error) {
 	r := new(models.Restaurant)
-	return Add(c, r, func(r models.Model) (primitive.ObjectID, error) {
+	return Add(c, r, func(r models.Model) (string, error) {
 		return models.InsertRestaurant(r.(*models.Restaurant))
 	})
 }
