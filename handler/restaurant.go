@@ -12,14 +12,14 @@ import (
 func (h *Handler) addRestaurant(c echo.Context) (err error) {
 	r := new(models.Restaurant)
 	return h.Add(c, r, func(r models.Model) (string, error) {
-		return models.InsertRestaurant(r.(*models.Restaurant))
+		return h.restaurantStore.Insert(r.(*models.Restaurant))
 	})
 }
 
 // Get all restaurants in the db
 func (h *Handler) getAllRestaurants(c echo.Context) (err error) {
 
-	l, err := models.GetAllRestaurants()
+	l, err := h.restaurantStore.GetAll()
 
 	if err != nil {
 		fmt.Println(err)
@@ -34,5 +34,5 @@ func (h *Handler) getAllRestaurants(c echo.Context) (err error) {
 
 //get Home
 func (h *Handler) getHomeMadeRestaurants(c echo.Context) (err error) {
-	return h.getFiltered(c, models.GetHomeMade)
+	return h.getFiltered(c, h.restaurantStore.GetAll)
 }

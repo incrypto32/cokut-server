@@ -16,23 +16,11 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-type Collections struct {
-	UserCollection        *mongo.Collection
-	RestaurantsCollection *mongo.Collection
-	MealsCollection       *mongo.Collection
-	TestCollection        *mongo.Collection
-	OrderCollecton        *mongo.Collection
-}
-
-var db *mongo.Database
-var ctx context.Context
-var C *Collections
-
 func ConnectMongo() *mongo.Database {
 
 	var err error
 	var client *mongo.Client
-	ctx = context.Background()
+	ctx := context.Background()
 	uri := os.Getenv("MONGO_DB_URI")
 	opts := options.Client()
 
@@ -41,20 +29,9 @@ func ConnectMongo() *mongo.Database {
 		log.Fatal(err)
 	}
 
-	db = client.Database("ecommerce")
-	GetCollections()
-	return db
-}
+	db := client.Database("ecommerce")
 
-// Initialize all collections required and save it into the Collections struct
-func GetCollections() {
-	C = &Collections{
-		UserCollection:        db.Collection("users"),
-		RestaurantsCollection: db.Collection("restaurants"),
-		MealsCollection:       db.Collection("meals"),
-		TestCollection:        db.Collection("test"),
-		OrderCollecton:        db.Collection("orders"),
-	}
+	return db
 }
 
 // Function to generally add anything to any collection

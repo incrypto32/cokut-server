@@ -1,4 +1,4 @@
-package stores
+package store
 
 import (
 	"context"
@@ -12,17 +12,19 @@ import (
 )
 
 type OrderStore struct {
-	collection *mongo.Collection
+	collection  *mongo.Collection
+	rcollection *mongo.Collection
 }
 
-func GetOrderStore(collection *mongo.Collection) *OrderStore {
+func NewOrderStore(collection *mongo.Collection, rcollection *mongo.Collection) *OrderStore {
 	return &OrderStore{
-		collection: collection,
+		collection:  collection,
+		rcollection: rcollection,
 	}
 }
 
 // Function to insert Meals into meals collection
-func (os *OrderStore) InsertOrder(o *models.Order, uid string) (id string, err error) {
+func (os *OrderStore) Insert(o *models.Order, uid string) (id string, err error) {
 
 	o.Time = primitive.Timestamp{T: uint32(time.Now().Unix())}
 	o.UID = uid
@@ -39,7 +41,7 @@ func (os *OrderStore) InsertOrder(o *models.Order, uid string) (id string, err e
 		return id, err
 	}
 
-	r := services.C.RestaurantsCollection.FindOne(context.Background(), bson.D{
+	r := os.collection.FindOne(context.Background(), bson.D{
 		{Key: "_id", Value: rid},
 	})
 
@@ -50,11 +52,10 @@ func (os *OrderStore) InsertOrder(o *models.Order, uid string) (id string, err e
 	return services.Add(c, o)
 }
 
-func (os *OrderStore) GetOrders() (l []interface{}, err error) {
-
+func (os *OrderStore) GetAll() (l []interface{}, err error) {
 	return services.GetAll(os.collection, models.Order{})
 }
 
-func (os *OrderStore) GetUserOrders(uid string) (l []interface{}, err error) {
+func (os *OrderStore) GetByUser(uid string) (l []interface{}, err error) {
 	return services.GetAll(os.collection, models.Order{UID: uid})
 }

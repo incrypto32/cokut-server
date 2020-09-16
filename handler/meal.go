@@ -12,7 +12,7 @@ import (
 func (h *Handler) addMeal(c echo.Context) (err error) {
 	r := new(models.Meal)
 	return h.Add(c, r, func(r models.Model) (string, error) {
-		return models.InsertMeal(r.(*models.Meal))
+		return h.mealStore.Insert(r.(*models.Meal))
 	})
 }
 
@@ -36,7 +36,7 @@ func (h *Handler) getMeals(c echo.Context) (err error) {
 		})
 	}
 
-	l, err := models.GetMeals(m["rid"].(string))
+	l, err := h.mealStore.GetByRestaurant(m["rid"].(string))
 
 	fmt.Println(l)
 	if err != nil {
@@ -77,7 +77,7 @@ func (h *Handler) addSpecial(c echo.Context) (err error) {
 	}
 	mid := m["meal_id"].(string)
 
-	id, err := models.InsertSpecial(mid)
+	id, err := h.mealStore.InsertSpecial(mid)
 
 	if err != nil {
 		fmt.Println(err)
@@ -89,17 +89,17 @@ func (h *Handler) addSpecial(c echo.Context) (err error) {
 
 	return c.JSON(http.StatusInternalServerError, echo.Map{
 		"success": true,
-		"id":      id.Hex(),
+		"id":      id,
 	})
 
 }
 
 // getSpecials
 func (h *Handler) getSpecials(c echo.Context) (err error) {
-	return h.getFiltered(c, models.GetSpecials)
+	return h.getFiltered(c, h.mealStore.GetSpecials)
 }
 
 // getSpicey
 func (h *Handler) getSpicey(c echo.Context) (err error) {
-	return h.getFiltered(c, models.GetSpicey)
+	return h.getFiltered(c, h.mealStore.GetSpicey)
 }

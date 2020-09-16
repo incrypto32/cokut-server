@@ -1,4 +1,4 @@
-package stores
+package store
 
 import (
 	"context"
@@ -15,14 +15,14 @@ type UserStore struct {
 	collection *mongo.Collection
 }
 
-func GetUserStore(collection *mongo.Collection) *UserStore {
+func NewUserStore(collection *mongo.Collection) *UserStore {
 	return &UserStore{
 		collection: collection,
 	}
 }
 
 // Function to insert users into userCollection
-func (us *UserStore) InsertUser(u *models.User) (id string, err error) {
+func (us *UserStore) Insert(u *models.User) (id string, err error) {
 	//  Getting the user colection
 	c := us.collection
 
@@ -63,7 +63,7 @@ func (us *UserStore) InsertUser(u *models.User) (id string, err error) {
 }
 
 // Check User existence
-func (us *UserStore) CheckPhoneExistence(phone string) bool {
+func (us *UserStore) CheckUserExistence(phone string) bool {
 	var val bool = false
 	fmt.Println("CheckUser called with phone : ", phone)
 	c := us.collection

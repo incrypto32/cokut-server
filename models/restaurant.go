@@ -30,29 +30,3 @@ func (r *Restaurant) Validate() error {
 	}
 	return nil
 }
-
-// Function to insert users into userCollection
-func InsertRestaurant(r *Restaurant) (id string, err error) {
-	//  Getting the user colection
-	c := services.C.RestaurantsCollection
-
-	// Basic Validation
-	if err = r.Validate(); err != nil {
-		return id, err
-	}
-
-	if err != nil {
-		return id, err
-	}
-
-	fmt.Println(services.PrintModel(r))
-	return services.Add(c, r)
-}
-
-func GetAllRestaurants() (l []interface{}, err error) {
-	return services.GetAll(services.C.RestaurantsCollection, Restaurant{})
-}
-
-func GetHomeMade() (l []interface{}, err error) {
-	return services.GetAll(services.C.RestaurantsCollection, Restaurant{Type: "home"})
-}

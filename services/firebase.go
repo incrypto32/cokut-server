@@ -38,6 +38,7 @@ func InitFire() (*firebase.App, error) {
 func FireAuthMiddleware() echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
+			ctx := context.Background()
 
 			if app == nil {
 				return errors.New("Firebase App not initialized")
@@ -51,7 +52,7 @@ func FireAuthMiddleware() echo.MiddlewareFunc {
 
 			auth := c.Request().Header.Get("Authorization")
 			idToken := strings.Replace(auth, "Bearer ", "", 1)
-			token, err := client.VerifyIDToken(ctx, idToken)
+			token, err := client.VerifyIDToken(context.Background(), idToken)
 
 			if err != nil {
 				log.Error(err.Error())

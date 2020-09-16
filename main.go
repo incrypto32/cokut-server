@@ -8,6 +8,7 @@ import (
 	"github.com/incrypt0/cokut-server/handler"
 	"github.com/incrypt0/cokut-server/router"
 	"github.com/incrypt0/cokut-server/services"
+	store "github.com/incrypt0/cokut-server/stores"
 )
 
 func main() {
@@ -17,12 +18,21 @@ func main() {
 	}
 
 	// Connect to mongo
-	services.ConnectMongo()
+	db := services.ConnectMongo()
+	users := db.Collection("users")
+	meals := db.Collection("meals")
+	restaurants := db.Collection("restaurants")
+	orders := db.Collection("orders")
+
+	userStore := store.NewUserStore(users)
+	mealsStore := store.NewMealStore(meals, restaurants)
+	restaurantStore := store.NewRestaurantStore(restaurants)
+	orderStore := store.NewOrderStore(orders, restaurants)
 
 	// echo instance
 	r := router.New()
 	v1 := r.Group("/api")
-	h := handler.NewHandler()
+	h := handler.NewHandler(userStore, mealsStore, orderStore, restaurantStore)
 	h.Register(v1)
 
 	// Server Start

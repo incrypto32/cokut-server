@@ -1,4 +1,4 @@
-package stores
+package store
 
 import (
 	"github.com/incrypt0/cokut-server/models"
@@ -11,14 +11,14 @@ type RestaurantStore struct {
 	collection *mongo.Collection
 }
 
-func GetRestaurantStore(collection *mongo.Collection) *RestaurantStore {
+func NewRestaurantStore(collection *mongo.Collection) *RestaurantStore {
 	return &RestaurantStore{
 		collection: collection,
 	}
 }
 
 // Function to insert users into userCollection
-func (rs *RestaurantStore) InsertRestaurant(r *models.Restaurant) (id string, err error) {
+func (rs *RestaurantStore) Insert(r *models.Restaurant) (id string, err error) {
 	//  Getting the user colection
 	c := rs.collection
 
@@ -34,10 +34,10 @@ func (rs *RestaurantStore) InsertRestaurant(r *models.Restaurant) (id string, er
 	return services.Add(c, r)
 }
 
-func (rs *RestaurantStore) GetAllRestaurants() (l []interface{}, err error) {
+func (rs *RestaurantStore) GetAll() (l []interface{}, err error) {
 	return services.GetAll(rs.collection, models.Restaurant{})
 }
 
-func (rs *RestaurantStore) GetHomeMade() (l []interface{}, err error) {
+func (rs *RestaurantStore) GetAllHomeMade() (l []interface{}, err error) {
 	return services.GetAll(rs.collection, models.Restaurant{Type: "home"})
 }

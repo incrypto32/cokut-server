@@ -3,17 +3,11 @@ package models
 import (
 	"context"
 	"fmt"
-	"log"
-	"net/http"
 
-	"firebase.google.com/go/auth"
 	"github.com/incrypt0/cokut-server/services"
-	"github.com/labstack/echo/v4"
 
 	"github.com/pkg/errors"
-	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"go.mongodb.org/mongo-driver/mongo"
 )
 
 var ctx context.Context = context.Background()
@@ -51,36 +45,36 @@ func (u *User) ValidateBasic() error {
 	return nil
 }
 
-// User Existence Middleware
-func UserExistenceMiddleWare() echo.MiddlewareFunc {
-	handler := func(next echo.HandlerFunc) echo.HandlerFunc {
-		return func(c echo.Context) (err error) {
-			u := new(User)
-			var token *auth.Token = c.Get("token").(*auth.Token)
-			r := services.C.UserCollection.FindOne(context.Background(), bson.D{{Key: "uid", Value: token.UID}})
+// // User Existence Middleware
+// func UserExistenceMiddleWare() echo.MiddlewareFunc {
+// 	handler := func(next echo.HandlerFunc) echo.HandlerFunc {
+// 		return func(c echo.Context) (err error) {
+// 			u := new(User)
+// 			var token *auth.Token = c.Get("token").(*auth.Token)
+// 			r := services.C.UserCollection.FindOne(context.Background(), bson.D{{Key: "uid", Value: token.UID}})
 
-			if r.Err() != mongo.ErrNoDocuments {
-				return c.JSON(http.StatusExpectationFailed, echo.Map{
-					"success": false,
-					"msg":     "User Not registered",
-					"code":    "NOT_REGISTERED",
-				})
-			}
+// 			if r.Err() != mongo.ErrNoDocuments {
+// 				return c.JSON(http.StatusExpectationFailed, echo.Map{
+// 					"success": false,
+// 					"msg":     "User Not registered",
+// 					"code":    "NOT_REGISTERED",
+// 				})
+// 			}
 
-			if r.Err() != nil {
-				return errors.New("Error")
-			}
-			if err = r.Decode(u); err != nil {
-				log.Panic(err)
-				return err
-			}
-			c.Set("user", u)
-			return next(c)
-		}
+// 			if r.Err() != nil {
+// 				return errors.New("Error")
+// 			}
+// 			if err = r.Decode(u); err != nil {
+// 				log.Panic(err)
+// 				return err
+// 			}
+// 			c.Set("user", u)
+// 			return next(c)
+// 		}
 
-	}
-	return handler
-}
+// 	}
+// 	return handler
+// }
 
 // // Function to insert users into userCollection
 // func InsertUser(u *User) (id string, err error) {
@@ -140,46 +134,46 @@ func UserExistenceMiddleWare() echo.MiddlewareFunc {
 
 // }
 
-// Admin check middleware
-func AdminCheck() echo.MiddlewareFunc {
-	return func(next echo.HandlerFunc) echo.HandlerFunc {
-		return func(c echo.Context) error {
-			if true {
-				return next(c)
-			}
+// // Admin check middleware
+// func AdminCheck() echo.MiddlewareFunc {
+// 	return func(next echo.HandlerFunc) echo.HandlerFunc {
+// 		return func(c echo.Context) error {
+// 			if true {
+// 				return next(c)
+// 			}
 
-			u := new(User)
-			uid := c.Request().Header.Get("Uid")
-			fmt.Println(uid)
+// 			u := new(User)
+// 			uid := c.Request().Header.Get("Uid")
+// 			fmt.Println(uid)
 
-			r := services.C.UserCollection.FindOne(ctx, bson.D{
-				{Key: "uid", Value: uid},
-			})
+// 			r := services.C.UserCollection.FindOne(ctx, bson.D{
+// 				{Key: "uid", Value: uid},
+// 			})
 
-			if r.Err() == mongo.ErrNoDocuments {
-				fmt.Println("no documents")
-				return c.JSON(http.StatusUnauthorized, echo.Map{
-					"success": false,
-					"msg":     "User Unauthorized",
-				})
-			}
+// 			if r.Err() == mongo.ErrNoDocuments {
+// 				fmt.Println("no documents")
+// 				return c.JSON(http.StatusUnauthorized, echo.Map{
+// 					"success": false,
+// 					"msg":     "User Unauthorized",
+// 				})
+// 			}
 
-			if err := r.Decode(u); err != nil {
-				return c.JSON(http.StatusUnauthorized, echo.Map{
-					"success": false,
-					"msg":     "User Unauthorized",
-				})
-			}
-			if u.Admin {
-				return next(c)
-			} else {
-				return c.JSON(http.StatusUnauthorized, echo.Map{
-					"success": false,
-					"msg":     "User Unauthorized",
-				})
-			}
+// 			if err := r.Decode(u); err != nil {
+// 				return c.JSON(http.StatusUnauthorized, echo.Map{
+// 					"success": false,
+// 					"msg":     "User Unauthorized",
+// 				})
+// 			}
+// 			if u.Admin {
+// 				return next(c)
+// 			} else {
+// 				return c.JSON(http.StatusUnauthorized, echo.Map{
+// 					"success": false,
+// 					"msg":     "User Unauthorized",
+// 				})
+// 			}
 
-		}
-	}
+// 		}
+// 	}
 
-}
+// }
