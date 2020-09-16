@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/incrypt0/cokut-server/models"
+	"github.com/incrypt0/cokut-server/tester"
 	"github.com/labstack/echo/v4"
 )
 
@@ -34,4 +35,27 @@ func Add(c echo.Context, r models.Model, f func(r models.Model) (string, error))
 		"msg":     "pwoliyeee",
 		"id":      id,
 	})
+}
+
+func getFiltered(c echo.Context, f func() ([]interface{}, error)) (err error) {
+	tester.Tester()
+	l, err := f()
+	tester.Tester()
+	fmt.Println(l)
+	if err != nil {
+		fmt.Println(err)
+		return c.JSON(http.StatusInternalServerError, echo.Map{
+			"success": false,
+			"msg":     "An error occured",
+		})
+	}
+
+	if len(l) <= 0 {
+		return c.JSON(http.StatusExpectationFailed, echo.Map{
+			"success": false,
+			"msg":     "Nothing found here :(",
+		})
+	}
+	return c.JSON(http.StatusOK, l)
+
 }

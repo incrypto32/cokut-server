@@ -21,6 +21,7 @@ type Collections struct {
 	RestaurantsCollection *mongo.Collection
 	MealsCollection       *mongo.Collection
 	TestCollection        *mongo.Collection
+	OrderCollecton        *mongo.Collection
 }
 
 var db *mongo.Database
@@ -52,6 +53,7 @@ func GetCollections() {
 		RestaurantsCollection: db.Collection("restaurants"),
 		MealsCollection:       db.Collection("meals"),
 		TestCollection:        db.Collection("test"),
+		OrderCollecton:        db.Collection("orders"),
 	}
 }
 
@@ -74,9 +76,22 @@ func Add(c *mongo.Collection, i interface{}) (id string, err error) {
 }
 
 func GetAll(c *mongo.Collection, i interface{}) (l []interface{}, err error) {
-	typ := reflect.TypeOf(i)
 
-	cur, err := c.Find(ctx, bson.D{})
+	typ := reflect.TypeOf(i)
+	a := reflect.Zero(reflect.TypeOf(i)).Interface()
+
+	fmt.Println("Deeply equal: ", reflect.DeepEqual(a, i))
+
+	// fmt.Println("Interface hase zero value : ", i == reflect.Zero(reflect.TypeOf(i)).Interface())
+
+	// if i == reflect.Zero(reflect.TypeOf(i)).Interface() {
+	// 	i = bson.D{}
+	// }
+	if reflect.DeepEqual(a, i) {
+		i = bson.D{}
+	}
+	fmt.Println(i)
+	cur, err := c.Find(ctx, i)
 
 	for cur.Next(ctx) {
 
@@ -95,25 +110,27 @@ func GetAll(c *mongo.Collection, i interface{}) (l []interface{}, err error) {
 
 	return l, err
 }
-func GetAllWithFilter(c *mongo.Collection, i interface{}) (l []interface{}, err error) {
-	typ := reflect.TypeOf(i)
 
-	cur, err := c.Find(ctx, i)
+func GetOne(c *mongo.Collection, i interface{}) (l interface{}, err error) {
 
-	for cur.Next(ctx) {
+	l = i
 
-		i := reflect.New(typ).Interface()
+	fmt.Println("Interface hase zero value : ", i == reflect.Zero(reflect.TypeOf(i)).Interface())
 
-		if err = cur.Decode(i); err != nil {
-			fmt.Println(err)
-
-			return l, err
-		}
-
-		l = append(l, i)
-
+	if i == reflect.Zero(reflect.TypeOf(i)).Interface() {
+		i = bson.D{}
 	}
-	defer cur.Close(ctx)
+	fmt.Println(i)
+
+	r := c.FindOne(ctx, i)
+
+	if r.Err() != nil {
+		log.Println(err)
+		return l, err
+	}
+	if err = r.Decode(&i); err != nil {
+		return l, err
+	}
 
 	return l, err
 }

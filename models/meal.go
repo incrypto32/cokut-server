@@ -16,8 +16,9 @@ type Meal struct {
 	Name         string             `json:"name,omitempty" bson:"name,omitempty" `
 	Price        float32            `json:"price,omitempty" bson:"price,omitempty" `
 	DisplayPrice float32            `json:"display_price,omitempty" bson:"display_price,omitempty"`
-	IsVeg        bool               `json:"isVeg,omitempty" bson:"isVegemail,omitempty"`
+	IsVeg        bool               `json:"isVeg,omitempty" bson:"isVeg,omitempty"`
 	Special      bool               `json:"special,omitempty" bson:"special,omitempty"`
+	Spicey       bool               `json:"spicey,omitempty" bson:"spicey,omitempty"`
 }
 
 func (m *Meal) GetModelData() string {
@@ -26,8 +27,7 @@ func (m *Meal) GetModelData() string {
 
 // Validate meal
 func (m *Meal) Validate() error {
-	fmt.Println(services.PrintModel(m))
-	fmt.Println(m.Price)
+
 	if m.Name == "" || (m.Price <= 0) || m.DisplayPrice <= 0 || m.RestID == "" {
 		return errors.New("Not Validated")
 	}
@@ -59,8 +59,6 @@ func InsertMeal(m *Meal) (id string, err error) {
 		return id, err
 	}
 
-	fmt.Println("_____Validated_____")
-	fmt.Println(services.PrintModel(m))
 	return services.Add(c, m)
 }
 
@@ -97,10 +95,15 @@ func InsertSpecial(id string) (result_id primitive.ObjectID, err error) {
 }
 
 func GetMeals(rid string) (l []interface{}, err error) {
-	return services.GetAllWithFilter(services.C.MealsCollection, Meal{RestID: rid})
+	return services.GetAll(services.C.MealsCollection, Meal{RestID: rid})
 }
 
 func GetSpecials() (l []interface{}, err error) {
 	fmt.Println("Test 1")
-	return services.GetAllWithFilter(services.C.MealsCollection, Meal{Special: true})
+	return services.GetAll(services.C.MealsCollection, Meal{Special: true})
+}
+
+func GetSpicey() (l []interface{}, err error) {
+	fmt.Println("Test Spicey")
+	return services.GetAll(services.C.MealsCollection, Meal{Spicey: true})
 }

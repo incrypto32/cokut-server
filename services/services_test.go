@@ -3,7 +3,12 @@ package services
 import (
 	"encoding/json"
 	"testing"
+	"time"
 )
+
+func Test(t *testing.T) {
+	t.Log(time.Now().Unix())
+}
 
 // DbServicesTest
 
