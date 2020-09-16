@@ -2,12 +2,9 @@ package models
 
 import (
 	"errors"
-	"time"
 
 	"github.com/incrypt0/cokut-server/services"
-	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type Order struct {
@@ -38,40 +35,40 @@ func (o *Order) Validate() error {
 	return nil
 }
 
-// Function to insert Meals into meals collection
-func InsertOrder(o *Order, uid string) (id string, err error) {
+// // Function to insert Meals into meals collection
+// func InsertOrder(o *Order, uid string) (id string, err error) {
 
-	o.Time = primitive.Timestamp{T: uint32(time.Now().Unix())}
-	o.UID = uid
-	//  Getting the user colection
-	var c *mongo.Collection = services.C.OrderCollecton
+// 	o.Time = primitive.Timestamp{T: uint32(time.Now().Unix())}
+// 	o.UID = uid
+// 	//  Getting the user colection
+// 	var c *mongo.Collection = services.C.OrderCollecton
 
-	// Basic Validation
-	if err = o.Validate(); err != nil {
-		return id, err
-	}
+// 	// Basic Validation
+// 	if err = o.Validate(); err != nil {
+// 		return id, err
+// 	}
 
-	rid, err := primitive.ObjectIDFromHex(o.RID)
-	if err != nil {
-		return id, err
-	}
+// 	rid, err := primitive.ObjectIDFromHex(o.RID)
+// 	if err != nil {
+// 		return id, err
+// 	}
 
-	r := services.C.RestaurantsCollection.FindOne(ctx, bson.D{
-		{Key: "_id", Value: rid},
-	})
+// 	r := services.C.RestaurantsCollection.FindOne(ctx, bson.D{
+// 		{Key: "_id", Value: rid},
+// 	})
 
-	if err = r.Err(); err != nil {
-		return id, err
-	}
+// 	if err = r.Err(); err != nil {
+// 		return id, err
+// 	}
 
-	return services.Add(c, o)
-}
+// 	return services.Add(c, o)
+// }
 
-func GetOrders() (l []interface{}, err error) {
+// func GetOrders() (l []interface{}, err error) {
 
-	return services.GetAll(services.C.OrderCollecton, Order{})
-}
+// 	return services.GetAll(services.C.OrderCollecton, Order{})
+// }
 
-func GetUserOrders(uid string) (l []interface{}, err error) {
-	return services.GetAll(services.C.OrderCollecton, Order{UID: uid})
-}
+// func GetUserOrders(uid string) (l []interface{}, err error) {
+// 	return services.GetAll(services.C.OrderCollecton, Order{UID: uid})
+// }

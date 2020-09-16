@@ -1,16 +1,15 @@
-package routes
+package handler
 
 import (
 	"fmt"
 	"net/http"
 
 	"github.com/incrypt0/cokut-server/models"
-	"github.com/incrypt0/cokut-server/tester"
 	"github.com/labstack/echo/v4"
 )
 
 // Add an item
-func Add(c echo.Context, r models.Model, f func(r models.Model) (string, error)) (err error) {
+func (h *Handler) Add(c echo.Context, r models.Model, f func(r models.Model) (string, error)) (err error) {
 
 	if err = c.Bind(r); err != nil {
 		fmt.Println(err)
@@ -37,10 +36,10 @@ func Add(c echo.Context, r models.Model, f func(r models.Model) (string, error))
 	})
 }
 
-func getFiltered(c echo.Context, f func() ([]interface{}, error)) (err error) {
-	tester.Tester()
+func (h *Handler) getFiltered(c echo.Context, f func() ([]interface{}, error)) (err error) {
+
 	l, err := f()
-	tester.Tester()
+
 	fmt.Println(l)
 	if err != nil {
 		fmt.Println(err)

@@ -82,63 +82,63 @@ func UserExistenceMiddleWare() echo.MiddlewareFunc {
 	return handler
 }
 
-// Function to insert users into userCollection
-func InsertUser(u *User) (id string, err error) {
-	//  Getting the user colection
-	c := services.C.UserCollection
+// // Function to insert users into userCollection
+// func InsertUser(u *User) (id string, err error) {
+// 	//  Getting the user colection
+// 	c := services.C.UserCollection
 
-	// Basic Validation
-	if err = u.ValidateBasic(); err != nil {
-		return id, err
-	}
+// 	// Basic Validation
+// 	if err = u.ValidateBasic(); err != nil {
+// 		return id, err
+// 	}
 
-	// Check if email is null
-	if u.Email != "" {
-		e := c.FindOne(ctx, bson.D{
-			{Key: "email", Value: u.Email},
-		})
+// 	// Check if email is null
+// 	if u.Email != "" {
+// 		e := c.FindOne(ctx, bson.D{
+// 			{Key: "email", Value: u.Email},
+// 		})
 
-		if e.Err() != mongo.ErrNoDocuments {
-			err = errors.New("Email Address is already associated with another account")
-			return id, err
-		}
-	}
+// 		if e.Err() != mongo.ErrNoDocuments {
+// 			err = errors.New("Email Address is already associated with another account")
+// 			return id, err
+// 		}
+// 	}
 
-	// Check if phone is null
-	if u.Phone != "" {
-		r := c.FindOne(ctx, bson.D{
-			{Key: "phone", Value: u.Phone},
-		})
+// 	// Check if phone is null
+// 	if u.Phone != "" {
+// 		r := c.FindOne(ctx, bson.D{
+// 			{Key: "phone", Value: u.Phone},
+// 		})
 
-		if r.Err() != mongo.ErrNoDocuments {
-			err = errors.New("Phone number is already associated with another account")
-			return id, err
-		}
-	}
+// 		if r.Err() != mongo.ErrNoDocuments {
+// 			err = errors.New("Phone number is already associated with another account")
+// 			return id, err
+// 		}
+// 	}
 
-	if err != nil {
-		return id, err
-	}
+// 	if err != nil {
+// 		return id, err
+// 	}
 
-	return services.Add(c, u)
-}
+// 	return services.Add(c, u)
+// }
 
-// Check User existence
-func CheckUser(phone string) bool {
-	var val bool = false
-	fmt.Println("CheckUser called with phone : ", phone)
-	c := services.C.UserCollection
-	r := c.FindOne(ctx, bson.D{
-		{Key: "phone", Value: phone},
-	})
+// // Check User existence
+// func CheckUserExistence(phone string) bool {
+// 	var val bool = false
+// 	fmt.Println("CheckUser called with phone : ", phone)
+// 	c := services.C.UserCollection
+// 	r := c.FindOne(ctx, bson.D{
+// 		{Key: "phone", Value: phone},
+// 	})
 
-	if r.Err() != mongo.ErrNoDocuments {
-		val = true
-	}
-	fmt.Println(phone, " exists : ", val)
-	return val
+// 	if r.Err() != mongo.ErrNoDocuments {
+// 		val = true
+// 	}
+// 	fmt.Println(phone, " exists : ", val)
+// 	return val
 
-}
+// }
 
 // Admin check middleware
 func AdminCheck() echo.MiddlewareFunc {
