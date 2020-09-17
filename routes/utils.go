@@ -1,61 +1,63 @@
 package routes
 
-import (
-	"fmt"
-	"net/http"
+// import (
+// 	"fmt"
+// 	"net/http"
 
-	"github.com/incrypt0/cokut-server/models"
-	"github.com/incrypt0/cokut-server/tester"
-	"github.com/labstack/echo/v4"
-)
+// 	"github.com/incrypt0/cokut-server/models"
+// 	"github.com/incrypt0/cokut-server/tester"
+// 	"github.com/labstack/echo/v4"
+// )
 
-// Add an item
-func Add(c echo.Context, r models.Model, f func(r models.Model) (string, error)) (err error) {
+func hi() {}
 
-	if err = c.Bind(r); err != nil {
-		fmt.Println(err)
-		return c.JSON(http.StatusExpectationFailed, echo.Map{
-			"success": false,
-			"msg":     "An Error Occured",
-		})
-	}
+// // Add an item
+// func Add(c echo.Context, r models.Model, f func(r models.Model) (string, error)) (err error) {
 
-	id, err := f(r)
+// 	if err = c.Bind(r); err != nil {
+// 		fmt.Println(err)
+// 		return c.JSON(http.StatusExpectationFailed, echo.Map{
+// 			"success": false,
+// 			"msg":     "An Error Occured",
+// 		})
+// 	}
 
-	if err != nil {
-		fmt.Println(err)
-		return c.JSON(http.StatusExpectationFailed, echo.Map{
-			"success": false,
-			"msg":     err.Error(),
-		})
-	}
+// 	id, err := f(r)
 
-	return c.JSON(http.StatusOK, echo.Map{
-		"success": true,
-		"msg":     "pwoliyeee",
-		"id":      id,
-	})
-}
+// 	if err != nil {
+// 		fmt.Println(err)
+// 		return c.JSON(http.StatusExpectationFailed, echo.Map{
+// 			"success": false,
+// 			"msg":     err.Error(),
+// 		})
+// 	}
 
-func getFiltered(c echo.Context, f func() ([]interface{}, error)) (err error) {
-	tester.Tester()
-	l, err := f()
-	tester.Tester()
-	fmt.Println(l)
-	if err != nil {
-		fmt.Println(err)
-		return c.JSON(http.StatusInternalServerError, echo.Map{
-			"success": false,
-			"msg":     "An error occured",
-		})
-	}
+// 	return c.JSON(http.StatusOK, echo.Map{
+// 		"success": true,
+// 		"msg":     "pwoliyeee",
+// 		"id":      id,
+// 	})
+// }
 
-	if len(l) <= 0 {
-		return c.JSON(http.StatusExpectationFailed, echo.Map{
-			"success": false,
-			"msg":     "Nothing found here :(",
-		})
-	}
-	return c.JSON(http.StatusOK, l)
+// func getFiltered(c echo.Context, f func() ([]interface{}, error)) (err error) {
+// 	tester.Tester()
+// 	l, err := f()
+// 	tester.Tester()
+// 	fmt.Println(l)
+// 	if err != nil {
+// 		fmt.Println(err)
+// 		return c.JSON(http.StatusInternalServerError, echo.Map{
+// 			"success": false,
+// 			"msg":     "An error occured",
+// 		})
+// 	}
 
-}
+// 	if len(l) <= 0 {
+// 		return c.JSON(http.StatusExpectationFailed, echo.Map{
+// 			"success": false,
+// 			"msg":     "Nothing found here :(",
+// 		})
+// 	}
+// 	return c.JSON(http.StatusOK, l)
+
+// }

@@ -44,6 +44,7 @@ func (h *Handler) registerAdmin(a *echo.Group) {
 }
 
 func (h *Handler) Register(e *echo.Echo) {
+
 	// Index Handler
 	e.GET("/", h.index)
 
