@@ -46,8 +46,6 @@ func main() {
 	if PORT == "" {
 		fmt.Println("PORT is empty")
 		PORT = "4000"
-	} else {
-		PORT = "4000"
 	}
 
 	r.Logger.Fatal(r.Start(":" + PORT))
