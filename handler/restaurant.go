@@ -19,6 +19,7 @@ func (h *Handler) addRestaurant(c echo.Context) (err error) {
 // Get all restaurants in the db
 func (h *Handler) getAllRestaurants(c echo.Context) (err error) {
 
+	fmt.Println(h.restaurantStore)
 	l, err := h.restaurantStore.GetAll()
 
 	if err != nil {

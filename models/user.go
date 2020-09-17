@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/incrypt0/cokut-server/services"
+	"github.com/incrypt0/cokut-server/workers"
 
 	"github.com/pkg/errors"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -24,7 +24,7 @@ type User struct {
 
 // Prints Model Data in String
 func (u *User) GetModelData() string {
-	return services.PrintModel(u)
+	return workers.PrintModel(u)
 }
 
 // Real Validation
@@ -51,7 +51,7 @@ func (u *User) ValidateBasic() error {
 // 		return func(c echo.Context) (err error) {
 // 			u := new(User)
 // 			var token *auth.Token = c.Get("token").(*auth.Token)
-// 			r := services.C.UserCollection.FindOne(context.Background(), bson.D{{Key: "uid", Value: token.UID}})
+// 			r := workers.C.UserCollection.FindOne(context.Background(), bson.D{{Key: "uid", Value: token.UID}})
 
 // 			if r.Err() != mongo.ErrNoDocuments {
 // 				return c.JSON(http.StatusExpectationFailed, echo.Map{
@@ -79,7 +79,7 @@ func (u *User) ValidateBasic() error {
 // // Function to insert users into userCollection
 // func InsertUser(u *User) (id string, err error) {
 // 	//  Getting the user colection
-// 	c := services.C.UserCollection
+// 	c := workers.C.UserCollection
 
 // 	// Basic Validation
 // 	if err = u.ValidateBasic(); err != nil {
@@ -114,14 +114,14 @@ func (u *User) ValidateBasic() error {
 // 		return id, err
 // 	}
 
-// 	return services.Add(c, u)
+// 	return workers.Add(c, u)
 // }
 
 // // Check User existence
 // func CheckUserExistence(phone string) bool {
 // 	var val bool = false
 // 	fmt.Println("CheckUser called with phone : ", phone)
-// 	c := services.C.UserCollection
+// 	c := workers.C.UserCollection
 // 	r := c.FindOne(ctx, bson.D{
 // 		{Key: "phone", Value: phone},
 // 	})
@@ -146,7 +146,7 @@ func (u *User) ValidateBasic() error {
 // 			uid := c.Request().Header.Get("Uid")
 // 			fmt.Println(uid)
 
-// 			r := services.C.UserCollection.FindOne(ctx, bson.D{
+// 			r := workers.C.UserCollection.FindOne(ctx, bson.D{
 // 				{Key: "uid", Value: uid},
 // 			})
 

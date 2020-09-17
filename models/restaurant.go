@@ -4,7 +4,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/incrypt0/cokut-server/services"
+	"github.com/incrypt0/cokut-server/workers"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -19,11 +19,11 @@ type Restaurant struct {
 }
 
 func (r *Restaurant) GetModelData() string {
-	return services.PrintModel(r)
+	return workers.PrintModel(r)
 }
 
 func (r *Restaurant) Validate() error {
-	fmt.Println(services.PrintModel(r))
+	fmt.Println(workers.PrintModel(r))
 
 	if r.Name == "" || (len(r.Phone) < 10) || r.Address == "" {
 		return errors.New("Not Validated")

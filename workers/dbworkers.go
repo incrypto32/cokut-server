@@ -1,4 +1,4 @@
-package services
+package workers
 
 import (
 	"context"
@@ -29,14 +29,14 @@ func ConnectMongo() *mongo.Database {
 		log.Fatal(err)
 	}
 
-	db := client.Database("ecommerce")
+	db := client.Database("cokut")
 
 	return db
 }
 
 // Function to generally add anything to any collection
 func Add(c *mongo.Collection, i interface{}) (id string, err error) {
-
+	ctx := context.Background()
 	result, err := c.InsertOne(ctx, i)
 	if err != nil {
 		return id, err
@@ -52,22 +52,17 @@ func Add(c *mongo.Collection, i interface{}) (id string, err error) {
 	return id, err
 }
 
-func GetAll(c *mongo.Collection, i interface{}) (l []interface{}, err error) {
-
+func Get(c *mongo.Collection, i interface{}) (l []interface{}, err error) {
+	ctx := context.Background()
 	typ := reflect.TypeOf(i)
 	a := reflect.Zero(reflect.TypeOf(i)).Interface()
 
-	fmt.Println("Deeply equal: ", reflect.DeepEqual(a, i))
+	log.Println("Without Filter : ", reflect.DeepEqual(a, i))
 
-	// fmt.Println("Interface hase zero value : ", i == reflect.Zero(reflect.TypeOf(i)).Interface())
-
-	// if i == reflect.Zero(reflect.TypeOf(i)).Interface() {
-	// 	i = bson.D{}
-	// }
 	if reflect.DeepEqual(a, i) {
 		i = bson.D{}
 	}
-	fmt.Println(i)
+
 	cur, err := c.Find(ctx, i)
 
 	for cur.Next(ctx) {
@@ -75,7 +70,7 @@ func GetAll(c *mongo.Collection, i interface{}) (l []interface{}, err error) {
 		i := reflect.New(typ).Interface()
 
 		if err = cur.Decode(i); err != nil {
-			fmt.Println(err)
+			log.Println(err)
 
 			return l, err
 		}
@@ -89,6 +84,7 @@ func GetAll(c *mongo.Collection, i interface{}) (l []interface{}, err error) {
 }
 
 func GetOne(c *mongo.Collection, i interface{}) (l interface{}, err error) {
+	ctx := context.Background()
 
 	l = i
 

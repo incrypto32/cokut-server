@@ -2,6 +2,7 @@ package handler
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/incrypt0/cokut-server/models"
@@ -38,7 +39,6 @@ func (h *Handler) getMeals(c echo.Context) (err error) {
 
 	l, err := h.mealStore.GetByRestaurant(m["rid"].(string))
 
-	fmt.Println(l)
 	if err != nil {
 		fmt.Println(err)
 		return c.JSON(http.StatusInternalServerError, echo.Map{
@@ -50,7 +50,7 @@ func (h *Handler) getMeals(c echo.Context) (err error) {
 	if len(l) <= 0 {
 		return c.JSON(http.StatusExpectationFailed, echo.Map{
 			"success": false,
-			"msg":     "Restaurant dont exist",
+			"msg":     "Nothing found there",
 		})
 	}
 	return c.JSON(http.StatusOK, l)
@@ -62,14 +62,14 @@ func (h *Handler) addSpecial(c echo.Context) (err error) {
 	m := map[string]interface{}{}
 
 	if err = c.Bind(&m); err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		return c.JSON(http.StatusInternalServerError, echo.Map{
 			"success": false,
 			"msg":     "An error occured",
 		})
 	}
 	if m["meal_id"] == nil || m["meal_id"] == "" {
-		fmt.Println(err)
+		log.Println(err)
 		return c.JSON(http.StatusInternalServerError, echo.Map{
 			"success": false,
 			"msg":     "An error occured",
@@ -80,7 +80,7 @@ func (h *Handler) addSpecial(c echo.Context) (err error) {
 	id, err := h.mealStore.InsertSpecial(mid)
 
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		return c.JSON(http.StatusInternalServerError, echo.Map{
 			"success": false,
 			"msg":     "An error occured",

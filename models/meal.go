@@ -3,7 +3,7 @@ package models
 import (
 	"errors"
 
-	"github.com/incrypt0/cokut-server/services"
+	"github.com/incrypt0/cokut-server/workers"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -19,7 +19,7 @@ type Meal struct {
 }
 
 func (m *Meal) GetModelData() string {
-	return services.PrintModel(m)
+	return workers.PrintModel(m)
 }
 
 // Validate meal

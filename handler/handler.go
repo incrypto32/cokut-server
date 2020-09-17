@@ -10,5 +10,10 @@ type Handler struct {
 }
 
 func NewHandler(us market.UserStore, ms market.MealStore, os market.OrderStore, rs market.RestaurantStore) *Handler {
-	return &Handler{}
+	return &Handler{
+		userStore:       us,
+		mealStore:       ms,
+		orderStore:      os,
+		restaurantStore: rs,
+	}
 }

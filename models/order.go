@@ -3,23 +3,23 @@ package models
 import (
 	"errors"
 
-	"github.com/incrypt0/cokut-server/services"
+	"github.com/incrypt0/cokut-server/workers"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type Order struct {
-	ID             primitive.ObjectID  `json:"_id,omitempty" bson:"_id,omitempty"`
-	RID            string              `json:"rid,omitempty" bson:"rid,omitempty"`
-	UID            string              `json:"uid,omitempty" bson:"uid,omitempty"`
-	Address        string              `json:"address,omitempty" bson:"address,omitempty"`
-	Meals          []string            `json:"meals,omitempty" bson:"meals,omitempty"`
-	Time           primitive.Timestamp `json:"time,omitempty" bson:"time,omitempty"`
-	Price          float32             `json:"price,omitempty" bson:"price,omitempty"`
-	DeliveryCharge float32             `json:"delivery_charge,omitempty" bson:"delivery_charge,omitempty"`
+	ID             primitive.ObjectID `json:"_id,omitempty" bson:"_id,omitempty"`
+	RID            string             `json:"rid,omitempty" bson:"rid,omitempty"`
+	UID            string             `json:"uid,omitempty" bson:"uid,omitempty"`
+	Address        string             `json:"address,omitempty" bson:"address,omitempty"`
+	Meals          []string           `json:"meals,omitempty" bson:"meals,omitempty"`
+	Time           primitive.DateTime `json:"time,omitempty" bson:"time,omitempty"`
+	Price          float32            `json:"price,omitempty" bson:"price,omitempty"`
+	DeliveryCharge float32            `json:"delivery_charge,omitempty" bson:"delivery_charge,omitempty"`
 }
 
 func (o *Order) GetModelData() string {
-	return services.PrintModel(o)
+	return workers.PrintModel(o)
 }
 
 // Validate meal
@@ -41,7 +41,7 @@ func (o *Order) Validate() error {
 // 	o.Time = primitive.Timestamp{T: uint32(time.Now().Unix())}
 // 	o.UID = uid
 // 	//  Getting the user colection
-// 	var c *mongo.Collection = services.C.OrderCollecton
+// 	var c *mongo.Collection = workers.C.OrderCollecton
 
 // 	// Basic Validation
 // 	if err = o.Validate(); err != nil {
@@ -53,7 +53,7 @@ func (o *Order) Validate() error {
 // 		return id, err
 // 	}
 
-// 	r := services.C.RestaurantsCollection.FindOne(ctx, bson.D{
+// 	r := workers.C.RestaurantsCollection.FindOne(ctx, bson.D{
 // 		{Key: "_id", Value: rid},
 // 	})
 
@@ -61,14 +61,14 @@ func (o *Order) Validate() error {
 // 		return id, err
 // 	}
 
-// 	return services.Add(c, o)
+// 	return workers.Add(c, o)
 // }
 
 // func GetOrders() (l []interface{}, err error) {
 
-// 	return services.GetAll(services.C.OrderCollecton, Order{})
+// 	return workers.GetAll(workers.C.OrderCollecton, Order{})
 // }
 
 // func GetUserOrders(uid string) (l []interface{}, err error) {
-// 	return services.GetAll(services.C.OrderCollecton, Order{UID: uid})
+// 	return workers.GetAll(workers.C.OrderCollecton, Order{UID: uid})
 // }

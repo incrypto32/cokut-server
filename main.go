@@ -5,35 +5,41 @@ import (
 	"log"
 	"os"
 
+	"github.com/incrypt0/cokut-server/fire"
 	"github.com/incrypt0/cokut-server/handler"
 	"github.com/incrypt0/cokut-server/router"
-	"github.com/incrypt0/cokut-server/services"
-	store "github.com/incrypt0/cokut-server/stores"
+	"github.com/incrypt0/cokut-server/stores"
+	"github.com/incrypt0/cokut-server/workers"
 )
 
 func main() {
+
 	// Initialize Firebase
-	if _, err := services.InitFire(); err != nil {
+	_, err := fire.InitFire()
+
+	if err != nil {
 		log.Panic(err)
 	}
 
 	// Connect to mongo
-	db := services.ConnectMongo()
+	db := workers.ConnectMongo()
+
+	// Initialize refernce to required Collections
 	users := db.Collection("users")
 	meals := db.Collection("meals")
 	restaurants := db.Collection("restaurants")
 	orders := db.Collection("orders")
 
-	userStore := store.NewUserStore(users)
-	mealsStore := store.NewMealStore(meals, restaurants)
-	restaurantStore := store.NewRestaurantStore(restaurants)
-	orderStore := store.NewOrderStore(orders, restaurants)
+	userStore := stores.NewUserStore(users)
+	mealsStore := stores.NewMealStore(meals, restaurants)
+	restaurantStore := stores.NewRestaurantStore(restaurants)
+	orderStore := stores.NewOrderStore(orders, restaurants)
 
 	// echo instance
 	r := router.New()
-	v1 := r.Group("/api")
+
 	h := handler.NewHandler(userStore, mealsStore, orderStore, restaurantStore)
-	h.Register(v1)
+	h.Register(r)
 
 	// Server Start
 	PORT := os.Getenv("PORT")

@@ -1,11 +1,11 @@
-package store
+package stores
 
 import (
 	"context"
 	"time"
 
 	"github.com/incrypt0/cokut-server/models"
-	"github.com/incrypt0/cokut-server/services"
+	"github.com/incrypt0/cokut-server/workers"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -26,7 +26,7 @@ func NewOrderStore(collection *mongo.Collection, rcollection *mongo.Collection) 
 // Function to insert Meals into meals collection
 func (os *OrderStore) Insert(o *models.Order, uid string) (id string, err error) {
 
-	o.Time = primitive.Timestamp{T: uint32(time.Now().Unix())}
+	o.Time = primitive.NewDateTimeFromTime(time.Now())
 	o.UID = uid
 
 	var c *mongo.Collection = os.collection
@@ -49,13 +49,13 @@ func (os *OrderStore) Insert(o *models.Order, uid string) (id string, err error)
 		return id, err
 	}
 
-	return services.Add(c, o)
+	return workers.Add(c, o)
 }
 
 func (os *OrderStore) GetAll() (l []interface{}, err error) {
-	return services.GetAll(os.collection, models.Order{})
+	return workers.Get(os.collection, models.Order{})
 }
 
 func (os *OrderStore) GetByUser(uid string) (l []interface{}, err error) {
-	return services.GetAll(os.collection, models.Order{UID: uid})
+	return workers.Get(os.collection, models.Order{UID: uid})
 }

@@ -1,4 +1,4 @@
-package store
+package stores
 
 import (
 	"context"
@@ -6,7 +6,7 @@ import (
 	"fmt"
 
 	"github.com/incrypt0/cokut-server/models"
-	"github.com/incrypt0/cokut-server/services"
+	"github.com/incrypt0/cokut-server/workers"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )
@@ -59,7 +59,7 @@ func (us *UserStore) Insert(u *models.User) (id string, err error) {
 		return id, err
 	}
 
-	return services.Add(c, u)
+	return workers.Add(c, u)
 }
 
 // Check User existence

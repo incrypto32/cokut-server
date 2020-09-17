@@ -1,4 +1,4 @@
-package store
+package stores
 
 import (
 	"context"
@@ -6,7 +6,8 @@ import (
 	"fmt"
 
 	"github.com/incrypt0/cokut-server/models"
-	"github.com/incrypt0/cokut-server/services"
+
+	"github.com/incrypt0/cokut-server/workers"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -48,7 +49,7 @@ func (ms *MealStore) Insert(m *models.Meal) (id string, err error) {
 		return id, err
 	}
 
-	return services.Add(c, m)
+	return workers.Add(c, m)
 }
 
 // Insert a special item
@@ -84,15 +85,15 @@ func (ms *MealStore) InsertSpecial(id string) (result_id string, err error) {
 }
 
 func (ms *MealStore) GetByRestaurant(rid string) (l []interface{}, err error) {
-	return services.GetAll(ms.collection, models.Meal{RestID: rid})
+	return workers.Get(ms.collection, models.Meal{RestID: rid})
 }
 
 func (ms *MealStore) GetSpecials() (l []interface{}, err error) {
-	fmt.Println("Test 1")
-	return services.GetAll(ms.collection, models.Meal{Special: true})
+
+	return workers.Get(ms.collection, models.Meal{Special: true})
 }
 
 func (ms *MealStore) GetSpicey() (l []interface{}, err error) {
-	fmt.Println("Test Spicey")
-	return services.GetAll(ms.collection, models.Meal{Spicey: true})
+
+	return workers.Get(ms.collection, models.Meal{Spicey: true})
 }

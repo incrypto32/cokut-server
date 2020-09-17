@@ -1,8 +1,8 @@
-package store
+package stores
 
 import (
 	"github.com/incrypt0/cokut-server/models"
-	"github.com/incrypt0/cokut-server/services"
+	"github.com/incrypt0/cokut-server/workers"
 
 	"go.mongodb.org/mongo-driver/mongo"
 )
@@ -19,6 +19,7 @@ func NewRestaurantStore(collection *mongo.Collection) *RestaurantStore {
 
 // Function to insert users into userCollection
 func (rs *RestaurantStore) Insert(r *models.Restaurant) (id string, err error) {
+
 	//  Getting the user colection
 	c := rs.collection
 
@@ -31,13 +32,13 @@ func (rs *RestaurantStore) Insert(r *models.Restaurant) (id string, err error) {
 		return id, err
 	}
 
-	return services.Add(c, r)
+	return workers.Add(c, r)
 }
 
 func (rs *RestaurantStore) GetAll() (l []interface{}, err error) {
-	return services.GetAll(rs.collection, models.Restaurant{})
+	return workers.Get(rs.collection, models.Restaurant{})
 }
 
 func (rs *RestaurantStore) GetAllHomeMade() (l []interface{}, err error) {
-	return services.GetAll(rs.collection, models.Restaurant{Type: "home"})
+	return workers.Get(rs.collection, models.Restaurant{Type: "home"})
 }

@@ -40,7 +40,6 @@ func (h *Handler) getFiltered(c echo.Context, f func() ([]interface{}, error)) (
 
 	l, err := f()
 
-	fmt.Println(l)
 	if err != nil {
 		fmt.Println(err)
 		return c.JSON(http.StatusInternalServerError, echo.Map{
