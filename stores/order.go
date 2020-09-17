@@ -41,7 +41,7 @@ func (os *OrderStore) Insert(o *models.Order, uid string) (id string, err error)
 		return id, err
 	}
 
-	r := os.collection.FindOne(context.Background(), bson.D{
+	r := os.rcollection.FindOne(context.Background(), bson.D{
 		{Key: "_id", Value: rid},
 	})
 

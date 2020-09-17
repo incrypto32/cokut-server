@@ -25,6 +25,7 @@ func (h *Handler) registerApiV1(api *echo.Group) {
 
 	api.POST("/register", h.registerUser)
 	api.POST("/checkphone", h.checkUserPhoneExistence)
+	api.POST("/order", h.addOrder)
 
 	a := api.Group("/admin")
 	h.registerAdmin(a)
@@ -39,7 +40,6 @@ func (h *Handler) registerAdmin(a *echo.Group) {
 	a.POST("/addrest", h.addRestaurant)
 	a.POST("/additem", h.addMeal)
 	a.POST("/addspecial", h.addSpecial)
-	a.POST("/order", h.addOrder)
 
 }
 

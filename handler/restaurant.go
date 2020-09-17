@@ -35,5 +35,5 @@ func (h *Handler) getAllRestaurants(c echo.Context) (err error) {
 
 //get Home
 func (h *Handler) getHomeMadeRestaurants(c echo.Context) (err error) {
-	return h.getFiltered(c, h.restaurantStore.GetAll)
+	return h.getFiltered(c, h.restaurantStore.GetAllHomeMade)
 }

@@ -12,7 +12,7 @@ import (
 func (h *Handler) addOrder(c echo.Context) (err error) {
 	r := new(models.Order)
 	return h.Add(c, r, func(r models.Model) (string, error) {
-		return h.orderStore.Insert(r.(*models.Order), "blah4")
+		return h.orderStore.Insert(r.(*models.Order), "UID_HERE")
 	})
 }
 
