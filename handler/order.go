@@ -17,14 +17,11 @@ func (h *Handler) addOrder(c echo.Context) (err error) {
 }
 
 func (h *Handler) getOrders(c echo.Context) (err error) {
-
 	return h.getFiltered(c, h.orderStore.GetAll)
 }
 
 func (h *Handler) getUserOrders(c echo.Context) (err error) {
-
 	m := map[string]interface{}{}
-
 	if err = c.Bind(&m); err != nil {
 		fmt.Println(err)
 		return c.JSON(http.StatusInternalServerError, echo.Map{
