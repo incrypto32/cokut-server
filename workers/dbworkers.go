@@ -36,6 +36,7 @@ func ConnectMongo() *mongo.Database {
 
 // Function to generally add anything to any collection
 func Add(c *mongo.Collection, i interface{}) (id string, err error) {
+
 	ctx := context.Background()
 	result, err := c.InsertOne(ctx, i)
 	if err != nil {
@@ -69,6 +70,7 @@ func Get(c *mongo.Collection, i interface{}) (l []interface{}, err error) {
 
 		i := reflect.New(typ).Interface()
 
+		// Remember dont use a pointer to l here by i
 		if err = cur.Decode(i); err != nil {
 			log.Println(err)
 
@@ -85,24 +87,25 @@ func Get(c *mongo.Collection, i interface{}) (l []interface{}, err error) {
 
 func GetOne(c *mongo.Collection, i interface{}) (l interface{}, err error) {
 	ctx := context.Background()
-
-	l = i
+	typ := reflect.TypeOf(i)
+	l = reflect.New(typ).Interface()
 
 	fmt.Println("Interface hase zero value : ", i == reflect.Zero(reflect.TypeOf(i)).Interface())
 
 	if i == reflect.Zero(reflect.TypeOf(i)).Interface() {
 		i = bson.D{}
 	}
-	fmt.Println(i)
 
 	r := c.FindOne(ctx, i)
 
 	if r.Err() != nil {
 		log.Println(err)
-		return l, err
+		return nil, err
 	}
-	if err = r.Decode(&i); err != nil {
-		return l, err
+
+	// Remember dont use a pointer to l here
+	if err = r.Decode(l); err != nil {
+		return nil, err
 	}
 
 	return l, err
@@ -110,11 +113,13 @@ func GetOne(c *mongo.Collection, i interface{}) (l interface{}, err error) {
 
 // Print a model
 func PrintModel(u interface{}) string {
-	fmt.Println("________Print Model_______")
+	fmt.Println("\n________Print Model_______")
+	fmt.Println()
 	b, err := json.MarshalIndent(u, "", "  ")
 	if err != nil {
 		return err.Error()
 	}
-	s := string(b)
+	s := string(b) + "\n"
 	return s
+
 }
