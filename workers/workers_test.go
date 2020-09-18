@@ -1,7 +1,6 @@
 package workers
 
 import (
-	"context"
 	"testing"
 	"time"
 
@@ -20,9 +19,9 @@ func TestDB(t *testing.T) {
 	db := ConnectMongo()
 	c := db.Collection("test")
 
-	if err := c.Drop(context.Background()); err != nil {
-		t.Error(err)
-	}
+	// if err := c.Drop(context.Background()); err != nil {
+	// 	t.Error(err)
+	// }
 
 	if id, err := Add(c, test1); err != nil {
 		t.Error(err)
@@ -73,5 +72,21 @@ func TestDB(t *testing.T) {
 		t.Log("Get One Test 2")
 		t.Log("Get One Success : ")
 		t.Log(PrintModel(l))
+	}
+
+	if n, err := DeleteOne(c, test1); err != nil {
+		t.Error(err)
+	} else {
+		t.Log("Delete One Test 1")
+		t.Log("Delete One Success : ")
+		t.Log(n)
+	}
+
+	if n, err := DeleteOne(c, test2); err != nil {
+		t.Error(err)
+	} else {
+		t.Log("Delete One Test 2")
+		t.Log("Delete One Success : ")
+		t.Log(n)
 	}
 }

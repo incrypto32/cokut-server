@@ -53,6 +53,25 @@ func Add(c *mongo.Collection, i interface{}) (id string, err error) {
 	return id, err
 }
 
+// Function to generally add anything to any collection
+func DeleteOne(c *mongo.Collection, i interface{}) (n int64, err error) {
+
+	ctx := context.Background()
+	result, err := c.DeleteOne(ctx, i)
+	if err != nil {
+		return n, err
+	}
+	if result.DeletedCount == 0 {
+		err = errors.New("No records were deleted")
+		return n, err
+	} else {
+
+		n = result.DeletedCount
+	}
+
+	return n, err
+}
+
 func Get(c *mongo.Collection, i interface{}) (l []interface{}, err error) {
 	ctx := context.Background()
 	typ := reflect.TypeOf(i)
@@ -121,5 +140,4 @@ func PrintModel(u interface{}) string {
 	}
 	s := string(b) + "\n"
 	return s
-
 }
