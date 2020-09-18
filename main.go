@@ -28,6 +28,7 @@ func main() {
 	// echo instance
 	r := router.New()
 
+	// Main Echo Handler
 	h := handler2.NewHandler(s)
 	h.Register(r)
 

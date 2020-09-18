@@ -1,11 +1,12 @@
 package handler2
 
 import (
+	"github.com/incrypt0/cokut-server/brokers"
 	"github.com/incrypt0/cokut-server/store"
 )
 
 type Handler struct {
-	store *store.Store
+	store brokers.CokutBroker
 }
 
 func NewHandler(store *store.Store) *Handler {
