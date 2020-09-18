@@ -1,4 +1,4 @@
-package handler
+package handler2
 
 import (
 	"net/http"
@@ -11,7 +11,7 @@ func (h *Handler) registerUser(c echo.Context) (err error) {
 
 	r := new(models.User)
 	return h.Add(c, r, func(r models.Model) (string, error) {
-		return h.userStore.Insert(r.(*models.User))
+		return h.store.InsertUser(r.(*models.User))
 	})
 }
 
@@ -30,7 +30,13 @@ func (h *Handler) checkUserPhoneExistence(c echo.Context) (err error) {
 		})
 	}
 
-	exist := h.userStore.CheckUserExistence(m["phone"].(string))
+	exist, err := h.store.CheckUserExistence(m["phone"].(string))
+	if err != nil {
+		return c.JSON(http.StatusExpectationFailed, echo.Map{
+			"success": false,
+			"msg":     "An error occured",
+		})
+	}
 
 	return c.JSON(http.StatusOK, echo.Map{
 		"success": true,

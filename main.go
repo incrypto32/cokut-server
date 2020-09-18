@@ -6,9 +6,9 @@ import (
 	"os"
 
 	"github.com/incrypt0/cokut-server/fire"
-	"github.com/incrypt0/cokut-server/handler"
+	"github.com/incrypt0/cokut-server/handler2"
 	"github.com/incrypt0/cokut-server/router"
-	"github.com/incrypt0/cokut-server/stores"
+	"github.com/incrypt0/cokut-server/store"
 	"github.com/incrypt0/cokut-server/workers"
 )
 
@@ -22,23 +22,13 @@ func main() {
 	}
 
 	// Connect to mongo
-	db := workers.ConnectMongo()
-
-	// Initialize refernce to required Collections
-	users := db.Collection("users")
-	meals := db.Collection("meals")
-	restaurants := db.Collection("restaurants")
-	orders := db.Collection("orders")
-
-	userStore := stores.NewUserStore(users)
-	mealsStore := stores.NewMealStore(meals, restaurants)
-	restaurantStore := stores.NewRestaurantStore(restaurants)
-	orderStore := stores.NewOrderStore(orders, restaurants)
+	w := workers.New()
+	s := store.NewStore("meals", "users", "orders", "restaurants", w)
 
 	// echo instance
 	r := router.New()
 
-	h := handler.NewHandler(userStore, mealsStore, orderStore, restaurantStore)
+	h := handler2.NewHandler(s)
 	h.Register(r)
 
 	// Server Start

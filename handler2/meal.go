@@ -1,4 +1,4 @@
-package handler
+package handler2
 
 import (
 	"fmt"
@@ -13,7 +13,7 @@ import (
 func (h *Handler) addMeal(c echo.Context) (err error) {
 	r := new(models.Meal)
 	return h.Add(c, r, func(r models.Model) (string, error) {
-		return h.mealStore.Insert(r.(*models.Meal))
+		return h.store.InsertMeal(r.(*models.Meal))
 	})
 }
 
@@ -37,7 +37,7 @@ func (h *Handler) getMeals(c echo.Context) (err error) {
 		})
 	}
 
-	l, err := h.mealStore.GetByRestaurant(m["rid"].(string))
+	l, err := h.store.GetMealsByRestaurant(m["rid"].(string))
 
 	if err != nil {
 		fmt.Println(err)
@@ -77,7 +77,7 @@ func (h *Handler) addSpecial(c echo.Context) (err error) {
 	}
 	mid := m["meal_id"].(string)
 
-	id, err := h.mealStore.InsertSpecial(mid)
+	id, err := h.store.InsertSpecial(mid)
 
 	if err != nil {
 		log.Println(err)
@@ -96,10 +96,10 @@ func (h *Handler) addSpecial(c echo.Context) (err error) {
 
 // getSpecials
 func (h *Handler) getSpecials(c echo.Context) (err error) {
-	return h.getFiltered(c, h.mealStore.GetSpecials)
+	return h.getFiltered(c, h.store.GetSpecialMeals)
 }
 
 // getSpicey
 func (h *Handler) getSpicey(c echo.Context) (err error) {
-	return h.getFiltered(c, h.mealStore.GetSpicey)
+	return h.getFiltered(c, h.store.GetSpiceyMeals)
 }

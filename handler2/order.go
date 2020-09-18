@@ -1,4 +1,4 @@
-package handler
+package handler2
 
 import (
 	"fmt"
@@ -11,13 +11,14 @@ import (
 // Create a new order
 func (h *Handler) addOrder(c echo.Context) (err error) {
 	r := new(models.Order)
+	r.UID = "UID_HERE"
 	return h.Add(c, r, func(r models.Model) (string, error) {
-		return h.orderStore.Insert(r.(*models.Order), "UID_HERE")
+		return h.store.CreateOrder(r.(*models.Order))
 	})
 }
 
 func (h *Handler) getOrders(c echo.Context) (err error) {
-	return h.getFiltered(c, h.orderStore.GetAll)
+	return h.getFiltered(c, h.store.GetAllOrders)
 }
 
 func (h *Handler) getUserOrders(c echo.Context) (err error) {
@@ -37,7 +38,7 @@ func (h *Handler) getUserOrders(c echo.Context) (err error) {
 		})
 	}
 
-	l, err := h.orderStore.GetByUser(m["uid"].(string))
+	l, err := h.store.GetOrdersByUser(m["uid"].(string))
 
 	fmt.Println(l)
 
