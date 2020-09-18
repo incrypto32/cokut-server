@@ -1,7 +1,6 @@
 package handler2
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 
@@ -23,7 +22,7 @@ func (h *Handler) getMeals(c echo.Context) (err error) {
 	m := map[string]interface{}{}
 
 	if err = c.Bind(&m); err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		return c.JSON(http.StatusInternalServerError, echo.Map{
 			"success": false,
 			"msg":     "An error occured",
@@ -40,7 +39,7 @@ func (h *Handler) getMeals(c echo.Context) (err error) {
 	l, err := h.store.GetMealsByRestaurant(m["rid"].(string))
 
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		return c.JSON(http.StatusInternalServerError, echo.Map{
 			"success": false,
 			"msg":     "An error occured",
@@ -53,6 +52,7 @@ func (h *Handler) getMeals(c echo.Context) (err error) {
 			"msg":     "Nothing found there",
 		})
 	}
+
 	return c.JSON(http.StatusOK, l)
 
 }

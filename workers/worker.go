@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"log"
 	"os"
 	"reflect"
@@ -20,6 +19,7 @@ type Worker struct {
 }
 
 func New() *Worker {
+	log.Println("New Worker Initiated")
 
 	var err error
 	var client *mongo.Client
@@ -101,7 +101,7 @@ func (w *Worker) Get(collectionName string, i interface{}) (l []interface{}, err
 	typ := reflect.TypeOf(i)
 	a := reflect.Zero(reflect.TypeOf(i)).Interface()
 
-	log.Println("Without Filter : ", reflect.DeepEqual(a, i))
+	// log.Println("Without Filter : ", reflect.DeepEqual(a, i))
 
 	if reflect.DeepEqual(a, i) {
 		i = bson.D{}
@@ -134,8 +134,6 @@ func (w *Worker) GetOne(collectionName string, i interface{}) (l interface{}, er
 	typ := reflect.TypeOf(i)
 	l = reflect.New(typ).Interface()
 
-	fmt.Println("Interface hase zero value : ", i == reflect.Zero(reflect.TypeOf(i)).Interface())
-
 	if i == reflect.Zero(reflect.TypeOf(i)).Interface() {
 		i = bson.D{}
 	}
@@ -156,7 +154,7 @@ func (w *Worker) GetOne(collectionName string, i interface{}) (l interface{}, er
 }
 
 func (w *Worker) FindOneAndUpdate(collectionName string, i interface{}, u interface{}) (l interface{}, err error) {
-	fmt.Println("___________________________________________")
+
 	c := w.db.Collection(collectionName)
 	ctx := context.Background()
 	typ := reflect.TypeOf(i)
@@ -179,10 +177,6 @@ func (w *Worker) FindOneAndUpdate(collectionName string, i interface{}, u interf
 	if err = r.Decode(l); err != nil {
 		return nil, err
 	}
-
-	fmt.Println(l)
-	fmt.Println("__hi__")
-	PrintModel(l)
 
 	return l, err
 }

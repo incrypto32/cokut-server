@@ -1,7 +1,7 @@
 package handler2
 
 import (
-	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/incrypt0/cokut-server/models"
@@ -12,7 +12,7 @@ import (
 func (h *Handler) Add(c echo.Context, r models.Model, f func(r models.Model) (string, error)) (err error) {
 
 	if err = c.Bind(r); err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		return c.JSON(http.StatusExpectationFailed, echo.Map{
 			"success": false,
 			"msg":     "An Error Occured",
@@ -22,7 +22,7 @@ func (h *Handler) Add(c echo.Context, r models.Model, f func(r models.Model) (st
 	id, err := f(r)
 
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		return c.JSON(http.StatusExpectationFailed, echo.Map{
 			"success": false,
 			"msg":     err.Error(),
@@ -41,7 +41,7 @@ func (h *Handler) getFiltered(c echo.Context, f func() ([]interface{}, error)) (
 	l, err := f()
 
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		return c.JSON(http.StatusInternalServerError, echo.Map{
 			"success": false,
 			"msg":     "An error occured",

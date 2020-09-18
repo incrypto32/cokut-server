@@ -2,7 +2,6 @@ package store
 
 import (
 	"errors"
-	"fmt"
 	"log"
 
 	"github.com/incrypt0/cokut-server/models"
@@ -43,7 +42,7 @@ func (s *Store) InsertMeal(m *models.Meal) (id string, err error) {
 	return s.w.Add(c, m)
 }
 
-// Insert a special item
+// Make a meal special
 func (s *Store) InsertSpecial(id string) (string, error) {
 	c := s.mc
 	pid, err := primitive.ObjectIDFromHex(id)
@@ -59,10 +58,7 @@ func (s *Store) InsertSpecial(id string) (string, error) {
 		log.Println(err)
 		return "", err
 	}
-
 	a := (r.(*models.Meal))
-	fmt.Println(a.GetModelData())
-
 	return a.ID.Hex(), err
 }
 
@@ -71,11 +67,9 @@ func (s *Store) GetMealsByRestaurant(rid string) (l []interface{}, err error) {
 }
 
 func (s *Store) GetSpecialMeals() (l []interface{}, err error) {
-
 	return s.w.Get(s.mc, models.Meal{Special: true})
 }
 
 func (s *Store) GetSpiceyMeals() (l []interface{}, err error) {
-
 	return s.w.Get(s.mc, models.Meal{Spicey: true})
 }

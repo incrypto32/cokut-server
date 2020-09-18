@@ -3,13 +3,12 @@ package middleware
 import (
 	"context"
 	"errors"
-	"fmt"
+	"log"
 	"net/http"
 	"strings"
 
 	firebase "firebase.google.com/go"
 	"github.com/labstack/echo/v4"
-	"github.com/labstack/gommon/log"
 )
 
 func FireAuthMiddleware(app *firebase.App) echo.MiddlewareFunc {
@@ -28,7 +27,7 @@ func FireAuthMiddleware(app *firebase.App) echo.MiddlewareFunc {
 			client, err := app.Auth(ctx)
 
 			if err != nil {
-				log.Error(err)
+				log.Println(err)
 				return err
 			}
 
@@ -37,10 +36,10 @@ func FireAuthMiddleware(app *firebase.App) echo.MiddlewareFunc {
 			token, err := client.VerifyIDToken(context.Background(), idToken)
 
 			if err != nil {
-				log.Error(err.Error())
+				log.Println(err.Error())
 				return c.JSON(http.StatusExpectationFailed, echo.Map{"success": false, "msg": "ID Token Expired"})
 			}
-			fmt.Println("Token Verified..!!")
+			log.Println("Token Verified..!!")
 
 			c.Set("token", token)
 			return next(c)

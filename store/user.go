@@ -2,7 +2,6 @@ package store
 
 import (
 	"errors"
-	"fmt"
 	"log"
 
 	"github.com/incrypt0/cokut-server/models"
@@ -12,7 +11,6 @@ import (
 func (s *Store) InsertUser(u *models.User) (id string, err error) {
 	var l interface{}
 
-	fmt.Println("Test 1")
 	//  Getting the user colection
 	c := s.uc
 
@@ -28,15 +26,13 @@ func (s *Store) InsertUser(u *models.User) (id string, err error) {
 
 			return id, err
 		}
-		fmt.Println("HERE")
+
 		l, err = s.w.FindOneWithOr(c, models.User{Email: u.Email}, models.User{Phone: u.Phone})
 
 	} else {
 
 		l, err = s.w.FindOne(c, models.User{Phone: u.Phone})
 	}
-
-	fmt.Println(l)
 
 	if err != nil {
 		if err.Error() != "NIL" {
@@ -55,7 +51,7 @@ func (s *Store) InsertUser(u *models.User) (id string, err error) {
 // Check User existence
 func (s *Store) CheckUserExistence(phone string) (bool, error) {
 	var val bool = true
-	fmt.Println("CheckUser called with phone : ", phone)
+
 	c := s.uc
 	filter := models.User{Phone: phone}
 	l, err := s.w.FindOne(c, filter)
@@ -73,7 +69,6 @@ func (s *Store) CheckUserExistence(phone string) (bool, error) {
 		val = true
 	}
 
-	fmt.Println(phone, " exists : ", val)
 	return val, nil
 
 }

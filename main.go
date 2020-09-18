@@ -1,25 +1,28 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"os"
 
 	"github.com/incrypt0/cokut-server/fire"
 	"github.com/incrypt0/cokut-server/handler2"
+	"github.com/incrypt0/cokut-server/handler2/middleware"
 	"github.com/incrypt0/cokut-server/router"
 	"github.com/incrypt0/cokut-server/store"
 	"github.com/incrypt0/cokut-server/workers"
 )
 
 func main() {
+	log.SetFlags(log.Llongfile)
 
 	// Initialize Firebase
-	_, err := fire.InitFire()
+	app, err := fire.InitFire()
 
 	if err != nil {
 		log.Panic(err)
 	}
+
+	fireAuthMWare := middleware.FireAuthMiddleware(app)
 
 	// Connect to mongo
 	w := workers.New()
@@ -29,13 +32,13 @@ func main() {
 	r := router.New()
 
 	// Main Echo Handler
-	h := handler2.NewHandler(s)
+	h := handler2.NewHandler(s, fireAuthMWare)
 	h.Register(r)
 
 	// Server Start
 	PORT := os.Getenv("PORT")
 	if PORT == "" {
-		fmt.Println("PORT is empty")
+		log.Println("PORT is empty")
 		PORT = "4000"
 	}
 

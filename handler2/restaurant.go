@@ -1,7 +1,7 @@
 package handler2
 
 import (
-	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/incrypt0/cokut-server/models"
@@ -22,7 +22,7 @@ func (h *Handler) getAllRestaurants(c echo.Context) (err error) {
 	l, err := h.store.GetAllRestaurants()
 
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		return c.JSON(http.StatusInternalServerError, echo.Map{
 			"success": false,
 			"msg":     "An error occured",

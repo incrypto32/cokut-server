@@ -1,7 +1,7 @@
 package handler2
 
 import (
-	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
@@ -14,7 +14,7 @@ func (h *Handler) registerApi(api *echo.Group) {
 
 func (h *Handler) registerApiV1(api *echo.Group) {
 
-	fmt.Println("________API Handler Initiated________")
+	log.Println("________API V1 Handler Initiated________")
 	api.GET("/test", h.routeTestV1)
 	api.GET("/getoutlets", h.getAllRestaurants)
 	api.GET("/getmeals", h.getMeals)
@@ -51,6 +51,9 @@ func (h *Handler) Register(e *echo.Echo) {
 	// Groups
 	api := e.Group("/api")
 	admin := e.Group("/admin")
+
+	// middlewares
+	api.Use(h.fireAuthMWare)
 
 	// Register the routes
 	h.registerApi(api)

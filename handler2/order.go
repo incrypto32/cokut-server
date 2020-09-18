@@ -1,7 +1,7 @@
 package handler2
 
 import (
-	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/incrypt0/cokut-server/models"
@@ -24,7 +24,7 @@ func (h *Handler) getOrders(c echo.Context) (err error) {
 func (h *Handler) getUserOrders(c echo.Context) (err error) {
 	m := map[string]interface{}{}
 	if err = c.Bind(&m); err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		return c.JSON(http.StatusInternalServerError, echo.Map{
 			"success": false,
 			"msg":     "An error occured",
@@ -40,10 +40,8 @@ func (h *Handler) getUserOrders(c echo.Context) (err error) {
 
 	l, err := h.store.GetOrdersByUser(m["uid"].(string))
 
-	fmt.Println(l)
-
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		return c.JSON(http.StatusInternalServerError, echo.Map{
 			"success": false,
 			"msg":     "An error occured",
