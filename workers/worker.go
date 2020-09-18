@@ -37,13 +37,21 @@ func New() *Worker {
 	return &Worker{db: db}
 }
 
-func (w *Worker) DropTest() {
+func (w *Worker) DropTest() error {
 	ctx := context.Background()
-	w.db.Collection("mctest").Drop(ctx)
-	w.db.Collection("uctest").Drop(ctx)
-	w.db.Collection("octest").Drop(ctx)
-	w.db.Collection("rctest").Drop(ctx)
-
+	if err := w.db.Collection("mctest").Drop(ctx); err != nil {
+		return err
+	}
+	if err := w.db.Collection("uctest").Drop(ctx); err != nil {
+		return err
+	}
+	if err := w.db.Collection("octest").Drop(ctx); err != nil {
+		return err
+	}
+	if err := w.db.Collection("rctest").Drop(ctx); err != nil {
+		return err
+	}
+	return nil
 }
 
 // Function to generally add anything to any collection
