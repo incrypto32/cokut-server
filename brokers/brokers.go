@@ -17,3 +17,14 @@ type CokutBroker interface {
 	GetAllOrders() (l []interface{}, err error)
 	GetOrdersByUser(uid string) (l []interface{}, err error)
 }
+
+type DbBroker interface {
+	DropTest() error
+	Add(collectionName string, i interface{}) (id string, err error)
+	DeleteOne(collectionName string, i interface{}) (n int64, err error)
+	Get(collectionName string, i interface{}) (l []interface{}, err error)
+	GetOne(collectionName string, i interface{}) (l interface{}, err error)
+	FindOneAndUpdate(collectionName string, i interface{}, u interface{}) (l interface{}, err error)
+	FindOne(collectionName string, i interface{}) (l interface{}, err error)
+	FindOneWithOr(collectionName string, i ...interface{}) (l interface{}, err error)
+}

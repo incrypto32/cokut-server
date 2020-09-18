@@ -1,16 +1,18 @@
 package store
 
-import "github.com/incrypt0/cokut-server/workers"
+import (
+	"github.com/incrypt0/cokut-server/brokers"
+)
 
 type Store struct {
 	mc     string
 	uc     string
 	orders string
 	rc     string
-	w      *workers.Worker
+	w      brokers.DbBroker
 }
 
-func NewStore(mc string, uc string, orders string, rc string, w *workers.Worker) *Store {
+func NewStore(mc string, uc string, orders string, rc string, w brokers.DbBroker) *Store {
 	return &Store{
 		uc:     uc,
 		rc:     rc,
