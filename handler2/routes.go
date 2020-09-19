@@ -1,20 +1,20 @@
-package handler
+package handler2
 
 import (
-	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
 )
 
-func (h *Handler) registerApi(api *echo.Group) {
+func (h *Handler) registerAPI(api *echo.Group) {
 	v1 := api.Group("/v1")
-	h.registerApiV1(v1)
+	h.registerAPIV1(v1)
 }
 
-func (h *Handler) registerApiV1(api *echo.Group) {
+func (h *Handler) registerAPIV1(api *echo.Group) {
 
-	fmt.Println("________API Handler Initiated________")
+	log.Println("________API V1 Handler Initiated________")
 	api.GET("/test", h.routeTestV1)
 	api.GET("/getoutlets", h.getAllRestaurants)
 	api.GET("/getmeals", h.getMeals)
@@ -25,6 +25,7 @@ func (h *Handler) registerApiV1(api *echo.Group) {
 
 	api.POST("/register", h.registerUser)
 	api.POST("/checkphone", h.checkUserPhoneExistence)
+	api.POST("/checkuser", h.checkUserExistence)
 	api.POST("/order", h.addOrder)
 
 	a := api.Group("/admin")
@@ -43,7 +44,9 @@ func (h *Handler) registerAdmin(a *echo.Group) {
 
 }
 
+// Register this method registers a new group with handler
 func (h *Handler) Register(e *echo.Echo) {
+
 	// Index Handler
 	e.GET("/", h.index)
 
@@ -51,8 +54,11 @@ func (h *Handler) Register(e *echo.Echo) {
 	api := e.Group("/api")
 	admin := e.Group("/admin")
 
+	// middlewares
+	api.Use(h.fireAuthMWare)
+
 	// Register the routes
-	h.registerApi(api)
+	h.registerAPI(api)
 	h.registerAdmin(admin)
 }
 

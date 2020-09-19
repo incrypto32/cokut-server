@@ -2,9 +2,8 @@ package models
 
 import (
 	"errors"
-	"fmt"
 
-	"github.com/incrypt0/cokut-server/workers"
+	"github.com/incrypt0/cokut-server/utils"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -19,12 +18,10 @@ type Restaurant struct {
 }
 
 func (r *Restaurant) GetModelData() string {
-	return workers.PrintModel(r)
+	return utils.PrintModel(r)
 }
 
 func (r *Restaurant) Validate() error {
-	fmt.Println(workers.PrintModel(r))
-
 	if r.Name == "" || (len(r.Phone) < 10) || r.Address == "" {
 		return errors.New("Not Validated")
 	}

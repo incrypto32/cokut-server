@@ -2,6 +2,7 @@ package fire
 
 import (
 	"context"
+	"log"
 
 	"fmt"
 	"os"
@@ -17,7 +18,7 @@ func InitFire() (*firebase.App, error) {
 
 	keys := os.Getenv("FIREBASE_KEYS")
 	if keys != "" {
-		fmt.Println("Reading from ENV")
+		log.Println("Reading from ENV")
 		opt = option.WithCredentialsJSON([]byte(keys))
 	}
 
