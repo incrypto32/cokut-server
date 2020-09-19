@@ -36,17 +36,41 @@ func TestUser(t *testing.T) {
 		t.Log("Insert User Success : ", id)
 	}
 
-	if val, err := s.CheckUserExistence("7034320441"); err != nil {
+	if val, err := s.CheckUserExistence("7034320441", "vpkrishnanand@gmail.com"); err != nil {
 		t.Error(err)
 	} else {
 		t.Log("Phone Exists (Test 1) : ", val)
 	}
 
-	if val, err := s.CheckUserExistence("9847859164"); err != nil {
+	if val, err := s.CheckUserExistence("9847859164", "blah@gmail.com"); err != nil {
+		t.Error(err)
+	} else {
+		t.Log("User Exists (Test 2) : ", val)
+	}
+	if val, err := s.CheckUserExistence("7034320441", "blah@gmail.com"); err != nil {
+		t.Error(err)
+	} else {
+		t.Log("User Exists (Test 1) : ", val)
+	}
+
+	if val, err := s.CheckUserExistence("9847859164", "vpkrishnanand@gmail.com"); err != nil {
+		t.Error(err)
+	} else {
+		t.Log("User Exists (Test 2) : ", val)
+	}
+
+	if val, err := s.CheckUserPhoneExistence("7034320441"); err != nil {
+		t.Error(err)
+	} else {
+		t.Log("Phone Exists (Test 1) : ", val)
+	}
+
+	if val, err := s.CheckUserPhoneExistence("9847859164"); err != nil {
 		t.Error(err)
 	} else {
 		t.Log("Phone Exists (Test 2) : ", val)
 	}
+
 }
 
 func TestRestaurant(t *testing.T) {

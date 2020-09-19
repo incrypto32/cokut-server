@@ -7,7 +7,7 @@ import (
 	"github.com/incrypt0/cokut-server/models"
 )
 
-// Function to insert users into userCollection
+//InsertUser Function to insert users into userCollection
 func (s *Store) InsertUser(u *models.User) (id string, err error) {
 	var l interface{}
 
@@ -48,8 +48,8 @@ func (s *Store) InsertUser(u *models.User) (id string, err error) {
 	return s.w.Add(c, u)
 }
 
-// Check User existence
-func (s *Store) CheckUserExistence(phone string) (bool, error) {
+//CheckUserPhoneExistence  checks whether the user exists with a phone
+func (s *Store) CheckUserPhoneExistence(phone string) (bool, error) {
 	var val bool = true
 
 	c := s.uc
@@ -70,5 +70,37 @@ func (s *Store) CheckUserExistence(phone string) (bool, error) {
 	}
 
 	return val, nil
+
+}
+
+//CheckUserExistence checks whether the user exists based on email and phone
+func (s *Store) CheckUserExistence(phone string, email string) (bool, error) {
+	var val bool
+
+	c := s.uc
+
+	var l interface{}
+	var err error
+
+	// Check if email is null
+	if email != "" {
+		l, err = s.w.FindOneWithOr(c, models.User{Email: email}, models.User{Phone: email})
+	} else {
+
+		l, err = s.w.FindOne(c, models.User{Phone: phone})
+	}
+	if err != nil {
+		if err.Error() == "NIL" {
+			val = false
+		} else {
+			log.Println(err)
+		}
+	}
+
+	if l != nil {
+		val = true
+	}
+
+	return val, err
 
 }

@@ -9,7 +9,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-// Function to insert Meals into meals collection
+//InsertMeal Function to insert Meals into meals collection
 func (s *Store) InsertMeal(m *models.Meal) (id string, err error) {
 	c := s.mc
 	rc := s.rc
@@ -31,10 +31,11 @@ func (s *Store) InsertMeal(m *models.Meal) (id string, err error) {
 		if err.Error() == "NIL" {
 			log.Println("NIL ERROR")
 			return "", errors.New("Restaurant doesn't exist")
-		} else {
-			return "", err
 		}
+		return "", err
+
 	}
+
 	if r == nil {
 		return "", errors.New("Restaurant doesn't exist")
 	}
@@ -42,7 +43,7 @@ func (s *Store) InsertMeal(m *models.Meal) (id string, err error) {
 	return s.w.Add(c, m)
 }
 
-// Make a meal special
+// InsertSpecial Make a meal special
 func (s *Store) InsertSpecial(id string) (string, error) {
 	c := s.mc
 	pid, err := primitive.ObjectIDFromHex(id)
@@ -62,14 +63,17 @@ func (s *Store) InsertSpecial(id string) (string, error) {
 	return a.ID.Hex(), err
 }
 
+// GetMealsByRestaurant .
 func (s *Store) GetMealsByRestaurant(rid string) (l []interface{}, err error) {
 	return s.w.Get(s.mc, models.Meal{RID: rid})
 }
 
+// GetSpecialMeals .
 func (s *Store) GetSpecialMeals() (l []interface{}, err error) {
 	return s.w.Get(s.mc, models.Meal{Special: true})
 }
 
+// GetSpiceyMeals .
 func (s *Store) GetSpiceyMeals() (l []interface{}, err error) {
 	return s.w.Get(s.mc, models.Meal{Spicey: true})
 }

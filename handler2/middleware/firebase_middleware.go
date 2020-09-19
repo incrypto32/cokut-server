@@ -11,6 +11,7 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
+// FireAuthMiddleware is a middlerware which handles the authorisation checking for users
 func FireAuthMiddleware(app *firebase.App) echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {

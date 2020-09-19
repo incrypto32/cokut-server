@@ -2,9 +2,12 @@ package brokers
 
 import "github.com/incrypt0/cokut-server/models"
 
+// CokutBroker is the interface whoch abstracts all the store functionalities
+// It acts as a mediator between actual store and the handler object
 type CokutBroker interface {
 	InsertUser(u *models.User) (id string, err error)
-	CheckUserExistence(phone string) (bool, error)
+	CheckUserPhoneExistence(phone string) (bool, error)
+	CheckUserExistence(phone string, email string) (bool, error)
 	InsertRestaurant(r *models.Restaurant) (id string, err error)
 	GetAllRestaurants() (l []interface{}, err error)
 	GetAllHomeMade() (l []interface{}, err error)
@@ -18,6 +21,8 @@ type CokutBroker interface {
 	GetOrdersByUser(uid string) (l []interface{}, err error)
 }
 
+// DbBroker is the interface whoch abstracts all the db functionalities
+// It acts as a mediator between actual db workers and the store object
 type DbBroker interface {
 	DropTest() error
 	Add(collectionName string, i interface{}) (id string, err error)

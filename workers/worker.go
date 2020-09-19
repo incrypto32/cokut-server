@@ -19,7 +19,6 @@ type Worker struct {
 }
 
 func New() *Worker {
-	log.Println("New Worker Initiated")
 
 	var err error
 	var client *mongo.Client
@@ -94,7 +93,7 @@ func (w *Worker) DeleteOne(collectionName string, i interface{}) (n int64, err e
 	return n, err
 }
 
-// Get
+// Get gets details from db with given filter
 func (w *Worker) Get(collectionName string, i interface{}) (l []interface{}, err error) {
 	c := w.db.Collection(collectionName)
 	ctx := context.Background()
@@ -115,8 +114,6 @@ func (w *Worker) Get(collectionName string, i interface{}) (l []interface{}, err
 
 		// Remember dont use a pointer to l here by i
 		if err = cur.Decode(i); err != nil {
-			log.Println(err)
-
 			return l, err
 		}
 
@@ -128,6 +125,7 @@ func (w *Worker) Get(collectionName string, i interface{}) (l []interface{}, err
 	return l, err
 }
 
+// GetOne gets single results from db with given filter
 func (w *Worker) GetOne(collectionName string, i interface{}) (l interface{}, err error) {
 	c := w.db.Collection(collectionName)
 	ctx := context.Background()
@@ -141,7 +139,6 @@ func (w *Worker) GetOne(collectionName string, i interface{}) (l interface{}, er
 	r := c.FindOne(ctx, i)
 
 	if r.Err() != nil {
-		log.Println(err)
 		return nil, err
 	}
 
@@ -153,6 +150,7 @@ func (w *Worker) GetOne(collectionName string, i interface{}) (l interface{}, er
 	return l, err
 }
 
+// FindOneAndUpdate FindOneAndUpdate
 func (w *Worker) FindOneAndUpdate(collectionName string, i interface{}, u interface{}) (l interface{}, err error) {
 
 	c := w.db.Collection(collectionName)
@@ -169,7 +167,6 @@ func (w *Worker) FindOneAndUpdate(collectionName string, i interface{}, u interf
 	})
 
 	if r.Err() != nil {
-		log.Println(err)
 		return nil, err
 	}
 
@@ -181,8 +178,8 @@ func (w *Worker) FindOneAndUpdate(collectionName string, i interface{}, u interf
 	return l, err
 }
 
+// FindOne FindOne
 func (w *Worker) FindOne(collectionName string, i interface{}) (l interface{}, err error) {
-
 	c := w.db.Collection(collectionName)
 	ctx := context.Background()
 	typ := reflect.TypeOf(i)
@@ -201,14 +198,13 @@ func (w *Worker) FindOne(collectionName string, i interface{}) (l interface{}, e
 
 	// Remember dont use a pointer to l here
 	if err = r.Decode(l); err != nil {
-
-		log.Println(err)
 		return nil, err
 	}
 
 	return l, err
 }
 
+// FindOneWithOr FindOneWithOr
 func (w *Worker) FindOneWithOr(collectionName string, i ...interface{}) (l interface{}, err error) {
 
 	c := w.db.Collection(collectionName)
@@ -223,7 +219,7 @@ func (w *Worker) FindOneWithOr(collectionName string, i ...interface{}) (l inter
 	r := c.FindOne(ctx, bson.D{{Key: "$or", Value: filters}})
 
 	if err := r.Err(); err != nil {
-		log.Println(err)
+
 		if err == mongo.ErrNoDocuments {
 			return nil, errors.New("NIL")
 		}
@@ -233,12 +229,13 @@ func (w *Worker) FindOneWithOr(collectionName string, i ...interface{}) (l inter
 	// Remember dont use a pointer to l here
 	if err = r.Decode(l); err != nil {
 
-		log.Println(err)
 		return nil, err
 	}
 
 	return l, err
 }
+
+// PrintModel PrintModel
 func PrintModel(u interface{}) string {
 	log.Println("\n________Print Model_______")
 	log.Println()
