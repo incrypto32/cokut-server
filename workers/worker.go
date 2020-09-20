@@ -14,10 +14,12 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
+// Worker .
 type Worker struct {
 	db *mongo.Database
 }
 
+// New Worker
 func New() *Worker {
 
 	var err error
@@ -36,6 +38,7 @@ func New() *Worker {
 	return &Worker{db: db}
 }
 
+// DropTest frop
 func (w *Worker) DropTest() error {
 	ctx := context.Background()
 	if err := w.db.Collection("mctest").Drop(ctx); err != nil {
@@ -53,7 +56,7 @@ func (w *Worker) DropTest() error {
 	return nil
 }
 
-// Function to generally add anything to any collection
+//Add Function to generally add anything to any collection
 func (w *Worker) Add(collectionName string, i interface{}) (id string, err error) {
 
 	c := w.db.Collection(collectionName)
@@ -61,47 +64,43 @@ func (w *Worker) Add(collectionName string, i interface{}) (id string, err error
 	ctx := context.Background()
 	result, err := c.InsertOne(ctx, i)
 	if err != nil {
-		return id, err
+		log.Println(err)
+		return id, errors.New("An error occured please try again")
 	}
 
 	if result.InsertedID == nil {
 		err = errors.New("An error occured please try again")
 		return id, err
-	} else {
-		id = result.InsertedID.(primitive.ObjectID).Hex()
 	}
-
+	id = result.InsertedID.(primitive.ObjectID).Hex()
 	return id, err
 }
 
-// Function to generally add anything to any collection
+//DeleteOne Function to generally add anything to any collection
 func (w *Worker) DeleteOne(collectionName string, i interface{}) (n int64, err error) {
 	c := w.db.Collection(collectionName)
 	ctx := context.Background()
 	result, err := c.DeleteOne(ctx, i)
 	if err != nil {
-		return n, err
+		log.Println(err)
+		return n, errors.New("An error occured please try again")
 	}
 	if result.DeletedCount == 0 {
 		err = errors.New("No records were deleted")
 		return n, err
-	} else {
-
-		n = result.DeletedCount
 	}
-
+	n = result.DeletedCount
 	return n, err
 }
 
 // Get gets details from db with given filter
-func (w *Worker) Get(collectionName string, i interface{}) (l []interface{}, err error) {
+func (w *Worker) Get(collectionName string, i interface{}) (l []interface{}, errerr error) {
 	c := w.db.Collection(collectionName)
 	ctx := context.Background()
 	typ := reflect.TypeOf(i)
 	a := reflect.Zero(reflect.TypeOf(i)).Interface()
 
 	// log.Println("Without Filter : ", reflect.DeepEqual(a, i))
-
 	if reflect.DeepEqual(a, i) {
 		i = bson.D{}
 	}
@@ -109,44 +108,16 @@ func (w *Worker) Get(collectionName string, i interface{}) (l []interface{}, err
 	cur, err := c.Find(ctx, i)
 
 	for cur.Next(ctx) {
-
 		i := reflect.New(typ).Interface()
-
 		// Remember dont use a pointer to l here by i
 		if err = cur.Decode(i); err != nil {
-			return l, err
+			log.Println(err)
+			return l, errors.New("An error occured please try again")
 		}
-
 		l = append(l, i)
-
 	}
+
 	defer cur.Close(ctx)
-
-	return l, err
-}
-
-// GetOne gets single results from db with given filter
-func (w *Worker) GetOne(collectionName string, i interface{}) (l interface{}, err error) {
-	c := w.db.Collection(collectionName)
-	ctx := context.Background()
-	typ := reflect.TypeOf(i)
-	l = reflect.New(typ).Interface()
-
-	if i == reflect.Zero(reflect.TypeOf(i)).Interface() {
-		i = bson.D{}
-	}
-
-	r := c.FindOne(ctx, i)
-
-	if r.Err() != nil {
-		return nil, err
-	}
-
-	// Remember dont use a pointer to l here
-	if err = r.Decode(l); err != nil {
-		return nil, err
-	}
-
 	return l, err
 }
 
@@ -167,12 +138,14 @@ func (w *Worker) FindOneAndUpdate(collectionName string, i interface{}, u interf
 	})
 
 	if r.Err() != nil {
-		return nil, err
+		log.Println(err)
+		return nil, errors.New("An error occured please try again")
 	}
 
 	// Remember dont use a pointer to l here
 	if err = r.Decode(l); err != nil {
-		return nil, err
+		log.Println(err)
+		return nil, errors.New("An error occured please try again")
 	}
 
 	return l, err
@@ -193,12 +166,14 @@ func (w *Worker) FindOne(collectionName string, i interface{}) (l interface{}, e
 		if err == mongo.ErrNoDocuments {
 			return nil, errors.New("NIL")
 		}
-		return nil, err
+		log.Println(err)
+		return nil, errors.New("An error occured please try again")
 	}
 
 	// Remember dont use a pointer to l here
 	if err = r.Decode(l); err != nil {
-		return nil, err
+		log.Println(err)
+		return nil, errors.New("An error occured please try again")
 	}
 
 	return l, err
@@ -223,13 +198,15 @@ func (w *Worker) FindOneWithOr(collectionName string, i ...interface{}) (l inter
 		if err == mongo.ErrNoDocuments {
 			return nil, errors.New("NIL")
 		}
-		return nil, err
+		log.Println(err)
+		return nil, errors.New("An error occured please try again")
 	}
 
 	// Remember dont use a pointer to l here
 	if err = r.Decode(l); err != nil {
 
-		return nil, err
+		log.Println(err)
+		return nil, errors.New("An error occured please try again")
 	}
 
 	return l, err

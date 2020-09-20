@@ -20,32 +20,37 @@ func (s *Store) InsertUser(u *models.User) (id string, err error) {
 	}
 
 	// Check if email is null
-	if u.Email != "" {
-
+	if u.Email != "" && u.Phone != "" {
 		if err = u.ValidateEmail(); err != nil {
-
 			return id, err
 		}
-
 		l, err = s.w.FindOneWithOr(c, models.User{Email: u.Email}, models.User{Phone: u.Phone})
-
-	} else {
-
+	} else if u.Phone != "" {
 		l, err = s.w.FindOne(c, models.User{Phone: u.Phone})
+	} else if u.Email != "" {
+		l, err = s.w.FindOne(c, models.User{Email: u.Email})
+	} else if u.GID != "" {
+		l, err = s.w.FindOne(c, models.User{GID: u.GID})
 	}
 
 	if err != nil {
 		if err.Error() != "NIL" {
 			log.Println(err)
-			return id, err
+			return id, errors.New("ERROR")
 		}
-
 	}
+
 	if l != nil {
+		log.Println(l)
 		return id, errors.New("DETAILS_EXIST")
 	}
 
 	return s.w.Add(c, u)
+}
+
+// GetUser .
+func (s *Store) GetUser(uid string) (l interface{}, err error) {
+	return s.w.FindOne(s.uc, models.User{UID: uid})
 }
 
 //CheckUserPhoneExistence  checks whether the user exists with a phone
@@ -54,6 +59,31 @@ func (s *Store) CheckUserPhoneExistence(phone string) (bool, error) {
 
 	c := s.uc
 	filter := models.User{Phone: phone}
+	l, err := s.w.FindOne(c, filter)
+
+	if err != nil {
+
+		if err.Error() == "NIL" {
+
+			val = false
+		} else {
+			return false, err
+		}
+	}
+	if l != nil {
+		val = true
+	}
+
+	return val, nil
+
+}
+
+//CheckUserPhoneExistenceByGID  checks whether the user exists with a phone
+func (s *Store) CheckUserPhoneExistenceByGID(gid string) (bool, error) {
+	var val bool = true
+
+	c := s.uc
+	filter := models.User{GID: gid}
 	l, err := s.w.FindOne(c, filter)
 
 	if err != nil {

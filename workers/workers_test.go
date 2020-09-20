@@ -60,22 +60,6 @@ func TestDBHandler(t *testing.T) {
 		t.Log(PrintModel(l))
 	}
 
-	if l, err := w.GetOne(c, test1); err != nil {
-		t.Error(err)
-	} else {
-		t.Log("Get One Test 1")
-		t.Log("Get One Success : ")
-		t.Log(PrintModel(l))
-	}
-
-	if l, err := w.GetOne(c, test2); err != nil {
-		t.Error(err)
-	} else {
-		t.Log("Get One Test 2")
-		t.Log("Get One Success : ")
-		t.Log(PrintModel(l))
-	}
-
 	if x, err := w.FindOne(c, test1); err != nil {
 		t.Error(err)
 	} else {

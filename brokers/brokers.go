@@ -6,8 +6,10 @@ import "github.com/incrypt0/cokut-server/models"
 // It acts as a mediator between actual store and the handler object
 type CokutBroker interface {
 	InsertUser(u *models.User) (id string, err error)
+	GetUser(uid string) (l interface{}, err error)
 	CheckUserPhoneExistence(phone string) (bool, error)
 	CheckUserExistence(phone string, email string) (bool, error)
+	CheckUserPhoneExistenceByGID(gid string) (bool, error)
 	CheckUserExistenceByUID(UID string) (bool, error)
 	InsertRestaurant(r *models.Restaurant) (id string, err error)
 	GetAllRestaurants() (l []interface{}, err error)
@@ -29,7 +31,6 @@ type DbBroker interface {
 	Add(collectionName string, i interface{}) (id string, err error)
 	DeleteOne(collectionName string, i interface{}) (n int64, err error)
 	Get(collectionName string, i interface{}) (l []interface{}, err error)
-	GetOne(collectionName string, i interface{}) (l interface{}, err error)
 	FindOneAndUpdate(collectionName string, i interface{}, u interface{}) (l interface{}, err error)
 	FindOne(collectionName string, i interface{}) (l interface{}, err error)
 	FindOneWithOr(collectionName string, i ...interface{}) (l interface{}, err error)

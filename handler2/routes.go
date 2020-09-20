@@ -16,6 +16,7 @@ func (h *Handler) registerAPIV1(api *echo.Group) {
 
 	log.Println("________API V1 Handler Initiated________")
 	api.GET("/test", h.routeTestV1)
+	api.GET("/getuser", h.getUser)
 	api.GET("/getoutlets", h.getAllRestaurants)
 	api.GET("/getmeals", h.getMeals)
 	api.GET("/getspecials", h.getSpecials)
@@ -25,10 +26,6 @@ func (h *Handler) registerAPIV1(api *echo.Group) {
 
 	api.POST("/register", h.registerUser)
 	api.POST("/order", h.addOrder)
-
-	u := api.Group("/utils")
-	u.POST("/checkphone", h.checkUserPhoneExistence)
-	u.POST("/checkuser", h.checkUserExistence)
 
 	a := api.Group("/admin")
 	h.registerAdmin(a)
@@ -46,6 +43,16 @@ func (h *Handler) registerAdmin(a *echo.Group) {
 
 }
 
+// The Admin Api
+func (h *Handler) registerUtils(u *echo.Group) {
+
+	u.POST("/checkphone", h.checkUserPhoneExistence)
+	u.POST("/checkuser", h.checkUserExistence)
+	u.POST("/checkgid", h.checkUserExistence)
+	u.POST("/getuser", h.getUser)
+
+}
+
 // Register this method registers a new group with handler
 func (h *Handler) Register(e *echo.Echo) {
 
@@ -55,11 +62,13 @@ func (h *Handler) Register(e *echo.Echo) {
 	// Groups
 	api := e.Group("/api")
 	admin := e.Group("/admin")
+	u := e.Group("/utils")
 
 	// middlewares
 	api.Use(h.fireAuthMWare)
 
 	// Register the routes
+	h.registerUtils(u)
 	h.registerAPI(api)
 	h.registerAdmin(admin)
 }
