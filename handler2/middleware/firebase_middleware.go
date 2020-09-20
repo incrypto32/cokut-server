@@ -18,7 +18,8 @@ func FireAuthMiddleware(app *firebase.App) echo.MiddlewareFunc {
 			ctx := context.Background()
 
 			// For testing purposes
-			if true {
+			if false {
+				c.Set("uid", "u1")
 				return next(c)
 			}
 

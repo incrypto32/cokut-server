@@ -24,9 +24,11 @@ func (h *Handler) registerAPIV1(api *echo.Group) {
 	api.GET("/getuserorders", h.getUserOrders)
 
 	api.POST("/register", h.registerUser)
-	api.POST("/checkphone", h.checkUserPhoneExistence)
-	api.POST("/checkuser", h.checkUserExistence)
 	api.POST("/order", h.addOrder)
+
+	u := api.Group("/utils")
+	u.POST("/checkphone", h.checkUserPhoneExistence)
+	u.POST("/checkuser", h.checkUserExistence)
 
 	a := api.Group("/admin")
 	h.registerAdmin(a)
@@ -67,5 +69,6 @@ func (h *Handler) routeTestAdmin(c echo.Context) error {
 }
 
 func (h *Handler) routeTestV1(c echo.Context) error {
+
 	return c.JSON(http.StatusOK, echo.Map{"success": true, "msg": "V1 working fine"})
 }

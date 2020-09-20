@@ -23,6 +23,7 @@ func main() {
 	}
 
 	fireAuthMWare := middleware.FireAuthMiddleware(app)
+	customClaimAdder := middleware.CustomClaimRegister(app)
 
 	// Connect to mongo
 	w := workers.New()
@@ -32,7 +33,7 @@ func main() {
 	r := router.New()
 
 	// Main Echo Handler
-	h := handler2.NewHandler(s, fireAuthMWare)
+	h := handler2.NewHandler(s, fireAuthMWare, customClaimAdder)
 	h.Register(r)
 
 	// Server Start

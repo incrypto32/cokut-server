@@ -104,3 +104,31 @@ func (s *Store) CheckUserExistence(phone string, email string) (bool, error) {
 	return val, err
 
 }
+
+//CheckUserExistenceByUID checks whether the user exists based on UID
+func (s *Store) CheckUserExistenceByUID(UID string) (bool, error) {
+	var val bool
+
+	c := s.uc
+
+	var l interface{}
+	var err error
+
+	l, err = s.w.FindOne(c, models.User{UID: UID})
+
+	if err != nil {
+		if err.Error() == "NIL" {
+			err = nil
+			val = false
+		} else {
+			log.Println(err)
+		}
+	}
+
+	if l != nil {
+		val = true
+	}
+
+	return val, err
+
+}

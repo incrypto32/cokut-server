@@ -9,10 +9,36 @@ import (
 )
 
 func (h *Handler) registerUser(c echo.Context) (err error) {
+	uid := c.Get("uid")
+
+	u, err := h.store.CheckUserExistenceByUID(uid.(string))
+
+	if err != nil {
+		log.Println(err)
+		return h.sendError(c)
+	}
+
+	if u {
+		return h.sendMessageWithFailure(c, "ALREADY_REGISTERED")
+	}
 
 	r := new(models.User)
-	return h.Add(c, r, func(r models.Model) (string, error) {
-		return h.store.InsertUser(r.(*models.User))
+	r.UID = uid.(string)
+	var id string
+
+	if id, err = h.store.InsertUser(r); err != nil {
+		return h.sendMessageWithFailure(c, err.Error())
+	}
+
+	claims := map[string]interface{}{"registered": true}
+
+	if err = h.customClaimsAdder(r.UID, claims); err != nil {
+		return h.sendError(c)
+	}
+
+	return c.JSON(http.StatusOK, echo.Map{
+		"success": true,
+		"id":      id,
 	})
 }
 

@@ -13,10 +13,7 @@ func (h *Handler) Add(c echo.Context, r models.Model, f func(r models.Model) (st
 
 	if err = c.Bind(r); err != nil {
 		log.Println(err)
-		return c.JSON(http.StatusExpectationFailed, echo.Map{
-			"success": false,
-			"msg":     "An Error Occured",
-		})
+		return h.sendError(c)
 	}
 
 	id, err := f(r)
@@ -56,4 +53,18 @@ func (h *Handler) getFiltered(c echo.Context, f func() ([]interface{}, error)) (
 	}
 	return c.JSON(http.StatusOK, l)
 
+}
+
+func (h *Handler) sendError(c echo.Context) error {
+	return c.JSON(http.StatusExpectationFailed, echo.Map{
+		"success": false,
+		"msg":     "An error occured",
+	})
+}
+
+func (h *Handler) sendMessageWithFailure(c echo.Context, msg string) error {
+	return c.JSON(http.StatusExpectationFailed, echo.Map{
+		"success": false,
+		"msg":     msg,
+	})
 }
