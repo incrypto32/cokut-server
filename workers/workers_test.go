@@ -104,7 +104,7 @@ func TestDBHandler(t *testing.T) {
 
 	}
 
-	if x, err := w.FindOneWithOr(c, Test{Name: "Test 3"}, Test{Name: "Test 1"}); err != nil {
+	if x, err := w.FindOneWithOr(c, Test{Name: "Test 3"}, Test{Name: "Test 1"}, Test{}); err != nil {
 		t.Error(err)
 	} else {
 		t.Log("FindOneWithOrTest 1")

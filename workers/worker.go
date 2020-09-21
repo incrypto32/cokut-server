@@ -186,7 +186,11 @@ func (w *Worker) FindOneWithOr(collectionName string, i ...interface{}) (l inter
 	l = reflect.New(typ).Interface()
 
 	filters := []interface{}{}
-	filters = append(filters, i...)
+	for _, r := range i {
+		if reflect.Zero(typ).Interface() != r {
+			filters = append(filters, r)
+		}
+	}
 
 	r := c.FindOne(ctx, bson.D{{Key: "$or", Value: filters}})
 
