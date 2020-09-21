@@ -30,14 +30,14 @@ func (s *Store) InsertMeal(m *models.Meal) (id string, err error) {
 	if err != nil {
 		if err.Error() == "NIL" {
 			log.Println("NIL ERROR")
-			return "", errors.New("Restaurant doesn't exist")
+			return "", errors.New("restaurant doesn't exist")
 		}
-		return "", err
 
+		return "", err
 	}
 
 	if r == nil {
-		return "", errors.New("Restaurant doesn't exist")
+		return "", errors.New("restaurant doesn't exist")
 	}
 
 	return s.w.Add(c, m)
@@ -47,9 +47,11 @@ func (s *Store) InsertMeal(m *models.Meal) (id string, err error) {
 func (s *Store) InsertSpecial(id string) (string, error) {
 	c := s.mc
 	pid, err := primitive.ObjectIDFromHex(id)
+
 	if err != nil {
 		return "", err
 	}
+
 	filter := models.Meal{ID: pid}
 	update := models.Meal{Special: true}
 
@@ -57,9 +59,12 @@ func (s *Store) InsertSpecial(id string) (string, error) {
 
 	if err != nil {
 		log.Println(err)
+
 		return "", err
 	}
+
 	a := (r.(*models.Meal))
+
 	return a.ID.Hex(), err
 }
 

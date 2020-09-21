@@ -1,6 +1,7 @@
 package store
 
 import (
+	"log"
 	"testing"
 
 	"github.com/incrypt0/cokut-server/models"
@@ -9,17 +10,15 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-var s *Store = NewStore("mctest", "uctest", "octest", "rctest", workers.New())
-var id1 primitive.ObjectID = primitive.NewObjectID()
-var id2 primitive.ObjectID = primitive.NewObjectID()
-
 func TestUser(t *testing.T) {
+	var s *Store = NewStore("mctest", "uctest", "octest", "rctest", workers.New())
+
 	a := make([]string, 3)
 	a[0] = "Vazahppully House"
 	user := models.User{
 		Name:    "Krish",
 		Address: a,
-		Email:   "vpkrishnanand",
+		Email:   "vpkrishnanand@gmail.com",
 		Admin:   true,
 		Phone:   "7034320441",
 		UID:     "1",
@@ -31,7 +30,6 @@ func TestUser(t *testing.T) {
 		} else {
 			t.Error("ERROR >>>>>>>>>>> : ", err)
 		}
-
 	} else {
 		t.Log("Insert User Success : ", id)
 	}
@@ -43,18 +41,24 @@ func TestUser(t *testing.T) {
 	}
 
 	if val, err := s.CheckUserExistence("9847859164", "blah@gmail.com"); err != nil {
-		t.Error("ERROR >>>>>>>>>>> : ", err)
+		if err.Error() != "NIL" {
+			t.Error("ERROR >>>>>>>>>>> : ", err)
+		}
 	} else {
 		t.Log("User Exists (Test 2) : ", val)
 	}
 	if val, err := s.CheckUserExistence("7034320441", "blah@gmail.com"); err != nil {
-		t.Error("ERROR >>>>>>>>>>> : ", err)
+		if err.Error() != "NIL" {
+			t.Error("ERROR >>>>>>>>>>> : ", err)
+		}
 	} else {
 		t.Log("User Exists (Test 1) : ", val)
 	}
 
 	if val, err := s.CheckUserExistence("9847859164", "vpkrishnanand@gmail.com"); err != nil {
-		t.Error("ERROR >>>>>>>>>>> : ", err)
+		if err.Error() != "NIL" {
+			t.Error("ERROR >>>>>>>>>>> : ", err)
+		}
 	} else {
 		t.Log("User Exists (Test 2) : ", val)
 	}
@@ -66,14 +70,20 @@ func TestUser(t *testing.T) {
 	}
 
 	if val, err := s.CheckUserPhoneExistence("9847859164"); err != nil {
-		t.Error("ERROR >>>>>>>>>>> : ", err)
+		if err.Error() != "NIL" {
+			t.Error("ERROR >>>>>>>>>>> : ", err)
+		}
 	} else {
 		t.Log("Phone Exists (Test 2) : ", val)
 	}
-
 }
 
 func TestRestaurant(t *testing.T) {
+	var s *Store = NewStore("mctest", "uctest", "octest", "rctest", workers.New())
+
+	id1, _ := primitive.ObjectIDFromHex("5f689aa84770a61206b9095b")
+	id2, _ := primitive.ObjectIDFromHex("5ec0115c23ca01bb29ea922f")
+
 	res1 := models.Restaurant{
 		ID:      id1,
 		Name:    "Ambadi Hotel",
@@ -93,6 +103,7 @@ func TestRestaurant(t *testing.T) {
 		Phone:   "9847859162",
 		Type:    "reg",
 	}
+
 	t.Log("<<<<<<<<<<<<<<<<<<<<<<>>>>>>>>>>>>>>>>>>>>>>>>>>>")
 	t.Log(id1, id2)
 
@@ -115,7 +126,6 @@ func TestRestaurant(t *testing.T) {
 	} else {
 		t.Log("Get All Restaurants Test 1")
 		t.Log(utils.ModelToString(l))
-
 	}
 
 	if l, err := s.GetAllHomeMade(); err != nil {
@@ -123,12 +133,13 @@ func TestRestaurant(t *testing.T) {
 	} else {
 		t.Log("Get All HomeMade Restaurants Test 1")
 		t.Log(utils.ModelToString(l))
-
 	}
-
 }
 
 func TestMeals(t *testing.T) {
+	var s *Store = NewStore("mctest", "uctest", "octest", "rctest", workers.New())
+	id1, _ := primitive.ObjectIDFromHex("5f689aa84770a61206b9095b")
+	id2, _ := primitive.ObjectIDFromHex("5ec0115c23ca01bb29ea922f")
 
 	m1 := models.Meal{
 
@@ -149,6 +160,7 @@ func TestMeals(t *testing.T) {
 		RID:          id2.Hex(),
 		Spicey:       true,
 	}
+
 	var mid string
 
 	if id, err := s.InsertMeal(&m1); err != nil {
@@ -198,6 +210,23 @@ func TestMeals(t *testing.T) {
 	}
 }
 
+func TestU(t *testing.T) {
+	var s *Store = NewStore("mctest", "uctest", "octest", "rctest", workers.New())
+	log.Println(s)
+	a := make([]string, 3)
+	a[0] = "Vazahppully House"
+	user := models.User{
+		Name:    "Krish",
+		Address: a,
+		Email:   "vpkrishnanand@gmail.com",
+		Admin:   true,
+		Phone:   "7034320441",
+		UID:     "1",
+	}
+	log.Println(user)
+}
 func TestDrop(t *testing.T) {
-	s.w.DropTest()
+	var s *Store = NewStore("mctest", "uctest", "octest", "rctest", workers.New())
+
+	_ = s.w.DropTest()
 }

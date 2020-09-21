@@ -4,7 +4,6 @@ import "github.com/incrypt0/cokut-server/models"
 
 // InsertRestaurant Function to insert restaurants into db
 func (s *Store) InsertRestaurant(r *models.Restaurant) (id string, err error) {
-
 	//  Getting the user colection
 	c := s.rc
 
