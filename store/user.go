@@ -70,7 +70,7 @@ func (s *Store) CheckUserPhoneExistence(phone string) (bool, error) {
 }
 
 //CheckUserPhoneExistenceByGID  checks whether the user exists with a phone
-func (s *Store) CheckUserPhoneExistenceByGID(gid string) (bool, error) {
+func (s *Store) CheckUserExistenceByGID(gid string) (bool, error) {
 	var val bool = true
 
 	c := s.uc

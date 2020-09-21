@@ -80,29 +80,29 @@ func (h *Handler) checkUserPhoneExistence(c echo.Context) (err error) {
 	})
 }
 
-func (h *Handler) checkUserExistenceByGID(c echo.Context) (err error) {
-	m := echo.Map{}
+// func (h *Handler) checkUserExistenceByGID(c echo.Context) (err error) {
+// 	m := echo.Map{}
 
-	if err := c.Bind(&m); err != nil {
-		log.Println(err)
-		return h.sendError(c)
-	}
+// 	if err := c.Bind(&m); err != nil {
+// 		log.Println(err)
+// 		return h.sendError(c)
+// 	}
 
-	if m["gid"] == nil || m["gid"] == "" {
-		return h.sendError(c)
-	}
+// 	if m["gid"] == nil || m["gid"] == "" {
+// 		return h.sendError(c)
+// 	}
 
-	exist, err := h.store.CheckUserPhoneExistenceByGID(m["gid"].(string))
+// 	exist, err := h.store.CheckUserPhoneExistenceByGID(m["gid"].(string))
 
-	if err != nil && err.Error() != "NIL" {
-		return h.sendError(c)
-	}
+// 	if err != nil && err.Error() != "NIL" {
+// 		return h.sendError(c)
+// 	}
 
-	return c.JSON(http.StatusOK, echo.Map{
-		"success": true,
-		"exist":   exist,
-	})
-}
+// 	return c.JSON(http.StatusOK, echo.Map{
+// 		"success": true,
+// 		"exist":   exist,
+// 	})
+// }
 
 func (h *Handler) checkUserExistence(c echo.Context) (err error) {
 	m := echo.Map{}

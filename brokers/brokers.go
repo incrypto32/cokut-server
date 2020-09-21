@@ -9,7 +9,7 @@ type CokutBroker interface {
 	GetUser(uid string) (l interface{}, err error)
 	CheckUserPhoneExistence(phone string) (bool, error)
 	CheckUserExistence(phone string, email string) (bool, error)
-	CheckUserPhoneExistenceByGID(gid string) (bool, error)
+	CheckUserExistenceByGID(gid string) (bool, error)
 	CheckUserExistenceByUID(UID string) (bool, error)
 	InsertRestaurant(r *models.Restaurant) (id string, err error)
 	GetAllRestaurants() (l []interface{}, err error)

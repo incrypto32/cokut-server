@@ -1,9 +1,6 @@
 package handler2
 
 import (
-	"log"
-	"net/http"
-
 	"github.com/incrypt0/cokut-server/models"
 	"github.com/labstack/echo/v4"
 )
@@ -23,40 +20,5 @@ func (h *Handler) getOrders(c echo.Context) (err error) {
 }
 
 func (h *Handler) getUserOrders(c echo.Context) (err error) {
-	m := map[string]interface{}{}
-	if err = c.Bind(&m); err != nil {
-		log.Println(err)
-
-		return c.JSON(http.StatusInternalServerError, echo.Map{
-			"success": false,
-			"msg":     "An error occurred     ",
-		})
-	}
-
-	if m["uid"] == nil {
-		return c.JSON(http.StatusInternalServerError, echo.Map{
-			"success": false,
-			"msg":     "An error occurred     ",
-		})
-	}
-
-	l, err := h.store.GetOrdersByUser(m["uid"].(string))
-
-	if err != nil {
-		log.Println(err)
-
-		return c.JSON(http.StatusInternalServerError, echo.Map{
-			"success": false,
-			"msg":     "An error occurred     ",
-		})
-	}
-
-	if len(l) == 0 {
-		return c.JSON(http.StatusExpectationFailed, echo.Map{
-			"success": false,
-			"msg":     "User dont have any orders",
-		})
-	}
-
-	return c.JSON(http.StatusOK, l)
+	return h.getBySpecificFilter(c, "uid", h.store.GetOrdersByUser)
 }

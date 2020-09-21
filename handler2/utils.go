@@ -33,7 +33,7 @@ func (h *Handler) Add(c echo.Context, r models.Model, f func(r models.Model) (st
 	})
 }
 
-func (h *Handler) getFiltered(c echo.Context, f func() ([]interface{}, error)) (err error) {
+func (h *Handler) getFiltered(c echo.Context, f ManyResultFunc) (err error) {
 	l, err := f()
 
 	if err != nil {
@@ -71,7 +71,9 @@ func (h *Handler) sendMessageWithFailure(c echo.Context, msg string) error {
 }
 
 // Get all meals from the database with the given restaurant ID.
-func (h *Handler) getBySpecificFilter(c echo.Context, filter string, f func(string) ([]interface{}, error)) (err error) {
+func (h *Handler) getBySpecificFilter(
+	c echo.Context, filter string,
+	f FilteredManyResultFunc) (err error) {
 	m := map[string]interface{}{}
 
 	if err = c.Bind(&m); err != nil {
@@ -83,11 +85,8 @@ func (h *Handler) getBySpecificFilter(c echo.Context, filter string, f func(stri
 		})
 	}
 
-	if m["rid"] == nil {
-		return c.JSON(http.StatusInternalServerError, echo.Map{
-			"success": false,
-			"msg":     "An error occurred     ",
-		})
+	if m[filter] == nil {
+		return h.sendError(c)
 	}
 
 	l, err := f(m[filter].(string))
@@ -95,17 +94,11 @@ func (h *Handler) getBySpecificFilter(c echo.Context, filter string, f func(stri
 	if err != nil {
 		log.Println(err)
 
-		return c.JSON(http.StatusInternalServerError, echo.Map{
-			"success": false,
-			"msg":     "An error occurred     ",
-		})
+		return h.sendError(c)
 	}
 
 	if len(l) == 0 {
-		return c.JSON(http.StatusExpectationFailed, echo.Map{
-			"success": false,
-			"msg":     "Nothing found there",
-		})
+		return h.sendMessageWithFailure(c, "Nothing found there")
 	}
 
 	return c.JSON(http.StatusOK, l)

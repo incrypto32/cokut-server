@@ -15,8 +15,16 @@ type Test struct {
 }
 
 func TestDBHandler(t *testing.T) {
-	test1 := Test{Name: "Test 1", Message: "Test 1 Success", Time: primitive.Timestamp{T: uint32(time.Now().Unix())}, Blah: "blah"}
-	test2 := Test{Name: "Test 2", Message: "Test 2 Success", Time: primitive.Timestamp{T: uint32(time.Now().Unix())}, Blah: "blah"}
+	test1 := Test{Name: "Test 1",
+		Message: "Test 1 Success",
+		Time:    primitive.Timestamp{T: uint32(time.Now().Unix())},
+		Blah:    "blah"}
+
+	test2 := Test{Name: "Test 2",
+		Message: "Test 2 Success",
+		Time:    primitive.Timestamp{T: uint32(time.Now().Unix())},
+		Blah:    "blah"}
+
 	test3 := Test{Message: "Test 1 Edited"}
 	w := New()
 
@@ -92,7 +100,6 @@ func TestDBHandler(t *testing.T) {
 		t.Log("FindOneTest 1")
 		t.Log("FindOne ")
 		t.Log(ModelToString(x))
-
 	}
 
 	if x, err := w.FindOne(c, test2); err != nil {
@@ -101,7 +108,6 @@ func TestDBHandler(t *testing.T) {
 		t.Log("FindOne Test 2")
 		t.Log("FindOne ")
 		t.Log(ModelToString(x))
-
 	}
 
 	if x, err := w.FindOneWithOr(c, Test{Name: "Test 3"}, Test{Name: "Test 1"}); err != nil {
@@ -113,7 +119,6 @@ func TestDBHandler(t *testing.T) {
 		if !(x.(*Test).Name == "Test 1") {
 			t.Error("ERROR >>>>>>>>>>> : ", "FindOneWithOr Failed")
 		}
-
 	}
 
 	x, err := w.FindOneAndUpdate(c, test1, test3)

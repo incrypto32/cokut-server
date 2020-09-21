@@ -19,43 +19,7 @@ func (h *Handler) addMeal(c echo.Context) (err error) {
 
 // Get all meals from the database with the given restaurant ID.
 func (h *Handler) getMeals(c echo.Context) (err error) {
-	m := map[string]interface{}{}
-
-	if err = c.Bind(&m); err != nil {
-		log.Println(err)
-
-		return c.JSON(http.StatusInternalServerError, echo.Map{
-			"success": false,
-			"msg":     "An error occurred     ",
-		})
-	}
-
-	if m["rid"] == nil {
-		return c.JSON(http.StatusInternalServerError, echo.Map{
-			"success": false,
-			"msg":     "An error occurred     ",
-		})
-	}
-
-	l, err := h.store.GetMealsByRestaurant(m["rid"].(string))
-
-	if err != nil {
-		log.Println(err)
-
-		return c.JSON(http.StatusInternalServerError, echo.Map{
-			"success": false,
-			"msg":     "An error occurred     ",
-		})
-	}
-
-	if len(l) == 0 {
-		return c.JSON(http.StatusExpectationFailed, echo.Map{
-			"success": false,
-			"msg":     "Nothing found there",
-		})
-	}
-
-	return c.JSON(http.StatusOK, l)
+	return h.getBySpecificFilter(c, "rid", h.store.GetMealsByRestaurant)
 }
 
 // Mark an Item Special.

@@ -11,6 +11,9 @@ type Handler struct {
 	fireAuthMWare echo.MiddlewareFunc
 }
 
+type ManyResultFunc func() ([]interface{}, error)
+type FilteredManyResultFunc func(string) ([]interface{}, error)
+
 //NewHandler is creates a new Handler object.
 func NewHandler(store brokers.CokutBroker, fireAuthMWare echo.MiddlewareFunc) *Handler {
 	return &Handler{
