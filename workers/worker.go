@@ -58,20 +58,15 @@ func (w *Worker) DropTest() error {
 
 //Add Function to generally add anything to any collection
 func (w *Worker) Add(collectionName string, i interface{}) (id string, err error) {
-
-	c := w.db.Collection(collectionName)
-
 	ctx := context.Background()
+	c := w.db.Collection(collectionName)
 	result, err := c.InsertOne(ctx, i)
+
 	if err != nil {
 		log.Println(err)
 		return id, errors.New("An error occured please try again")
 	}
 
-	if result.InsertedID == nil {
-		err = errors.New("An error occured please try again")
-		return id, err
-	}
 	id = result.InsertedID.(primitive.ObjectID).Hex()
 	return id, err
 }
@@ -139,6 +134,9 @@ func (w *Worker) FindOneAndUpdate(collectionName string, i interface{}, u interf
 
 	if r.Err() != nil {
 		log.Println(err)
+		if r.Err() == mongo.ErrNoDocuments {
+			return nil, errors.New("NIL")
+		}
 		return nil, errors.New("An error occured please try again")
 	}
 
@@ -162,7 +160,6 @@ func (w *Worker) FindOne(collectionName string, i interface{}) (l interface{}, e
 	r := c.FindOne(ctx, i)
 
 	if err := r.Err(); err != nil {
-
 		if err == mongo.ErrNoDocuments {
 			return nil, errors.New("NIL")
 		}
@@ -194,7 +191,6 @@ func (w *Worker) FindOneWithOr(collectionName string, i ...interface{}) (l inter
 	r := c.FindOne(ctx, bson.D{{Key: "$or", Value: filters}})
 
 	if err := r.Err(); err != nil {
-
 		if err == mongo.ErrNoDocuments {
 			return nil, errors.New("NIL")
 		}
