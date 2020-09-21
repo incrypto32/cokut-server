@@ -9,7 +9,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-//InsertMeal Function to insert Meals into meals collection
+//InsertMeal Function to insert Meals into meals collection.
 func (s *Store) InsertMeal(m *models.Meal) (id string, err error) {
 	c := s.mc
 	rc := s.rc
@@ -18,6 +18,7 @@ func (s *Store) InsertMeal(m *models.Meal) (id string, err error) {
 	if err = m.Validate(); err != nil {
 		return id, err
 	}
+
 	rid, err := primitive.ObjectIDFromHex(m.RID)
 
 	if err != nil {
@@ -27,7 +28,6 @@ func (s *Store) InsertMeal(m *models.Meal) (id string, err error) {
 	r, err := s.w.FindOne(rc, models.Restaurant{ID: rid})
 
 	if err != nil {
-
 		if err.Error() == "NIL" {
 			log.Println("NIL ERROR")
 			return "", errors.New("Restaurant doesn't exist")

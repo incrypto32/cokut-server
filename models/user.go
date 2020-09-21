@@ -20,7 +20,7 @@ type User struct {
 
 //GetModelData Prints Model Data in String
 func (u *User) GetModelData() string {
-	return utils.PrintModel(u)
+	return utils.ModelToString(u)
 }
 
 //Validate Real Validation

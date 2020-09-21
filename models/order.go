@@ -19,7 +19,7 @@ type Order struct {
 }
 
 func (o *Order) GetModelData() string {
-	return utils.PrintModel(o)
+	return utils.ModelToString(o)
 }
 
 // Validate meal

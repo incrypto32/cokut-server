@@ -5,11 +5,14 @@ import (
 	"log"
 
 	"github.com/incrypt0/cokut-server/models"
+	"github.com/incrypt0/cokut-server/utils"
 )
 
 //InsertUser Function to insert users into userCollection
 func (s *Store) InsertUser(u *models.User) (id string, err error) {
 	var l interface{}
+
+	utils.ModelToString(u)
 
 	//  Getting the user colection
 	c := s.uc
@@ -19,19 +22,7 @@ func (s *Store) InsertUser(u *models.User) (id string, err error) {
 		return id, err
 	}
 
-	// Check if email is null
-	if u.Email != "" && u.Phone != "" {
-		if err = u.ValidateEmail(); err != nil {
-			return id, err
-		}
-		l, err = s.w.FindOneWithOr(c, models.User{Email: u.Email}, models.User{Phone: u.Phone})
-	} else if u.Phone != "" {
-		l, err = s.w.FindOne(c, models.User{Phone: u.Phone})
-	} else if u.Email != "" {
-		l, err = s.w.FindOne(c, models.User{Email: u.Email})
-	} else if u.GID != "" {
-		l, err = s.w.FindOne(c, models.User{GID: u.GID})
-	}
+	l, err = s.w.FindOneWithOr(c, models.User{Email: u.Email}, models.User{Phone: u.Phone}, models.User{GID: u.GID}, models.User{UID: u.UID})
 
 	if err != nil {
 		if err.Error() != "NIL" {
@@ -41,7 +32,6 @@ func (s *Store) InsertUser(u *models.User) (id string, err error) {
 	}
 
 	if l != nil {
-		log.Println(l)
 		return id, errors.New("DETAILS_EXIST")
 	}
 

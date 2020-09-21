@@ -13,7 +13,6 @@ func (h *Handler) registerAPI(api *echo.Group) {
 }
 
 func (h *Handler) registerAPIV1(api *echo.Group) {
-
 	log.Println("________API V1 Handler Initiated________")
 	api.GET("/test", h.routeTestV1)
 	api.GET("/getuser", h.getUser)
@@ -29,33 +28,27 @@ func (h *Handler) registerAPIV1(api *echo.Group) {
 
 	a := api.Group("/admin")
 	h.registerAdmin(a)
-
 }
 
 // The Admin Api
 func (h *Handler) registerAdmin(a *echo.Group) {
-
 	a.GET("/test", h.routeTestAdmin)
 	a.GET("/getorders", h.getOrders)
 	a.POST("/addrest", h.addRestaurant)
 	a.POST("/additem", h.addMeal)
 	a.POST("/addspecial", h.addSpecial)
-
 }
 
 // The Admin Api
 func (h *Handler) registerUtils(u *echo.Group) {
-
 	u.POST("/checkphone", h.checkUserPhoneExistence)
 	u.POST("/checkuser", h.checkUserExistence)
 	u.POST("/checkgid", h.checkUserExistence)
 	u.POST("/getuser", h.getUser)
-
 }
 
 // Register this method registers a new group with handler
 func (h *Handler) Register(e *echo.Echo) {
-
 	// Index Handler
 	e.GET("/", h.index)
 
@@ -78,6 +71,5 @@ func (h *Handler) routeTestAdmin(c echo.Context) error {
 }
 
 func (h *Handler) routeTestV1(c echo.Context) error {
-
 	return c.JSON(http.StatusOK, echo.Map{"success": true, "msg": "V1 working fine"})
 }

@@ -64,7 +64,7 @@ func (w *Worker) Add(collectionName string, i interface{}) (id string, err error
 
 	if err != nil {
 		log.Println(err)
-		return id, errors.New("An error occured please try again")
+		return id, errors.New("An error occurred      please try again")
 	}
 
 	id = result.InsertedID.(primitive.ObjectID).Hex()
@@ -78,7 +78,7 @@ func (w *Worker) DeleteOne(collectionName string, i interface{}) (n int64, err e
 	result, err := c.DeleteOne(ctx, i)
 	if err != nil {
 		log.Println(err)
-		return n, errors.New("An error occured please try again")
+		return n, errors.New("An error occurred      please try again")
 	}
 	if result.DeletedCount == 0 {
 		err = errors.New("No records were deleted")
@@ -107,7 +107,7 @@ func (w *Worker) Get(collectionName string, i interface{}) (l []interface{}, err
 		// Remember dont use a pointer to l here by i
 		if err = cur.Decode(i); err != nil {
 			log.Println(err)
-			return l, errors.New("An error occured please try again")
+			return l, errors.New("An error occurred      please try again")
 		}
 		l = append(l, i)
 	}
@@ -137,13 +137,13 @@ func (w *Worker) FindOneAndUpdate(collectionName string, i interface{}, u interf
 		if r.Err() == mongo.ErrNoDocuments {
 			return nil, errors.New("NIL")
 		}
-		return nil, errors.New("An error occured please try again")
+		return nil, errors.New("An error occurred      please try again")
 	}
 
 	// Remember dont use a pointer to l here
 	if err = r.Decode(l); err != nil {
 		log.Println(err)
-		return nil, errors.New("An error occured please try again")
+		return nil, errors.New("An error occurred      please try again")
 	}
 
 	return l, err
@@ -164,13 +164,13 @@ func (w *Worker) FindOne(collectionName string, i interface{}) (l interface{}, e
 			return nil, errors.New("NIL")
 		}
 		log.Println(err)
-		return nil, errors.New("An error occured please try again")
+		return nil, errors.New("An error occurred      please try again")
 	}
 
 	// Remember dont use a pointer to l here
 	if err = r.Decode(l); err != nil {
 		log.Println(err)
-		return nil, errors.New("An error occured please try again")
+		return nil, errors.New("An error occurred      please try again")
 	}
 
 	return l, err
@@ -182,12 +182,13 @@ func (w *Worker) FindOneWithOr(collectionName string, i ...interface{}) (l inter
 	c := w.db.Collection(collectionName)
 	ctx := context.Background()
 	typ := reflect.TypeOf(i[0])
-
 	l = reflect.New(typ).Interface()
 
 	filters := []interface{}{}
+
 	for _, r := range i {
-		if reflect.Zero(typ).Interface() != r {
+		a := reflect.Zero(typ).Interface()
+		if !reflect.DeepEqual(a, r) {
 			filters = append(filters, r)
 		}
 	}
@@ -199,21 +200,21 @@ func (w *Worker) FindOneWithOr(collectionName string, i ...interface{}) (l inter
 			return nil, errors.New("NIL")
 		}
 		log.Println(err)
-		return nil, errors.New("An error occured please try again")
+		return nil, errors.New("An error occurred      please try again")
 	}
 
 	// Remember dont use a pointer to l here
 	if err = r.Decode(l); err != nil {
 
 		log.Println(err)
-		return nil, errors.New("An error occured please try again")
+		return nil, errors.New("An error occurred      please try again")
 	}
 
 	return l, err
 }
 
-// PrintModel PrintModel
-func PrintModel(u interface{}) string {
+// ModelToString            ModelToString
+func ModelToString(u interface{}) string {
 	log.Println("\n________Print Model_______")
 	log.Println()
 	b, err := json.MarshalIndent(u, "", "  ")

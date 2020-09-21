@@ -8,31 +8,32 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-// Add a meal to the db
+// Add a meal to the db.
 func (h *Handler) addMeal(c echo.Context) (err error) {
 	r := new(models.Meal)
+
 	return h.Add(c, r, func(r models.Model) (string, error) {
 		return h.store.InsertMeal(r.(*models.Meal))
 	})
 }
 
-// Get all meals from the database with the given resaurant ID
+// Get all meals from the database with the given restaurant ID.
 func (h *Handler) getMeals(c echo.Context) (err error) {
-
 	m := map[string]interface{}{}
 
 	if err = c.Bind(&m); err != nil {
 		log.Println(err)
+
 		return c.JSON(http.StatusInternalServerError, echo.Map{
 			"success": false,
-			"msg":     "An error occured",
+			"msg":     "An error occurred     ",
 		})
 	}
 
 	if m["rid"] == nil {
 		return c.JSON(http.StatusInternalServerError, echo.Map{
 			"success": false,
-			"msg":     "An error occured",
+			"msg":     "An error occurred     ",
 		})
 	}
 
@@ -40,13 +41,14 @@ func (h *Handler) getMeals(c echo.Context) (err error) {
 
 	if err != nil {
 		log.Println(err)
+
 		return c.JSON(http.StatusInternalServerError, echo.Map{
 			"success": false,
-			"msg":     "An error occured",
+			"msg":     "An error occurred     ",
 		})
 	}
 
-	if len(l) <= 0 {
+	if len(l) == 0 {
 		return c.JSON(http.StatusExpectationFailed, echo.Map{
 			"success": false,
 			"msg":     "Nothing found there",
@@ -54,36 +56,40 @@ func (h *Handler) getMeals(c echo.Context) (err error) {
 	}
 
 	return c.JSON(http.StatusOK, l)
-
 }
 
-// Mark an Item Special
+// Mark an Item Special.
 func (h *Handler) addSpecial(c echo.Context) (err error) {
 	m := map[string]interface{}{}
 
 	if err = c.Bind(&m); err != nil {
 		log.Println(err)
+
 		return c.JSON(http.StatusInternalServerError, echo.Map{
 			"success": false,
-			"msg":     "An error occured",
+			"msg":     "An error occurred     ",
 		})
 	}
+
 	if m["meal_id"] == nil || m["meal_id"] == "" {
 		log.Println(err)
+
 		return c.JSON(http.StatusInternalServerError, echo.Map{
 			"success": false,
-			"msg":     "An error occured",
+			"msg":     "An error occurred     ",
 		})
 	}
+
 	mid := m["meal_id"].(string)
 
 	id, err := h.store.InsertSpecial(mid)
 
 	if err != nil {
 		log.Println(err)
+
 		return c.JSON(http.StatusInternalServerError, echo.Map{
 			"success": false,
-			"msg":     "An error occured",
+			"msg":     "An error occurred     ",
 		})
 	}
 
@@ -91,10 +97,9 @@ func (h *Handler) addSpecial(c echo.Context) (err error) {
 		"success": true,
 		"id":      id,
 	})
-
 }
 
-// getSpecials
+// getSpecials.
 func (h *Handler) getSpecials(c echo.Context) (err error) {
 	return h.getFiltered(c, h.store.GetSpecialMeals)
 }

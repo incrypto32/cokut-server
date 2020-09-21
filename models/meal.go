@@ -19,7 +19,7 @@ type Meal struct {
 }
 
 func (m *Meal) GetModelData() string {
-	return utils.PrintModel(m)
+	return utils.ModelToString(m)
 }
 
 // Validate meal

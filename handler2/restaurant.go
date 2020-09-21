@@ -11,6 +11,7 @@ import (
 // Add a single restaurant
 func (h *Handler) addRestaurant(c echo.Context) (err error) {
 	r := new(models.Restaurant)
+
 	return h.Add(c, r, func(r models.Model) (string, error) {
 		return h.store.InsertRestaurant(r.(*models.Restaurant))
 	})
@@ -18,14 +19,14 @@ func (h *Handler) addRestaurant(c echo.Context) (err error) {
 
 // Get all restaurants in the db
 func (h *Handler) getAllRestaurants(c echo.Context) (err error) {
-
 	l, err := h.store.GetAllRestaurants()
 
 	if err != nil {
 		log.Println(err)
+
 		return c.JSON(http.StatusInternalServerError, echo.Map{
 			"success": false,
-			"msg":     "An error occured",
+			"msg":     "An error occurred     ",
 		})
 	}
 

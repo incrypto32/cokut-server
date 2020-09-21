@@ -29,7 +29,7 @@ func TestUser(t *testing.T) {
 		if err.Error() == "DETAILS_EXIST" {
 			t.Log("Details Exist")
 		} else {
-			t.Error(err)
+			t.Error("ERROR >>>>>>>>>>> : ", err)
 		}
 
 	} else {
@@ -37,36 +37,36 @@ func TestUser(t *testing.T) {
 	}
 
 	if val, err := s.CheckUserExistence("7034320441", "vpkrishnanand@gmail.com"); err != nil {
-		t.Error(err)
+		t.Error("ERROR >>>>>>>>>>> : ", err)
 	} else {
 		t.Log("Phone Exists (Test 1) : ", val)
 	}
 
 	if val, err := s.CheckUserExistence("9847859164", "blah@gmail.com"); err != nil {
-		t.Error(err)
+		t.Error("ERROR >>>>>>>>>>> : ", err)
 	} else {
 		t.Log("User Exists (Test 2) : ", val)
 	}
 	if val, err := s.CheckUserExistence("7034320441", "blah@gmail.com"); err != nil {
-		t.Error(err)
+		t.Error("ERROR >>>>>>>>>>> : ", err)
 	} else {
 		t.Log("User Exists (Test 1) : ", val)
 	}
 
 	if val, err := s.CheckUserExistence("9847859164", "vpkrishnanand@gmail.com"); err != nil {
-		t.Error(err)
+		t.Error("ERROR >>>>>>>>>>> : ", err)
 	} else {
 		t.Log("User Exists (Test 2) : ", val)
 	}
 
 	if val, err := s.CheckUserPhoneExistence("7034320441"); err != nil {
-		t.Error(err)
+		t.Error("ERROR >>>>>>>>>>> : ", err)
 	} else {
 		t.Log("Phone Exists (Test 1) : ", val)
 	}
 
 	if val, err := s.CheckUserPhoneExistence("9847859164"); err != nil {
-		t.Error(err)
+		t.Error("ERROR >>>>>>>>>>> : ", err)
 	} else {
 		t.Log("Phone Exists (Test 2) : ", val)
 	}
@@ -97,32 +97,32 @@ func TestRestaurant(t *testing.T) {
 	t.Log(id1, id2)
 
 	if id, err := s.InsertRestaurant(&res1); err != nil {
-		t.Error(err)
+		t.Error("ERROR >>>>>>>>>>> : ", err)
 	} else {
 		t.Log("Insert Restaurant Test 1")
 		t.Log("Insert Restaurant Success : ", id)
 	}
 
 	if id, err := s.InsertRestaurant(&res2); err != nil {
-		t.Error(err)
+		t.Error("ERROR >>>>>>>>>>> : ", err)
 	} else {
 		t.Log("Insert Restaurant Test 2")
 		t.Log("Insert Restaurant Success : ", id)
 	}
 
 	if l, err := s.GetAllRestaurants(); err != nil {
-		t.Error(err)
+		t.Error("ERROR >>>>>>>>>>> : ", err)
 	} else {
 		t.Log("Get All Restaurants Test 1")
-		t.Log(utils.PrintModel(l))
+		t.Log(utils.ModelToString(l))
 
 	}
 
 	if l, err := s.GetAllHomeMade(); err != nil {
-		t.Error(err)
+		t.Error("ERROR >>>>>>>>>>> : ", err)
 	} else {
 		t.Log("Get All HomeMade Restaurants Test 1")
-		t.Log(utils.PrintModel(l))
+		t.Log(utils.ModelToString(l))
 
 	}
 
@@ -152,7 +152,7 @@ func TestMeals(t *testing.T) {
 	var mid string
 
 	if id, err := s.InsertMeal(&m1); err != nil {
-		t.Error(err)
+		t.Error("ERROR >>>>>>>>>>> : ", err)
 	} else {
 		t.Log("Insert Meal Test 1")
 		t.Log("Insert Meal Success : ", id)
@@ -160,41 +160,41 @@ func TestMeals(t *testing.T) {
 
 	mid, err := s.InsertMeal(&m2)
 	if err != nil {
-		t.Error(err)
+		t.Error("ERROR >>>>>>>>>>> : ", err)
 	} else {
 		t.Log("Insert Meal Test 2")
 		t.Log("Insert Meal Success : ", mid)
 	}
 
 	if id, err := s.InsertSpecial(mid); err != nil {
-		t.Error(err)
+		t.Error("ERROR >>>>>>>>>>> : ", err)
 	} else {
 		t.Log("Insert Special Test 1")
 		t.Log("Insert Special Success : ", id)
 	}
 
 	if l, err := s.GetMealsByRestaurant(id1.Hex()); err != nil {
-		t.Error(err)
+		t.Error("ERROR >>>>>>>>>>> : ", err)
 	} else {
 		t.Log("GetMeals By Restaurant Test 1")
 		t.Log("GetMeals By Restaurant : ")
-		t.Log(utils.PrintModel(l))
+		t.Log(utils.ModelToString(l))
 	}
 
 	if l, err := s.GetSpecialMeals(); err != nil {
-		t.Error(err)
+		t.Error("ERROR >>>>>>>>>>> : ", err)
 	} else {
 		t.Log("Get Special Meals Test 1")
 		t.Log("Get Special Meals : ")
-		t.Log(utils.PrintModel(l))
+		t.Log(utils.ModelToString(l))
 	}
 
 	if l, err := s.GetSpiceyMeals(); err != nil {
-		t.Error(err)
+		t.Error("ERROR >>>>>>>>>>> : ", err)
 	} else {
 		t.Log("Get Spicey Meals Test 1")
 		t.Log("Get Spicey Meals Restaurant : ")
-		t.Log(utils.PrintModel(l))
+		t.Log(utils.ModelToString(l))
 	}
 }
 

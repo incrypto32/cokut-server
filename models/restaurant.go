@@ -18,7 +18,7 @@ type Restaurant struct {
 }
 
 func (r *Restaurant) GetModelData() string {
-	return utils.PrintModel(r)
+	return utils.ModelToString(r)
 }
 
 func (r *Restaurant) Validate() error {
