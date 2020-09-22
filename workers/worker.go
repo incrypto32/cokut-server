@@ -8,6 +8,7 @@ import (
 	"os"
 	"reflect"
 
+	"github.com/incrypt0/cokut-server/brokers/myerrors"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -149,17 +150,17 @@ func (w *Worker) FindOneAndUpdate(collectionName string, i interface{}, u interf
 		log.Println(err)
 
 		if r.Err() == mongo.ErrNoDocuments {
-			return nil, errors.New("NIL")
+			return nil, myerrors.ErrNIL
 		}
 
-		return nil, errors.New("an error occurred please try again")
+		return nil, err
 	}
 
 	// Remember dont use a pointer to l here
 	if err = r.Decode(l); err != nil {
 		log.Println(err)
 
-		return nil, errors.New("an error occurred please try again")
+		return nil, err
 	}
 
 	return l, err
@@ -182,13 +183,13 @@ func (w *Worker) FindOne(collectionName string, i interface{}) (l interface{}, e
 
 		log.Println(err)
 
-		return nil, errors.New("an error occurred please try again")
+		return nil, err
 	}
 
 	// Remember dont use a pointer to l here
 	if err = r.Decode(l); err != nil {
 		log.Println(err)
-		return nil, errors.New("an error occurred please try again")
+		return nil, err
 	}
 
 	return l, err
