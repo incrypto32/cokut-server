@@ -23,10 +23,10 @@ func FireAuthMiddleware(app *firebase.App) echo.MiddlewareFunc {
 				return err
 			}
 
-			if true {
-				c.Set("uid", "u3")
-				return next(c)
-			}
+			// if true {
+			// 	c.Set("uid", "u3")
+			// 	return next(c)
+			// }
 
 			if app == nil {
 				return errors.New("firebase app not initialized")
