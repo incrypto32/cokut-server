@@ -38,15 +38,15 @@ func (h *Handler) getUser(c echo.Context) (err error) {
 	l, err := h.store.GetUser(uid.(string))
 
 	if err != nil {
-		log.Println(err)
-
 		if err.Error() == "NIL" {
-			return c.JSON(http.StatusExpectationFailed, echo.Map{
+			return c.JSON(http.StatusOK, echo.Map{
 				"success": true,
 				"exist":   false,
-				"user":    l,
+				"user":    nil,
 			})
 		}
+
+		log.Println(err)
 
 		return h.sendError(c)
 	}

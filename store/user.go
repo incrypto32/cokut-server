@@ -5,14 +5,11 @@ import (
 	"log"
 
 	"github.com/incrypt0/cokut-server/models"
-	"github.com/incrypt0/cokut-server/utils"
 )
 
 //InsertUser Function to insert users into userCollection
 func (s *Store) InsertUser(u *models.User) (id string, err error) {
 	var l interface{}
-
-	utils.ModelToString(u)
 
 	//  Getting the user colection
 	c := s.uc

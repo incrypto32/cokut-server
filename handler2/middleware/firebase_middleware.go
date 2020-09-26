@@ -43,8 +43,6 @@ func FireAuthMiddleware(app *firebase.App) echo.MiddlewareFunc {
 				return c.JSON(http.StatusExpectationFailed, echo.Map{"success": false, "msg": "ID Token Expired"})
 			}
 
-			log.Println("Token Verified..!!")
-
 			c.Set("uid", token.UID)
 
 			return next(c)
