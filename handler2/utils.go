@@ -74,22 +74,15 @@ func (h *Handler) sendMessageWithFailure(c echo.Context, msg string) error {
 func (h *Handler) getBySpecificFilter(
 	c echo.Context, filter string,
 	f FilteredManyResultFunc) (err error) {
-	m := map[string]interface{}{}
+	m := c.QueryParams()
 
-	if err = c.Bind(&m); err != nil {
-		log.Println(err)
-
-		return c.JSON(http.StatusInternalServerError, echo.Map{
-			"success": false,
-			"msg":     "An error occurred     ",
-		})
-	}
+	log.Println(m)
 
 	if m[filter] == nil {
 		return h.sendError(c)
 	}
 
-	l, err := f(m[filter].(string))
+	l, err := f(m[filter][0])
 
 	if err != nil {
 		log.Println(err)
