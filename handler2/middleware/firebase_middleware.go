@@ -35,10 +35,12 @@ func FireAuthMiddleware(app *firebase.App) echo.MiddlewareFunc {
 			auth := c.Request().Header.Get("Authorization")
 
 			idToken := strings.Replace(auth, "Bearer ", "", 1)
+
 			if idToken == "TEST_TOKEN" {
 				c.Set("uid", "TEST_USER")
 				return next(c)
 			}
+
 			token, err := client.VerifyIDToken(context.Background(), idToken)
 
 			if err != nil {
