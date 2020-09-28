@@ -17,6 +17,7 @@ func (h *Handler) registerAPIV1(api *echo.Group) {
 	api.GET("/test", h.routeTestV1)
 	api.GET("/getuser", h.getUser)
 	api.GET("/getoutlets", h.getAllRestaurants)
+	api.GET("/getregoutlets", h.getAllRegularRestaurants)
 	api.GET("/getmeals", h.getMeals)
 	api.GET("/getspecials", h.getSpecials)
 	api.GET("/getspicey", h.getSpicey)

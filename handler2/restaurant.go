@@ -1,9 +1,6 @@
 package handler2
 
 import (
-	"log"
-	"net/http"
-
 	"github.com/incrypt0/cokut-server/models"
 	"github.com/labstack/echo/v4"
 )
@@ -19,15 +16,12 @@ func (h *Handler) addRestaurant(c echo.Context) (err error) {
 
 // Get all restaurants in the db
 func (h *Handler) getAllRestaurants(c echo.Context) (err error) {
-	l, err := h.store.GetAllRestaurants()
+	return h.getFiltered(c, h.store.GetAllRestaurants)
+}
 
-	if err != nil {
-		log.Println(err)
-
-		return h.sendError(c)
-	}
-
-	return c.JSON(http.StatusOK, l)
+// Get all restaurants in the db
+func (h *Handler) getAllRegularRestaurants(c echo.Context) (err error) {
+	return h.getFiltered(c, h.store.GetAllRegularRestaurants)
 }
 
 //get Home
