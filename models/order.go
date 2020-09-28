@@ -8,7 +8,7 @@ import (
 )
 
 type Order struct {
-	ID             primitive.ObjectID `json:"_id,omitempty" bson:"_id,omitempty"`
+	ID             primitive.ObjectID `json:"id,omitempty" bson:"_id,omitempty"`
 	RID            string             `json:"rid,omitempty" bson:"rid,omitempty"`
 	UID            string             `json:"uid,omitempty" bson:"uid,omitempty"`
 	Address        string             `json:"address,omitempty" bson:"address,omitempty"`
