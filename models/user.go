@@ -6,6 +6,14 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
+// Address
+type Address struct {
+	Zone         string `json:"zone,omitempty" bson:"zone,omitempty"`
+	AddressLine1 string `json:"adl1,omitempty" bson:"adl1,omitempty"`
+	AddressLine2 string `json:"adl2,omitempty" bson:"adl2,omitempty"`
+	AddressLine3 string `json:"adl3,omitempty" bson:"adl3,omitempty"`
+}
+
 // User struct
 type User struct {
 	Admin   bool               `json:"admin,omitempty" bson:"admin,omitempty"`
@@ -15,7 +23,7 @@ type User struct {
 	Name    string             `json:"name,omitempty" bson:"name,omitempty" `
 	Phone   string             `json:"phone,omitempty" bson:"phone,omitempty" `
 	Email   string             `json:"email,omitempty" bson:"email,omitempty"`
-	Address []string           `json:"address,omitempty" bson:"address,omitempty"`
+	Address []Address          `json:"address,omitempty" bson:"address,omitempty"`
 }
 
 //GetModelData Prints Model Data in String

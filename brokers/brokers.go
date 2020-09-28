@@ -33,6 +33,7 @@ type DbBroker interface {
 	DeleteOne(collectionName string, i interface{}) (n int64, err error)
 	Get(collectionName string, i interface{}) (l []interface{}, err error)
 	FindOneAndUpdate(collectionName string, i interface{}, u interface{}) (l interface{}, err error)
+	FindOneAndPush(collectionName string, i interface{}, u interface{}, field string) (l interface{}, err error)
 	FindOne(collectionName string, i interface{}) (l interface{}, err error)
 	FindOneWithOr(collectionName string, i ...interface{}) (l interface{}, err error)
 }

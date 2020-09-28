@@ -29,19 +29,12 @@ func (h *Handler) addSpecial(c echo.Context) (err error) {
 	if err = c.Bind(&m); err != nil {
 		log.Println(err)
 
-		return c.JSON(http.StatusInternalServerError, echo.Map{
-			"success": false,
-			"msg":     "An error occurred     ",
-		})
+		return h.sendError(c)
 	}
 
 	if m["meal_id"] == nil || m["meal_id"] == "" {
 		log.Println(err)
-
-		return c.JSON(http.StatusInternalServerError, echo.Map{
-			"success": false,
-			"msg":     "An error occurred     ",
-		})
+		return h.sendError(c)
 	}
 
 	mid := m["meal_id"].(string)

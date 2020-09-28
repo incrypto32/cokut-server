@@ -135,16 +135,41 @@ func (w *Worker) Get(collectionName string, i interface{}) (l []interface{}, err
 }
 
 // FindOneAndUpdate FindOneAndUpdate
-func (w *Worker) FindOneAndUpdate(collectionName string, i interface{}, u interface{}) (l interface{}, err error) {
+func (w *Worker) FindOneAndUpdate(collectionName string, filter interface{}, update interface{}) (
+	l interface{},
+	err error) {
+	return w.findOneAndUpdateHelper(collectionName, filter, update, false, "")
+}
+
+// FindOneAndUpdate FindOneAndUpdate
+func (w *Worker) FindOneAndPush(collectionName string, filter interface{}, update interface{}, field string) (
+	l interface{},
+	err error) {
+	return w.findOneAndUpdateHelper(collectionName, filter, update, true, field)
+}
+
+// FindOneAndUpdateHelper FindOneAndUpdate
+func (w *Worker) findOneAndUpdateHelper(
+	collectionName string, i interface{}, u interface{}, push bool, field string) (
+	l interface{},
+	err error) {
 	c := w.db.Collection(collectionName)
 	ctx := context.Background()
 	typ := reflect.TypeOf(i)
 
 	l = reflect.New(typ).Interface()
+	action := "$set"
+
+	if push {
+		action = "$push"
+		u = bson.M{field: u}
+	}
+
+	log.Println(action)
 
 	upsert := true
 	after := options.After
-	r := c.FindOneAndUpdate(ctx, i, bson.M{"$set": u}, &options.FindOneAndUpdateOptions{
+	r := c.FindOneAndUpdate(ctx, i, bson.M{action: u}, &options.FindOneAndUpdateOptions{
 		ReturnDocument: &after,
 		Upsert:         &upsert,
 	})

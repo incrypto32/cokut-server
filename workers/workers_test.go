@@ -5,6 +5,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/incrypt0/cokut-server/utils"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -13,7 +14,12 @@ type Test struct {
 	Name    string              `json:"name,omitempty" bson:"name,omitempty"`
 	Message string              `json:"msg,omitempty" bson:"msg,omitempty"`
 	Time    primitive.Timestamp `json:"time,omitempty" bson:"time,omitempty"`
-	Blah    string              `json:"blah,omitempty" bson:"blah,omitempty"`
+	Blah    []Blah              `json:"blah,omitempty" bson:"blah,omitempty"`
+}
+
+type Blah struct {
+	Hmm string `json:"hmm,omitempty" bson:"hmm,omitempty"`
+	Hai string `json:"hai,omitempty" bson:"hai,omitempty"`
 }
 
 func TestDBHandler(t *testing.T) {
@@ -25,19 +31,38 @@ func TestDBHandler(t *testing.T) {
 		Name:    "Test 1",
 		Message: "Test 1 Success",
 		Time:    primitive.Timestamp{T: uint32(time.Now().Unix())},
-		Blah:    "blah"}
+		Blah:    []Blah{{Hai: "hai", Hmm: "hmm"}},
+	}
 
 	test2 := Test{
 		ID:      id2,
 		Name:    "Test 2",
 		Message: "Test 2 Success",
 		Time:    primitive.Timestamp{T: uint32(time.Now().Unix())},
-		Blah:    "blah"}
+	}
 
 	test3 := Test{Message: "Test 1 Edited"}
-	_ = New()
+	w := New()
 
-	_ = "test"
+	if err := w.DropTest(); err != nil {
+		t.Error(err)
+	}
+
+	c := "test"
 
 	log.Println(test1, test2, test3)
+
+	if i, err := w.Add(c, test1); err != nil {
+		t.Log(err)
+	} else if i != id1.Hex() {
+		t.Error("ERROR")
+	}
+
+	if i, err := w.FindOneAndPush(c, Test{ID: id1}, Blah{Hai: "hello",
+		Hmm: "HMMMMMM"},
+		"blah"); err != nil {
+		t.Error(err)
+	} else if i.(*Test).Blah[1].Hai != "hello" {
+		t.Error(utils.ModelToString(i))
+	}
 }

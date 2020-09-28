@@ -214,13 +214,12 @@ func TestUser1(t *testing.T) {
 	a := make([]string, 3)
 	a[0] = "Vazahppully House"
 	user := &models.User{
-		Name:    "Krish",
-		Address: a,
-		Email:   "vpkrishnanand@gmail.com",
-		Admin:   true,
-		Phone:   "7034320441",
-		UID:     "1",
-		GID:     "g1",
+		Name:  "Krish",
+		Email: "vpkrishnanand@gmail.com",
+		Admin: true,
+		Phone: "7034320441",
+		UID:   "1",
+		GID:   "g1",
 	}
 
 	if id, err := s.InsertUser(user); err != nil {
