@@ -24,10 +24,7 @@ func (h *Handler) getAllRestaurants(c echo.Context) (err error) {
 	if err != nil {
 		log.Println(err)
 
-		return c.JSON(http.StatusInternalServerError, echo.Map{
-			"success": false,
-			"msg":     "An error occurred     ",
-		})
+		return h.sendError(c)
 	}
 
 	return c.JSON(http.StatusOK, l)

@@ -24,6 +24,11 @@ func (s *Store) GetAllRestaurants() (l []interface{}, err error) {
 	return s.w.Get(s.rc, models.Restaurant{})
 }
 
+// GetAllRestaurants Function to get all restaurants
+func (s *Store) GetAllRegularRestaurants() (l []interface{}, err error) {
+	return s.w.Get(s.rc, models.Restaurant{Type: "regular"})
+}
+
 // GetAllHomeMade Function to get all home food centers
 func (s *Store) GetAllHomeMade() (l []interface{}, err error) {
 	return s.w.Get(s.rc, models.Restaurant{Type: "home"})

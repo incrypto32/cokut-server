@@ -38,18 +38,11 @@ func (h *Handler) getFiltered(c echo.Context, f ManyResultFunc) (err error) {
 
 	if err != nil {
 		log.Println(err)
-
-		return c.JSON(http.StatusInternalServerError, echo.Map{
-			"success": false,
-			"msg":     "An error occurred     ",
-		})
+		return h.sendError(c)
 	}
 
 	if len(l) == 0 {
-		return c.JSON(http.StatusExpectationFailed, echo.Map{
-			"success": false,
-			"msg":     "Nothing found here :(",
-		})
+		return h.sendMessageWithFailure(c, "Nothing Here :(")
 	}
 
 	return c.JSON(http.StatusOK, l)
@@ -75,8 +68,6 @@ func (h *Handler) getBySpecificFilter(
 	c echo.Context, filter string,
 	f FilteredManyResultFunc) (err error) {
 	m := c.QueryParams()
-
-	log.Println(m)
 
 	if m[filter] == nil {
 		return h.sendError(c)
