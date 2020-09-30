@@ -1,8 +1,10 @@
 package handler2
 
 import (
+	"fmt"
 	"log"
 	"net/http"
+	"runtime"
 
 	"github.com/incrypt0/cokut-server/models"
 	"github.com/labstack/echo/v4"
@@ -12,7 +14,7 @@ import (
 func (h *Handler) Add(c echo.Context, r models.Model, f func(r models.Model) (string, error)) (err error) {
 	if err = c.Bind(r); err != nil {
 		log.Println(err)
-		return h.sendError(c)
+		return h.sendError(c, err)
 	}
 
 	id, err := f(r)
@@ -37,8 +39,7 @@ func (h *Handler) getFiltered(c echo.Context, f ManyResultFunc) (err error) {
 	l, err := f()
 
 	if err != nil {
-		log.Println(err)
-		return h.sendError(c)
+		return h.sendError(c, err)
 	}
 
 	if len(l) == 0 {
@@ -48,7 +49,11 @@ func (h *Handler) getFiltered(c echo.Context, f ManyResultFunc) (err error) {
 	return c.JSON(http.StatusOK, l)
 }
 
-func (h *Handler) sendError(c echo.Context) error {
+func (h *Handler) sendError(c echo.Context, err error) error {
+	function, file, line, _ := runtime.Caller(1)
+	trace := fmt.Sprintf("\nFile: %s  Function: %s Line: %d", file, runtime.FuncForPC(function).Name(), line)
+	log.Println("Error Sent : ", err, trace)
+
 	return c.JSON(http.StatusExpectationFailed, echo.Map{
 		"success": false,
 		"error":   true,
@@ -70,7 +75,7 @@ func (h *Handler) getBySpecificFilter(
 	m := c.QueryParams()
 
 	if m[filter] == nil {
-		return h.sendError(c)
+		return h.sendError(c, err)
 	}
 
 	l, err := f(m[filter][0])
@@ -78,7 +83,7 @@ func (h *Handler) getBySpecificFilter(
 	if err != nil {
 		log.Println(err)
 
-		return h.sendError(c)
+		return h.sendError(c, err)
 	}
 
 	if len(l) == 0 {

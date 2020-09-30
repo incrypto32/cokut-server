@@ -155,17 +155,24 @@ func (w *Worker) findOneAndUpdateHelper(
 	err error) {
 	c := w.db.Collection(collectionName)
 	ctx := context.Background()
-	typ := reflect.TypeOf(i)
+	filterTyp := reflect.TypeOf(i)
+	updateTyp := reflect.TypeOf(u)
 
-	l = reflect.New(typ).Interface()
+	uChecker := reflect.Zero(updateTyp).Interface()
+
+	if reflect.DeepEqual(u, uChecker) {
+		log.Println("EMPTY INTERFACE")
+		return l, errors.New("EMPTY")
+	}
+
+	l = reflect.New(filterTyp).Interface()
+
 	action := "$set"
 
 	if push {
 		action = "$push"
 		u = bson.M{field: u}
 	}
-
-	log.Println(action)
 
 	upsert := true
 	after := options.After

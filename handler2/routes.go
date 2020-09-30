@@ -25,6 +25,7 @@ func (h *Handler) registerAPIV1(api *echo.Group) {
 	api.GET("/getuserorders", h.getUserOrders)
 
 	api.POST("/register", h.registerUser)
+	api.GET("/adduseraddress", h.addAddress)
 	api.POST("/order", h.addOrder)
 
 	a := api.Group("/admin")

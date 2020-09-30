@@ -27,14 +27,11 @@ func (h *Handler) addSpecial(c echo.Context) (err error) {
 	m := map[string]interface{}{}
 
 	if err = c.Bind(&m); err != nil {
-		log.Println(err)
-
-		return h.sendError(c)
+		return h.sendError(c, err)
 	}
 
 	if m["meal_id"] == nil || m["meal_id"] == "" {
-		log.Println(err)
-		return h.sendError(c)
+		return h.sendError(c, err)
 	}
 
 	mid := m["meal_id"].(string)

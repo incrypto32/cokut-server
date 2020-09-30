@@ -38,6 +38,31 @@ func (s *Store) InsertUser(u *models.User) (id string, err error) {
 	return s.w.Add(c, u)
 }
 
+//InsertUser Function to insert users into userCollection
+func (s *Store) AddUserAddress(uid string, address models.Address) (user *models.User, err error) {
+	var i interface{}
+
+	//  Getting the user colection
+	c := s.uc
+
+	if err != nil {
+		return user, errors.New("ERROR")
+	}
+
+	i, err = s.w.FindOneAndPush(c, models.User{UID: uid}, address, "address")
+
+	if err != nil {
+		if err.Error() != "NIL" {
+			log.Println(err)
+			return user, errors.New("ERROR")
+		}
+	}
+
+	user = i.(*models.User)
+
+	return user, err
+}
+
 // GetUser .
 func (s *Store) GetUser(uid string) (l interface{}, err error) {
 	return s.w.FindOne(s.uc, models.User{UID: uid})

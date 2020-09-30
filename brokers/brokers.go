@@ -6,6 +6,7 @@ import "github.com/incrypt0/cokut-server/models"
 // It acts as a mediator between actual store and the handler object
 type CokutBroker interface {
 	InsertUser(u *models.User) (id string, err error)
+	AddUserAddress(id string, address models.Address) (user *models.User, err error)
 	GetUser(uid string) (l interface{}, err error)
 	CheckUserPhoneExistence(phone string) (bool, error)
 	CheckUserExistence(phone string, email string) (bool, error)
