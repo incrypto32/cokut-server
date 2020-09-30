@@ -23,10 +23,10 @@ func FireAuthMiddleware(app *firebase.App) echo.MiddlewareFunc {
 				return err
 			}
 
-			if true {
-				c.Set("uid", "u3")
-				return next(c)
-			}
+			// if true {
+			// 	c.Set("uid", "u3")
+			// 	return next(c)
+			// }
 
 			if app == nil {
 				return errors.New("firebase app not initialized")
@@ -42,8 +42,6 @@ func FireAuthMiddleware(app *firebase.App) echo.MiddlewareFunc {
 				log.Println(err.Error())
 				return c.JSON(http.StatusExpectationFailed, echo.Map{"success": false, "msg": "ID Token Expired"})
 			}
-
-			log.Println("Token Verified..!!")
 
 			c.Set("uid", token.UID)
 
