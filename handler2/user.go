@@ -59,7 +59,6 @@ func (h *Handler) getUser(c echo.Context) (err error) {
 }
 
 func (h *Handler) addAddress(c echo.Context) (err error) {
-
 	a := models.Address{}
 
 	if err := c.Bind(&a); err != nil {
@@ -68,6 +67,21 @@ func (h *Handler) addAddress(c echo.Context) (err error) {
 	}
 
 	if _, err := h.store.AddUserAddress(c.Get("uid").(string), a); err != nil {
+		return h.sendError(c, err)
+	}
+
+	return c.JSON(http.StatusOK, echo.Map{"success": true})
+}
+
+func (h *Handler) removeAddress(c echo.Context) (err error) {
+	a := models.Address{}
+
+	if err := c.Bind(&a); err != nil {
+		log.Println(err)
+		return h.sendError(c, err)
+	}
+
+	if _, err := h.store.RemoveUserAddress(c.Get("uid").(string), a); err != nil {
 		return h.sendError(c, err)
 	}
 

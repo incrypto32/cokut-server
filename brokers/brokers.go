@@ -7,6 +7,7 @@ import "github.com/incrypt0/cokut-server/models"
 type CokutBroker interface {
 	InsertUser(u *models.User) (id string, err error)
 	AddUserAddress(id string, address models.Address) (user *models.User, err error)
+	RemoveUserAddress(uid string, address models.Address) (user *models.User, err error)
 	GetUser(uid string) (l interface{}, err error)
 	CheckUserPhoneExistence(phone string) (bool, error)
 	CheckUserExistence(phone string, email string) (bool, error)
@@ -35,6 +36,7 @@ type DbBroker interface {
 	Get(collectionName string, i interface{}) (l []interface{}, err error)
 	FindOneAndUpdate(collectionName string, i interface{}, u interface{}) (l interface{}, err error)
 	FindOneAndPush(collectionName string, i interface{}, u interface{}, field string) (l interface{}, err error)
+	FindOneAndPull(collectionName string, filter interface{}, update interface{}, field string) (l interface{}, err error)
 	FindOne(collectionName string, i interface{}) (l interface{}, err error)
 	FindOneWithOr(collectionName string, i ...interface{}) (l interface{}, err error)
 }

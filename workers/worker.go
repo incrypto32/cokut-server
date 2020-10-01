@@ -138,19 +138,26 @@ func (w *Worker) Get(collectionName string, i interface{}) (l []interface{}, err
 func (w *Worker) FindOneAndUpdate(collectionName string, filter interface{}, update interface{}) (
 	l interface{},
 	err error) {
-	return w.findOneAndUpdateHelper(collectionName, filter, update, false, "")
+	return w.findOneAndUpdateHelper(collectionName, filter, update, "$set", "")
 }
 
 // FindOneAndUpdate FindOneAndUpdate
 func (w *Worker) FindOneAndPush(collectionName string, filter interface{}, update interface{}, field string) (
 	l interface{},
 	err error) {
-	return w.findOneAndUpdateHelper(collectionName, filter, update, true, field)
+	return w.findOneAndUpdateHelper(collectionName, filter, update, "$push", field)
+}
+
+// FindOneAndUpdate FindOneAndUpdate
+func (w *Worker) FindOneAndPull(collectionName string, filter interface{}, update interface{}, field string) (
+	l interface{},
+	err error) {
+	return w.findOneAndUpdateHelper(collectionName, filter, update, "$pull", field)
 }
 
 // FindOneAndUpdateHelper FindOneAndUpdate
 func (w *Worker) findOneAndUpdateHelper(
-	collectionName string, i interface{}, u interface{}, push bool, field string) (
+	collectionName string, i interface{}, u interface{}, action string, field string) (
 	l interface{},
 	err error) {
 	c := w.db.Collection(collectionName)
@@ -167,10 +174,7 @@ func (w *Worker) findOneAndUpdateHelper(
 
 	l = reflect.New(filterTyp).Interface()
 
-	action := "$set"
-
-	if push {
-		action = "$push"
+	if action != "$set" {
 		u = bson.M{field: u}
 	}
 
