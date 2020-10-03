@@ -8,6 +8,7 @@ import (
 
 // Address
 type Address struct {
+	Title        string `json:"title,omitempty" bson:"title,omitempty"`
 	Zone         string `json:"zone,omitempty" bson:"zone,omitempty"`
 	AddressLine1 string `json:"adl1,omitempty" bson:"adl1,omitempty"`
 	AddressLine2 string `json:"adl2,omitempty" bson:"adl2,omitempty"`
