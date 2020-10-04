@@ -15,18 +15,27 @@ func (h *Handler) registerAPI(api *echo.Group) {
 func (h *Handler) registerAPIV1(api *echo.Group) {
 	log.Println("________API V1 Handler Initiated________")
 	api.GET("/test", h.routeTestV1)
-	api.GET("/getuser", h.getUser)
-	api.GET("/getoutlets", h.getAllRestaurants)
-	api.GET("/getregoutlets", h.getAllRegularRestaurants)
-	api.GET("/getmeals", h.getMeals)
-	api.GET("/getspecials", h.getSpecials)
-	api.GET("/getspicey", h.getSpicey)
-	api.GET("/gethome", h.getHomeMadeRestaurants)
-	api.GET("/getuserorders", h.getUserOrders)
 
-	api.POST("/register", h.registerUser)
-	api.POST("/addaddress", h.addAddress)
-	api.POST("/removeaddress", h.removeAddress)
+	// User
+	user := api.Group("/user")
+	user.GET("", h.getUser)
+	user.GET("/orders", h.getUserOrders)
+	user.POST("/register", h.registerUser)
+	user.POST("/address", h.addAddress)
+	user.DELETE("/address", h.removeAddress)
+
+	// Restaurants
+	restaurants := api.Group("/restaurants")
+	restaurants.GET("", h.getAllRestaurants)
+	restaurants.GET("/regular", h.getAllRegularRestaurants)
+	restaurants.GET("/homemade", h.getHomeMadeRestaurants)
+
+	// Meals
+	meals := api.Group("/meals")
+	meals.GET("", h.getMeals)
+	meals.GET("/specials", h.getSpecials)
+	meals.GET("/spicey", h.getSpicey)
+
 	api.POST("/order", h.addOrder)
 
 	a := api.Group("/admin")
@@ -36,10 +45,10 @@ func (h *Handler) registerAPIV1(api *echo.Group) {
 // The Admin Api
 func (h *Handler) registerAdmin(a *echo.Group) {
 	a.GET("/test", h.routeTestAdmin)
-	a.GET("/getorders", h.getOrders)
-	a.POST("/addrest", h.addRestaurant)
-	a.POST("/additem", h.addMeal)
-	a.POST("/addspecial", h.addSpecial)
+	a.GET("/orders", h.getOrders)
+	a.POST("/restaurant", h.addRestaurant)
+	a.POST("/meal", h.addMeal)
+	a.POST("/special", h.addSpecial)
 }
 
 // The Admin Api

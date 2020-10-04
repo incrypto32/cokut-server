@@ -3,7 +3,6 @@ package models
 import (
 	"github.com/incrypt0/cokut-server/utils"
 	"github.com/pkg/errors"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 // Address
@@ -17,14 +16,15 @@ type Address struct {
 
 // User struct
 type User struct {
-	Admin   bool               `json:"admin,omitempty" bson:"admin,omitempty"`
-	ID      primitive.ObjectID `json:"id,omitempty" bson:"_id,omitempty"`
-	UID     string             `json:"uid,omitempty" bson:"uid,omitempty"`
-	GID     string             `json:"gid,omitempty" bson:"gid,omitempty"`
-	Name    string             `json:"name,omitempty" bson:"name,omitempty" `
-	Phone   string             `json:"phone,omitempty" bson:"phone,omitempty" `
-	Email   string             `json:"email,omitempty" bson:"email,omitempty"`
-	Address []Address          `json:"address,omitempty" bson:"address,omitempty"`
+	Admin     bool               `json:"admin,omitempty" bson:"admin,omitempty"`
+	ID        string             `json:"id,omitempty" bson:"_id,omitempty"`
+	UID       string             `json:"uid,omitempty" bson:"uid,omitempty"`
+	GID       string             `json:"gid,omitempty" bson:"gid,omitempty"`
+	Name      string             `json:"name,omitempty" bson:"name,omitempty" `
+	Phone     string             `json:"phone,omitempty" bson:"phone,omitempty" `
+	Email     string             `json:"email,omitempty" bson:"email,omitempty"`
+	Address   []Address          `json:"address,omitempty" bson:"address,omitempty"`
+	Addresses map[string]Address `json:"addresses,omitempty" bson:"addresses,omitempty"`
 }
 
 //GetModelData Prints Model Data in String

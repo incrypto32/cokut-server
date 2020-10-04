@@ -142,6 +142,13 @@ func (w *Worker) FindOneAndUpdate(collectionName string, filter interface{}, upd
 }
 
 // FindOneAndUpdate FindOneAndUpdate
+func (w *Worker) DeleteFromMap(collectionName string, filter interface{}, update interface{}) (
+	l interface{},
+	err error) {
+	return w.findOneAndUpdateHelper(collectionName, filter, update, "$unset", "")
+}
+
+// FindOneAndUpdate FindOneAndUpdate
 func (w *Worker) FindOneAndPush(collectionName string, filter interface{}, update interface{}, field string) (
 	l interface{},
 	err error) {
@@ -174,7 +181,7 @@ func (w *Worker) findOneAndUpdateHelper(
 
 	l = reflect.New(filterTyp).Interface()
 
-	if action != "$set" {
+	if action != "$set" && action != "$unset" {
 		u = bson.M{field: u}
 	}
 
@@ -186,13 +193,13 @@ func (w *Worker) findOneAndUpdateHelper(
 	})
 
 	if r.Err() != nil {
-		log.Println(err)
-
 		if r.Err() == mongo.ErrNoDocuments {
 			return nil, myerrors.ErrNIL
 		}
 
-		return nil, err
+		log.Println(r.Err().Error())
+
+		return nil, r.Err()
 	}
 
 	// Remember dont use a pointer to l here

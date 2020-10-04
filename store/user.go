@@ -2,9 +2,11 @@ package store
 
 import (
 	"errors"
+	"fmt"
 	"log"
 
 	"github.com/incrypt0/cokut-server/models"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 //InsertUser Function to insert users into userCollection
@@ -45,11 +47,9 @@ func (s *Store) AddUserAddress(uid string, address models.Address) (user *models
 	//  Getting the user colection
 	c := s.uc
 
-	if err != nil {
-		return user, errors.New("ERROR")
-	}
-
-	i, err = s.w.FindOneAndPush(c, models.User{UID: uid}, address, "address")
+	field := fmt.Sprintf("%s.%s", "addresses", address.Title)
+	update := bson.M{field: address}
+	i, err = s.w.FindOneAndUpdate(c, models.User{UID: uid}, update)
 
 	if err != nil {
 		if err.Error() != "NIL" {
@@ -70,11 +70,9 @@ func (s *Store) RemoveUserAddress(uid string, address models.Address) (user *mod
 	//  Getting the user colection
 	c := s.uc
 
-	if err != nil {
-		return user, errors.New("ERROR")
-	}
-
-	i, err = s.w.FindOneAndPull(c, models.User{UID: uid}, address, "address")
+	field := fmt.Sprintf("%s.%s", "addresses", address.Title)
+	update := bson.M{field: address}
+	i, err = s.w.DeleteFromMap(c, models.User{UID: uid}, update)
 
 	if err != nil {
 		if err.Error() != "NIL" {
