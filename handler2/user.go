@@ -83,11 +83,12 @@ func (h *Handler) removeAddress(c echo.Context) (err error) {
 		return h.sendError(c, err)
 	}
 
-	if _, err := h.store.RemoveUserAddress(c.Get("uid").(string), a); err != nil {
+	user, err := h.store.RemoveUserAddress(c.Get("uid").(string), a)
+	if err != nil {
 		return h.sendError(c, err)
 	}
 
-	return c.JSON(http.StatusOK, echo.Map{"success": true})
+	return c.JSON(http.StatusOK, echo.Map{"success": true, "user": user})
 }
 
 func (h *Handler) checkUserPhoneExistence(c echo.Context) (err error) {
