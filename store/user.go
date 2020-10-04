@@ -71,6 +71,7 @@ func (s *Store) RemoveUserAddress(uid string, address models.Address) (user *mod
 	c := s.uc
 
 	field := fmt.Sprintf("%s.%s", "addresses", address.Title)
+
 	update := bson.M{field: address}
 	i, err = s.w.DeleteFromMap(c, models.User{UID: uid}, update)
 

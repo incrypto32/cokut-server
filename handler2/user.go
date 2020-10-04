@@ -78,10 +78,7 @@ func (h *Handler) addAddress(c echo.Context) (err error) {
 func (h *Handler) removeAddress(c echo.Context) (err error) {
 	a := models.Address{}
 
-	if err := c.Bind(&a); err != nil {
-		log.Println(err)
-		return h.sendError(c, err)
-	}
+	a.Title = c.QueryParam("TITLE")
 
 	user, err := h.store.RemoveUserAddress(c.Get("uid").(string), a)
 	if err != nil {
