@@ -23,8 +23,7 @@ type User struct {
 	Name      string             `json:"name,omitempty" bson:"name,omitempty" `
 	Phone     string             `json:"phone,omitempty" bson:"phone,omitempty" `
 	Email     string             `json:"email,omitempty" bson:"email,omitempty"`
-	Address   []Address          `json:"address,omitempty" bson:"address,omitempty"`
-	Addresses map[string]Address `json:"addresses,omitempty" bson:"addresses,omitempty"`
+	Addresses map[string]Address `json:"address,omitempty" bson:"address,omitempty"`
 }
 
 //GetModelData Prints Model Data in String

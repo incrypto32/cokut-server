@@ -47,7 +47,7 @@ func (s *Store) AddUserAddress(uid string, address models.Address) (user *models
 	//  Getting the user colection
 	c := s.uc
 
-	field := fmt.Sprintf("%s.%s", "addresses", address.Title)
+	field := fmt.Sprintf("%s.%s", "address", address.Title)
 	update := bson.M{field: address}
 	i, err = s.w.FindOneAndUpdate(c, models.User{UID: uid}, update)
 
@@ -70,7 +70,7 @@ func (s *Store) RemoveUserAddress(uid string, address models.Address) (user *mod
 	//  Getting the user colection
 	c := s.uc
 
-	field := fmt.Sprintf("%s.%s", "addresses", address.Title)
+	field := fmt.Sprintf("%s.%s", "address", address.Title)
 
 	update := bson.M{field: address}
 	i, err = s.w.DeleteFromMap(c, models.User{UID: uid}, update)
