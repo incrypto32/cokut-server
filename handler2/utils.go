@@ -11,7 +11,7 @@ import (
 )
 
 // Add an item
-func (h *Handler) Add(c echo.Context, r models.Model, f func(r models.Model) (string, error)) (err error) {
+func (h *Handler) Add(c echo.Context, r models.Model, f func(r models.Model) (interface{}, error)) (err error) {
 	if err = c.Bind(r); err != nil {
 		log.Println(err)
 		return h.sendError(c, err)

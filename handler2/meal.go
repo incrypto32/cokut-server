@@ -12,7 +12,7 @@ import (
 func (h *Handler) addMeal(c echo.Context) (err error) {
 	r := new(models.Meal)
 
-	return h.Add(c, r, func(r models.Model) (string, error) {
+	return h.Add(c, r, func(r models.Model) (interface{}, error) {
 		return h.store.InsertMeal(r.(*models.Meal))
 	})
 }

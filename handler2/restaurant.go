@@ -9,7 +9,7 @@ import (
 func (h *Handler) addRestaurant(c echo.Context) (err error) {
 	r := new(models.Restaurant)
 
-	return h.Add(c, r, func(r models.Model) (string, error) {
+	return h.Add(c, r, func(r models.Model) (interface{}, error) {
 		return h.store.InsertRestaurant(r.(*models.Restaurant))
 	})
 }

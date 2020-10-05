@@ -23,9 +23,12 @@ func (s *Store) CreateOrder(o *models.Order) (po *models.Order, err error) {
 		return po, err
 	}
 
-	if _, err := s.w.Add(c, o); err != nil {
+	if id, err := s.w.Add(c, o); err != nil {
+		return nil, err
+	} else if o.ID, err = primitive.ObjectIDFromHex(id); err != nil {
 		return nil, err
 	}
+
 	return o, err
 }
 

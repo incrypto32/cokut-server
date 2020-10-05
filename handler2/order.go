@@ -8,9 +8,9 @@ import (
 // Create a new order
 func (h *Handler) addOrder(c echo.Context) (err error) {
 	r := new(models.Order)
-	r.UID = "UID_HERE"
+	r.UID = c.Get("uid").(string)
 
-	return h.Add(c, r, func(r models.Model) (string, error) {
+	return h.Add(c, r, func(r models.Model) (interface{}, error) {
 		return h.store.CreateOrder(r.(*models.Order))
 	})
 }
