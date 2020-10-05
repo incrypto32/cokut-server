@@ -92,3 +92,9 @@ func TestDrop(t *testing.T) {
 
 	_ = s.w.DropTest()
 }
+
+func TestOrder(t *testing.T) {
+	var s *Store = NewStore("mctest", "uctest", "octest", "rctest", workers.New())
+
+	_ = s.w.DropTest()
+}

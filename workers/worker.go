@@ -80,6 +80,7 @@ func (w *Worker) Add(collectionName string, i interface{}) (id string, err error
 	}
 
 	id = result.InsertedID.(primitive.ObjectID).Hex()
+	log.Println(result)
 
 	return id, err
 }
@@ -105,18 +106,18 @@ func (w *Worker) DeleteOne(collectionName string, i interface{}) (n int64, err e
 }
 
 // Get gets details from db with given filter
-func (w *Worker) Get(collectionName string, i interface{}) (l []interface{}, errerr error) {
+func (w *Worker) Get(collectionName string, filter interface{}) (l []interface{}, err error) {
 	c := w.db.Collection(collectionName)
 	ctx := context.Background()
-	typ := reflect.TypeOf(i)
-	a := reflect.Zero(reflect.TypeOf(i)).Interface()
+	typ := reflect.TypeOf(filter)
+	a := reflect.Zero(reflect.TypeOf(filter)).Interface()
 
 	// log.Println("Without Filter : ", reflect.DeepEqual(a, i))
-	if reflect.DeepEqual(a, i) {
-		i = bson.D{}
+	if reflect.DeepEqual(a, filter) {
+		filter = bson.D{}
 	}
 
-	cur, err := c.Find(ctx, i)
+	cur, err := c.Find(ctx, filter)
 
 	for cur.Next(ctx) {
 		i := reflect.New(typ).Interface()
@@ -130,6 +131,40 @@ func (w *Worker) Get(collectionName string, i interface{}) (l []interface{}, err
 	}
 
 	defer cur.Close(ctx)
+
+	return l, err
+}
+
+func (w *Worker) GetMultipleByID(collectionName string, model interface{}, ids []string) (l []interface{}, err error) {
+	log.Println(ids, len(ids))
+	pids := make([]primitive.ObjectID, len(ids))
+
+	ctx := context.Background()
+	c := w.db.Collection(collectionName)
+	typ := reflect.TypeOf(model)
+
+	for i, b := range ids {
+		log.Println(i, "|", b, ids)
+		pids[i], err = primitive.ObjectIDFromHex(b)
+
+		if err != nil {
+			log.Println(err)
+			return nil, err
+		}
+	}
+
+	cur, err := c.Find(ctx, bson.M{"_id": bson.M{"$in": pids}})
+	for cur.Next(ctx) {
+		i := reflect.New(typ).Interface()
+
+		// Remember dont use a pointer to l here by i
+		if err = cur.Decode(i); err != nil {
+			log.Println(err)
+			return nil, err
+		}
+
+		l = append(l, i)
+	}
 
 	return l, err
 }

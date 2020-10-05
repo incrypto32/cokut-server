@@ -22,7 +22,7 @@ type CokutBroker interface {
 	GetMealsByRestaurant(rid string) (l []interface{}, err error)
 	GetSpecialMeals() (l []interface{}, err error)
 	GetSpiceyMeals() (l []interface{}, err error)
-	CreateOrder(o *models.Order) (id string, err error)
+	CreateOrder(o *models.Order) (po *models.Order, err error)
 	GetAllOrders() (l []interface{}, err error)
 	GetOrdersByUser(uid string) (l []interface{}, err error)
 }
@@ -34,6 +34,7 @@ type DbBroker interface {
 	Add(collectionName string, i interface{}) (id string, err error)
 	DeleteOne(collectionName string, i interface{}) (n int64, err error)
 	Get(collectionName string, i interface{}) (l []interface{}, err error)
+	GetMultipleByID(collectionName string, model interface{}, ids []string) (l []interface{}, err error)
 	FindOneAndUpdate(collectionName string, i interface{}, u interface{}) (l interface{}, err error)
 	DeleteFromMap(collectionName string, filter interface{}, update interface{}) (l interface{}, err error)
 	FindOneAndPush(collectionName string, i interface{}, u interface{}, field string) (l interface{}, err error)

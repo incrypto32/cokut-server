@@ -1,6 +1,8 @@
 package store
 
 import (
+	"errors"
+	"log"
 	"time"
 
 	"github.com/incrypt0/cokut-server/models"
@@ -8,16 +10,75 @@ import (
 )
 
 // CreateOrder creates a new order
-func (s *Store) CreateOrder(o *models.Order) (id string, err error) {
+func (s *Store) CreateOrder(o *models.Order) (po *models.Order, err error) {
 	c := s.orders // Basic Validation
 
 	o.Time = primitive.NewDateTimeFromTime(time.Now())
 
 	if err = o.Validate(); err != nil {
-		return id, err
+		return po, err
 	}
 
-	return s.w.Add(c, o)
+	if err = s.processOrder(o); err != nil {
+		return po, err
+	}
+
+	if _, err := s.w.Add(c, o); err != nil {
+		return nil, err
+	}
+	return o, err
+}
+
+func (s *Store) processOrder(o *models.Order) error {
+	mealCollection := s.mc
+	ids := make([]string, 0, len(o.Items))
+
+	for key := range o.Items {
+		log.Println(key, "_____", len(o.Items))
+		ids = append(ids, key)
+	}
+
+	rid, err := primitive.ObjectIDFromHex(o.RID)
+	if err != nil {
+		return err
+	}
+
+	if r, err := s.w.FindOne(s.rc, models.Restaurant{ID: rid}); err != nil {
+		return err
+	} else if r.(*models.Restaurant).Closed {
+		return errors.New("RESTAURANT CLOSED")
+	}
+
+	l, err := s.w.GetMultipleByID(mealCollection, models.Meal{}, ids)
+
+	s.calculateOrderPrice(o, l)
+	s.calculateDeliveryCharge(o)
+	s.calculateTotal(o)
+
+	if err != nil {
+		return err
+	}
+
+	return err
+}
+
+func (s *Store) calculateOrderPrice(o *models.Order, l []interface{}) {
+	for _, item := range l {
+		meal := item.(*models.Meal)
+		count := o.Items[meal.ID.Hex()]
+		price := meal.Price * float64(count)
+
+		o.Summary = append(o.Summary, models.Summary{Meal: *meal, Count: count, Price: price})
+		o.Price += price
+	}
+}
+
+func (s *Store) calculateDeliveryCharge(o *models.Order) {
+	o.DeliveryCharge = 20
+}
+
+func (s *Store) calculateTotal(o *models.Order) {
+	o.Total = o.Price + o.DeliveryCharge
 }
 
 // GetAllOrders Admin only function

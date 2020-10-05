@@ -65,4 +65,10 @@ func TestDBHandler(t *testing.T) {
 	} else if i.(*Test).Blah[1].Hai != "hello" {
 		t.Error(utils.ModelToString(i))
 	}
+
+	if l, err := w.GetMultipleByID(c, Test{}, []string{id1.Hex(), id2.Hex()}); err != nil {
+		t.Error(err)
+	} else {
+		t.Log(utils.ModelToString(l))
+	}
 }

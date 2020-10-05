@@ -11,11 +11,12 @@ type Meal struct {
 	IsVeg        bool               `json:"isVeg,omitempty" bson:"isVeg,omitempty"`
 	Special      bool               `json:"special,omitempty" bson:"special,omitempty"`
 	Spicey       bool               `json:"spicey,omitempty" bson:"spicey,omitempty"`
+	Available    bool               `json:"available,omitempty" bson:"available,omitempty"`
 	ID           primitive.ObjectID `json:"id,omitempty" bson:"_id,omitempty"`
 	RID          string             `json:"rid,omitempty" bson:"rid,omitempty"`
 	Name         string             `json:"name,omitempty" bson:"name,omitempty" `
-	Price        float32            `json:"price,omitempty" bson:"price,omitempty" `
-	DisplayPrice float32            `json:"display_price,omitempty" bson:"display_price,omitempty"`
+	Price        float64            `json:"price,omitempty" bson:"price,omitempty" `
+	DisplayPrice float64            `json:"display_price,omitempty" bson:"display_price,omitempty"`
 }
 
 func (m *Meal) GetModelData() string {
