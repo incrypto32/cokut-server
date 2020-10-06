@@ -35,6 +35,31 @@ func (h *Handler) Add(c echo.Context, r models.Model, f func(r models.Model) (in
 	})
 }
 
+// Add an item
+func (h *Handler) AddOrder(c echo.Context, r models.Model, f func(r models.Model) (interface{}, error)) (err error) {
+	if err = c.Bind(r); err != nil {
+		log.Println(err)
+		return h.sendError(c, err)
+	}
+
+	order, err := f(r)
+
+	if err != nil {
+		log.Println(err)
+
+		return c.JSON(http.StatusExpectationFailed, echo.Map{
+			"success": false,
+			"msg":     err.Error(),
+		})
+	}
+
+	return c.JSON(http.StatusOK, echo.Map{
+		"success": true,
+		"msg":     "pwoliyeee",
+		"order":   order,
+	})
+}
+
 func (h *Handler) getFiltered(c echo.Context, f ManyResultFunc) (err error) {
 	l, err := f()
 

@@ -10,7 +10,7 @@ func (h *Handler) addOrder(c echo.Context) (err error) {
 	r := new(models.Order)
 	r.UID = c.Get("uid").(string)
 
-	return h.Add(c, r, func(r models.Model) (interface{}, error) {
+	return h.AddOrder(c, r, func(r models.Model) (interface{}, error) {
 		return h.store.CreateOrder(r.(*models.Order))
 	})
 }
@@ -20,5 +20,6 @@ func (h *Handler) getOrders(c echo.Context) (err error) {
 }
 
 func (h *Handler) getUserOrders(c echo.Context) (err error) {
+	c.QueryParams().Add("uid", c.Get("uid").(string))
 	return h.getBySpecificFilter(c, "uid", h.store.GetOrdersByUser)
 }
