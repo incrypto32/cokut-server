@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/incrypt0/cokut-server/models"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -91,7 +92,5 @@ func (s *Store) GetAllOrders() (l []interface{}, err error) {
 
 // GetOrdersByUser user orders are returned
 func (s *Store) GetOrdersByUser(uid string) (l []interface{}, err error) {
-	log.Println(uid, s.orders)
-	log.Println(uid == "TEST_USER")
-	return s.w.Get(s.orders, models.Order{UID: uid})
+	return s.w.Get(s.orders, bson.M{"uid": uid})
 }

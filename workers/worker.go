@@ -9,7 +9,6 @@ import (
 	"reflect"
 
 	"github.com/incrypt0/cokut-server/brokers/myerrors"
-	"github.com/incrypt0/cokut-server/utils"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -110,6 +109,7 @@ func (w *Worker) DeleteOne(collectionName string, i interface{}) (n int64, err e
 func (w *Worker) Get(collectionName string, filter interface{}) (l []interface{}, err error) {
 	log.Println(collectionName)
 	c := w.db.Collection(collectionName)
+
 	ctx := context.Background()
 	typ := reflect.TypeOf(filter)
 	a := reflect.Zero(reflect.TypeOf(filter)).Interface()
@@ -118,9 +118,6 @@ func (w *Worker) Get(collectionName string, filter interface{}) (l []interface{}
 	if reflect.DeepEqual(a, filter) {
 		filter = bson.D{}
 	}
-
-	log.Println(utils.ModelToString(filter))
-	log.Println(filter)
 
 	cur, err := c.Find(ctx, filter)
 
@@ -131,8 +128,6 @@ func (w *Worker) Get(collectionName string, filter interface{}) (l []interface{}
 			log.Println(err)
 			return l, err
 		}
-
-		log.Println("HI", i)
 
 		l = append(l, i)
 	}

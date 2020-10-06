@@ -103,8 +103,6 @@ func (h *Handler) getBySpecificFilter(
 		return h.sendError(c, err)
 	}
 
-	log.Println(m[filter][0])
-
 	l, err := f(m[filter][0])
 
 	if err != nil {
