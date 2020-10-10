@@ -4,6 +4,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/incrypt0/cokut-server/brokers/myerrors"
 	"github.com/incrypt0/cokut-server/models"
 	"github.com/labstack/echo/v4"
 )
@@ -23,7 +24,7 @@ func (h *Handler) registerUser(c echo.Context) (err error) {
 	r.UID = uid.(string)
 	if id, err = h.store.InsertUser(r); err != nil {
 		log.Println(err)
-		return h.sendMessageWithFailure(c, err.Error())
+		return h.sendMessageWithFailure(c, err.Error(), myerrors.ErrBasicCode)
 	}
 
 	return c.JSON(http.StatusOK, echo.Map{

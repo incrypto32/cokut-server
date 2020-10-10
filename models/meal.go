@@ -17,6 +17,7 @@ type Meal struct {
 	Name         string             `json:"name,omitempty" bson:"name,omitempty" `
 	Price        float64            `json:"price,omitempty" bson:"price,omitempty" `
 	DisplayPrice float64            `json:"display_price,omitempty" bson:"display_price,omitempty"`
+	Keywords     []string           `json:"keywords,omitempty" bson:"keywords,omitempty"`
 }
 
 func (m *Meal) GetModelData() string {

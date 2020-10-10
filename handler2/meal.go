@@ -62,3 +62,9 @@ func (h *Handler) getSpecials(c echo.Context) (err error) {
 func (h *Handler) getSpicey(c echo.Context) (err error) {
 	return h.getFiltered(c, h.store.GetSpiceyMeals)
 }
+
+// getSpicey
+func (h *Handler) searchMeal(c echo.Context) (err error) {
+	keyword := c.QueryParam("keyword")
+	return h.getFiltered(c, func() ([]interface{}, error) { return h.store.SearchMeal(keyword) })
+}

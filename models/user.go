@@ -5,13 +5,22 @@ import (
 	"github.com/pkg/errors"
 )
 
+// PlaceInfo
+type PlaceInfo struct {
+	Name      string  `json:"name,omitempty" bson:"name,omitempty" `
+	Details   string  `json:"details,omitempty" bson:"details,omitempty" `
+	Latitude  float64 `json:"latitude,omitempty" bson:"latitude,omitempty" `
+	Longitude float64 `json:"longitude,omitempty" bson:"longitude,omitempty" `
+}
+
 // Address
 type Address struct {
-	Title        string `json:"title,omitempty" bson:"title,omitempty"`
-	Zone         string `json:"zone,omitempty" bson:"zone,omitempty"`
-	AddressLine1 string `json:"adl1,omitempty" bson:"adl1,omitempty"`
-	AddressLine2 string `json:"adl2,omitempty" bson:"adl2,omitempty"`
-	AddressLine3 string `json:"adl3,omitempty" bson:"adl3,omitempty"`
+	PlaceInfo    PlaceInfo `json:"place,omitempty" bson:"place,omitempty"`
+	Title        string    `json:"title,omitempty" bson:"title,omitempty"`
+	Zone         string    `json:"zone,omitempty" bson:"zone,omitempty"`
+	AddressLine1 string    `json:"adl1,omitempty" bson:"adl1,omitempty"`
+	AddressLine2 string    `json:"adl2,omitempty" bson:"adl2,omitempty"`
+	AddressLine3 string    `json:"adl3,omitempty" bson:"adl3,omitempty"`
 }
 
 // User struct

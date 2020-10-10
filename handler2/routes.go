@@ -35,6 +35,7 @@ func (h *Handler) registerAPIV1(api *echo.Group) {
 	meals.GET("", h.getMeals)
 	meals.GET("/specials", h.getSpecials)
 	meals.GET("/spicey", h.getSpicey)
+	meals.GET("/search", h.searchMeal)
 
 	api.POST("/order", h.addOrder)
 

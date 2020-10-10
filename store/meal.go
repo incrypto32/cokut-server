@@ -68,6 +68,11 @@ func (s *Store) InsertSpecial(id string) (string, error) {
 	return a.ID.Hex(), err
 }
 
+//
+func (s *Store) SearchMeal(searchText string) (l []interface{}, err error) {
+	return s.w.Search(s.mc, models.Meal{}, searchText)
+}
+
 // GetMealsByRestaurant .
 func (s *Store) GetMealsByRestaurant(rid string) (l []interface{}, err error) {
 	return s.w.Get(s.mc, models.Meal{RID: rid})

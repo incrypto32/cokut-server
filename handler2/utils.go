@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"runtime"
 
+	"github.com/incrypt0/cokut-server/brokers/myerrors"
 	"github.com/incrypt0/cokut-server/models"
 	"github.com/labstack/echo/v4"
 )
@@ -47,15 +48,11 @@ func (h *Handler) AddOrder(c echo.Context, r models.Model, f func(r models.Model
 	if err != nil {
 		log.Println(err)
 
-		return c.JSON(http.StatusExpectationFailed, echo.Map{
-			"success": false,
-			"msg":     err.Error(),
-		})
+		return h.sendMessageWithFailure(c, "Order Not Validated", myerrors.ErrOrderNotValidatedCode)
 	}
 
 	return c.JSON(http.StatusOK, echo.Map{
 		"success": true,
-		"msg":     "pwoliyeee",
 		"order":   order,
 	})
 }
@@ -68,7 +65,7 @@ func (h *Handler) getFiltered(c echo.Context, f ManyResultFunc) (err error) {
 	}
 
 	if len(l) == 0 {
-		return h.sendMessageWithFailure(c, "Nothing Here :(")
+		return h.sendMessageWithFailure(c, "Nothing Here :(", myerrors.ErrNoRecordsCode)
 	}
 
 	return c.JSON(http.StatusOK, l)
@@ -82,14 +79,16 @@ func (h *Handler) sendError(c echo.Context, err error) error {
 	return c.JSON(http.StatusExpectationFailed, echo.Map{
 		"success": false,
 		"error":   true,
-		"msg":     "An error occurred     ",
+		"code":    myerrors.ErrBasicCode,
+		"msg":     "An error occurred",
 	})
 }
 
-func (h *Handler) sendMessageWithFailure(c echo.Context, msg string) error {
+func (h *Handler) sendMessageWithFailure(c echo.Context, msg string, code int) error {
 	return c.JSON(http.StatusExpectationFailed, echo.Map{
 		"success": false,
 		"msg":     msg,
+		"code":    code,
 	})
 }
 
@@ -112,7 +111,7 @@ func (h *Handler) getBySpecificFilter(
 	}
 
 	if len(l) == 0 {
-		return h.sendMessageWithFailure(c, "Nothing found there")
+		return h.sendMessageWithFailure(c, "Nothing found there", myerrors.ErrNoRecordsCode)
 	}
 
 	return c.JSON(http.StatusOK, l)

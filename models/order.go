@@ -25,6 +25,7 @@ type Order struct {
 	Total          float64            `json:"total,omitempty" bson:"total,omitempty"`
 	DeliveryCharge float64            `json:"delivery_charge,omitempty" bson:"delivery_charge,omitempty"`
 	Status         string             `json:"status,omitempty" bson:"status,omitempty"`
+	StatusCode     int                `json:"status_code,omitempty" bson:"status_code,omitempty"`
 }
 
 func (o *Order) GetModelData() string {
@@ -33,7 +34,7 @@ func (o *Order) GetModelData() string {
 
 // Validate meal
 func (o *Order) Validate() error {
-	if (o.Address.Zone == "") || o.UID == "" || o.RID == "" {
+	if o.UID == "" || o.RID == "" {
 		return errors.New("NOT_VALIDATED")
 	}
 
