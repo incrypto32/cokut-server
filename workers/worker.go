@@ -137,12 +137,52 @@ func (w *Worker) Get(collectionName string, filter interface{}) (l []interface{}
 	return l, err
 }
 
+// Get gets details from db with given filter
+func (w *Worker) Search(collectionName string, model interface{}, keyword string) (l []interface{}, err error) {
+	c := w.db.Collection(collectionName)
+	log.Println(collectionName)
+	log.Println(keyword)
+
+	ctx := context.Background()
+	typ := reflect.TypeOf(model)
+
+	query := bson.M{
+		"$text": bson.M{
+			"$search": keyword,
+		},
+	}
+
+	cur, err := c.Find(ctx, query)
+
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+
+	for cur.Next(ctx) {
+		i := reflect.New(typ).Interface()
+		// Remember dont use a pointer to l here by i
+		if err = cur.Decode(i); err != nil {
+			log.Println(err)
+			return l, err
+		}
+
+		l = append(l, i)
+	}
+
+	defer cur.Close(ctx)
+	log.Println(l)
+
+	return l, err
+}
+
 func (w *Worker) GetMultipleByID(collectionName string, model interface{}, ids []string) (l []interface{}, err error) {
 	log.Println(ids, len(ids))
 	pids := make([]primitive.ObjectID, len(ids))
 
 	ctx := context.Background()
 	c := w.db.Collection(collectionName)
+
 	typ := reflect.TypeOf(model)
 
 	for i, b := range ids {
