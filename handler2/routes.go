@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 )
 
 func (h *Handler) registerAPI(api *echo.Group) {
@@ -63,6 +64,7 @@ func (h *Handler) registerUtils(u *echo.Group) {
 // Register this method registers a new group with handler
 func (h *Handler) Register(e *echo.Echo) {
 	// Index Handler
+	e.Use(middleware.CORS())
 	e.GET("/", h.index)
 
 	// Groups
