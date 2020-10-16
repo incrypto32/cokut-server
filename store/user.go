@@ -49,7 +49,7 @@ func (s *Store) AddUserAddress(uid string, address models.Address) (user *models
 
 	field := fmt.Sprintf("%s.%s", "address", address.Title)
 	update := bson.M{field: address}
-	i, err = s.w.FindOneAndUpdate(c, models.User{UID: uid}, update)
+	i, err = s.w.FindOneAndUpdateMap(c, models.User{UID: uid}, update)
 
 	if err != nil {
 		if err.Error() != "NIL" {

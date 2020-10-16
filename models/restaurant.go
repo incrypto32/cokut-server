@@ -17,6 +17,12 @@ type Restaurant struct {
 	Address  string             `json:"address,omitempty" bson:"address,omitempty"`
 	Type     string             `json:"type,omitempty" bson:"type,omitempty"`
 	Keywords []string           `json:"keywords,omitempty" bson:"keywords,omitempty"`
+	Location Location           `json:"location,omitempty" bson:"location,omitempty"`
+}
+
+type Location struct {
+	Latitude  float64 `json:"latitude,omitempty" bson:"latitude,omitempty"`
+	Longitude float64 `json:"longitude,omitempty" bson:"longitude,omitempty"`
 }
 
 func (r *Restaurant) GetModelData() string {

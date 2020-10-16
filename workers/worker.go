@@ -215,6 +215,13 @@ func (w *Worker) GetMultipleByID(collectionName string, model interface{}, ids [
 func (w *Worker) FindOneAndUpdate(collectionName string, filter interface{}, update interface{}) (
 	l interface{},
 	err error) {
+	return w.findOneAndUpdateHelper(collectionName, filter, update, "$update", "")
+}
+
+// FindOneAndUpdate FindOneAndUpdate
+func (w *Worker) FindOneAndUpdateMap(collectionName string, filter interface{}, update interface{}) (
+	l interface{},
+	err error) {
 	return w.findOneAndUpdateHelper(collectionName, filter, update, "$set", "")
 }
 
@@ -264,6 +271,7 @@ func (w *Worker) findOneAndUpdateHelper(
 
 	upsert := true
 	after := options.After
+
 	r := c.FindOneAndUpdate(ctx, i, bson.M{action: u}, &options.FindOneAndUpdateOptions{
 		ReturnDocument: &after,
 		Upsert:         &upsert,

@@ -12,3 +12,16 @@ var ErrOrderNotValidated = errors.New("order validation failed")
 var ErrBasicCode = 1
 var ErrNoRecordsCode = 0
 var ErrOrderNotValidatedCode = 2
+var FileUploadErrorCode = 3
+
+type MyErrors struct {
+	ErrBasicCode             int
+	ErrNoRecordsCode         int
+	ErrOrderNotValidatedCode int
+	FileUploadErrorCode      int
+
+	ErrDetailsExist      error
+	ErrNIL               error
+	ErrNoRecordsDeleted  error
+	ErrOrderNotValidated error
+}
