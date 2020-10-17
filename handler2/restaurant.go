@@ -9,6 +9,7 @@ import (
 
 	"github.com/incrypt0/cokut-server/brokers/myerrors"
 	"github.com/incrypt0/cokut-server/models"
+	"github.com/incrypt0/cokut-server/utils"
 	"github.com/labstack/echo/v4"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
@@ -36,7 +37,7 @@ func (h *Handler) addRestaurantForm(c echo.Context) (err error) {
 
 	location := models.Location{Latitude: latitude, Longitude: longitude}
 
-	r := models.Restaurant{ID: pid, Name: form["name"][0], Address: form["address"][0], Closed: true, Location: location}
+	r := models.Restaurant{ID: pid, Name: form["name"][0], Address: form["address"][0], Closed: utils.NewBool(true), Location: &location}
 
 	log.Println(r.GetModelData())
 
@@ -90,9 +91,9 @@ func (h *Handler) changeRestaurantStatus(c echo.Context) (err error) {
 	id := params["id"].(string)
 	value := params["closed"].(bool)
 
-	r := models.Restaurant{Closed: value}
+	r := models.Restaurant{Closed: utils.NewBool(value)}
 
-	result, err := h.store.UpdateRestaurant(id, r)
+	result, err := h.store.UpdateRestaurantStatus(id, r)
 
 	if err != nil {
 		log.Println(err)
@@ -100,6 +101,19 @@ func (h *Handler) changeRestaurantStatus(c echo.Context) (err error) {
 	}
 
 	return c.JSON(http.StatusOK, result)
+}
+func (h *Handler) deleteRestaurant(c echo.Context) (err error) {
+
+	log.Println(c.QueryParam("id"))
+
+	a, err := h.store.DeleteRestaurant(c.QueryParam("id"))
+
+	if err != nil {
+		log.Println(err)
+		return h.sendError(c, err)
+	}
+
+	return c.JSON(http.StatusOK, a)
 }
 
 // Get all restaurants in the db

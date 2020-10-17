@@ -49,7 +49,7 @@ func (s *Store) processOrder(o *models.Order) error {
 
 	if r, err := s.w.FindOne(s.rc, models.Restaurant{ID: rid}); err != nil {
 		return err
-	} else if r.(*models.Restaurant).Closed {
+	} else if *(r.(*models.Restaurant).Closed) {
 		return errors.New("RESTAURANT CLOSED")
 	}
 

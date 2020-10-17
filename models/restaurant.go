@@ -9,7 +9,7 @@ import (
 
 type Restaurant struct {
 	ID       primitive.ObjectID `json:"id,omitempty" bson:"_id,omitempty"`
-	Closed   bool               `json:"closed,omitempty" bson:"closed,omitempty"`
+	Closed   *bool              `json:"closed,omitempty" bson:"closed,omitempty"`
 	Name     string             `json:"name,omitempty" bson:"name,omitempty"`
 	Phone    string             `json:"phone,omitempty" bson:"phone,omitempty" `
 	LogoURL  string             `json:"logo,omitempty" bson:"logo,omitempty"`
@@ -17,7 +17,7 @@ type Restaurant struct {
 	Address  string             `json:"address,omitempty" bson:"address,omitempty"`
 	Type     string             `json:"type,omitempty" bson:"type,omitempty"`
 	Keywords []string           `json:"keywords,omitempty" bson:"keywords,omitempty"`
-	Location Location           `json:"location,omitempty" bson:"location,omitempty"`
+	Location *Location          `json:"location,omitempty" bson:"location,omitempty"`
 }
 
 type Location struct {

@@ -30,13 +30,13 @@ func (h *Handler) addSpecial(c echo.Context) (err error) {
 		return h.sendError(c, err)
 	}
 
-	if m["meal_id"] == nil || m["meal_id"] == "" {
+	if m["id"] == nil || m["id"] == "" {
 		return h.sendError(c, err)
 	}
 
-	mid := m["meal_id"].(string)
+	mid := m["id"].(string)
 
-	id, err := h.store.InsertSpecial(mid)
+	id, err := h.store.InsertSpecial(mid, m["value"].(bool))
 
 	if err != nil {
 		log.Println(err)

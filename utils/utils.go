@@ -22,3 +22,9 @@ func ModelToString(u interface{}) string {
 
 	return s
 }
+
+// NewBool
+func NewBool(val bool) *bool {
+	b := val
+	return &b
+}

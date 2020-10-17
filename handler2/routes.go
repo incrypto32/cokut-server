@@ -33,6 +33,7 @@ func (h *Handler) registerAPIV1(api *echo.Group) {
 
 	restaurants.POST("/form", h.addRestaurantForm)
 	restaurants.POST("/status", h.changeRestaurantStatus)
+	restaurants.DELETE("/delete", h.deleteRestaurant)
 
 	// Meals
 	meals := api.Group("/meals")

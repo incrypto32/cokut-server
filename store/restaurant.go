@@ -2,6 +2,7 @@ package store
 
 import (
 	"github.com/incrypt0/cokut-server/models"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -47,4 +48,26 @@ func (s *Store) UpdateRestaurant(id string, restaurant models.Restaurant) (l int
 	}
 
 	return s.w.FindOneAndUpdate(s.rc, models.Restaurant{ID: pid}, restaurant)
+}
+
+// Delete Restaurant
+
+func (s *Store) DeleteRestaurant(id string) (l interface{}, err error) {
+	pid, err := primitive.ObjectIDFromHex(id)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return s.w.DeleteOne(s.rc, models.Restaurant{ID: pid})
+}
+
+func (s *Store) UpdateRestaurantStatus(id string, restaurant models.Restaurant) (l interface{}, err error) {
+	pid, err := primitive.ObjectIDFromHex(id)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return s.w.FindOneAndUpdate(s.rc, models.Restaurant{ID: pid}, bson.D{{Key: "closed", Value: restaurant.Closed}})
 }

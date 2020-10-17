@@ -215,7 +215,8 @@ func (w *Worker) GetMultipleByID(collectionName string, model interface{}, ids [
 func (w *Worker) FindOneAndUpdate(collectionName string, filter interface{}, update interface{}) (
 	l interface{},
 	err error) {
-	return w.findOneAndUpdateHelper(collectionName, filter, update, "$update", "")
+
+	return w.findOneAndUpdateHelper(collectionName, filter, update, "$set", "")
 }
 
 // FindOneAndUpdate FindOneAndUpdate
@@ -254,27 +255,22 @@ func (w *Worker) findOneAndUpdateHelper(
 	c := w.db.Collection(collectionName)
 	ctx := context.Background()
 	filterTyp := reflect.TypeOf(i)
-	updateTyp := reflect.TypeOf(u)
-
-	uChecker := reflect.Zero(updateTyp).Interface()
-
-	if reflect.DeepEqual(u, uChecker) {
-		log.Println("EMPTY INTERFACE")
-		return l, errors.New("EMPTY")
-	}
 
 	l = reflect.New(filterTyp).Interface()
 
-	if action != "$set" && action != "$unset" {
+	if action == "$push" || action == "$pull" {
 		u = bson.M{field: u}
+		u = bson.M{action: u}
+	} else if action == "$set" || action == "$unset" {
+		u = bson.M{action: u}
 	}
 
-	upsert := true
 	after := options.After
 
-	r := c.FindOneAndUpdate(ctx, i, bson.M{action: u}, &options.FindOneAndUpdateOptions{
+	log.Println(i, u)
+
+	r := c.FindOneAndUpdate(ctx, i, u, &options.FindOneAndUpdateOptions{
 		ReturnDocument: &after,
-		Upsert:         &upsert,
 	})
 
 	if r.Err() != nil {

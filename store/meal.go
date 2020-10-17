@@ -44,7 +44,7 @@ func (s *Store) InsertMeal(m *models.Meal) (id string, err error) {
 }
 
 // InsertSpecial Make a meal special
-func (s *Store) InsertSpecial(id string) (string, error) {
+func (s *Store) InsertSpecial(id string, value bool) (string, error) {
 	c := s.mc
 	pid, err := primitive.ObjectIDFromHex(id)
 
@@ -53,7 +53,7 @@ func (s *Store) InsertSpecial(id string) (string, error) {
 	}
 
 	filter := models.Meal{ID: pid}
-	update := models.Meal{Special: true}
+	update := models.Meal{Special: value}
 
 	r, err := s.w.FindOneAndUpdate(c, filter, update)
 
