@@ -1,7 +1,6 @@
 package handler2
 
 import (
-	"log"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
@@ -14,7 +13,6 @@ func (h *Handler) registerAPI(api *echo.Group) {
 }
 
 func (h *Handler) registerAPIV1(api *echo.Group) {
-	log.Println("________API V1 Handler Initiated________")
 	api.GET("/test", h.routeTestV1)
 
 	// User

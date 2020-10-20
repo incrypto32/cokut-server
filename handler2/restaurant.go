@@ -3,6 +3,7 @@ package handler2
 import (
 	"io"
 	"log"
+	"mime/multipart"
 	"net/http"
 	"os"
 	"strconv"
@@ -25,19 +26,43 @@ func (h *Handler) addRestaurant(c echo.Context) (err error) {
 
 func (h *Handler) addRestaurantForm(c echo.Context) (err error) {
 	form, err := c.FormParams()
+	if err != nil {
+		log.Println(err)
+
+		return h.sendError(c, err)
+	}
+
 	latitude, err := strconv.ParseFloat(form["latitude"][0], 64)
+
+	if err != nil {
+		log.Println(err)
+
+		return h.sendError(c, err)
+	}
+
 	longitude, err := strconv.ParseFloat(form["longitude"][0], 64)
+
+	if err != nil {
+		log.Println(err)
+
+		return h.sendError(c, err)
+	}
 
 	pid := primitive.NewObjectID()
 
 	if err != nil {
 		log.Println(err)
+
 		return h.sendError(c, err)
 	}
 
 	location := models.Location{Latitude: latitude, Longitude: longitude}
 
-	r := models.Restaurant{ID: pid, Name: form["name"][0], Address: form["address"][0], Closed: utils.NewBool(true), Location: &location}
+	r := models.Restaurant{ID: pid,
+		Name:     form["name"][0],
+		Address:  form["address"][0],
+		Closed:   utils.NewBool(true),
+		Location: &location}
 
 	log.Println(r.GetModelData())
 
@@ -47,37 +72,22 @@ func (h *Handler) addRestaurantForm(c echo.Context) (err error) {
 	}
 
 	file, err := c.FormFile("file")
-
 	if err != nil {
-		log.Println(err)
 		return h.sendMessageWithFailure(c, "Please upload a vallid file", myerrors.FileUploadErrorCode)
 	}
 
-	log.Println(file.Filename)
-
-	src, err := file.Open()
-	if err != nil {
-		log.Println(err)
-		return h.sendMessageWithFailure(c, "Please upload a vallid file", myerrors.FileUploadErrorCode)
-	}
-	defer src.Close()
-
-	// Destination
-
-	dst, err := os.Create("./files/restaurants/" + pid.Hex() + ".png")
-	if err != nil {
-		log.Println(err)
-		return h.sendMessageWithFailure(c, "Please upload a vallid file", myerrors.FileUploadErrorCode)
-	}
-	defer dst.Close()
-
-	// Copy
-	if _, err = io.Copy(dst, src); err != nil {
-		log.Println(err)
+	if err = h.handleFile(file, pid); err != nil {
 		return h.sendMessageWithFailure(c, "Please upload a vallid file", myerrors.FileUploadErrorCode)
 	}
 
-	return c.JSON(http.StatusOK, form)
+	if result, err := h.store.InsertRestaurant(&r); err != nil {
+		return h.sendError(c, err)
+	} else {
+		return c.JSON(http.StatusOK, echo.Map{
+			"success": true,
+			"id":      result,
+		})
+	}
 }
 
 func (h *Handler) changeRestaurantStatus(c echo.Context) (err error) {
@@ -102,8 +112,45 @@ func (h *Handler) changeRestaurantStatus(c echo.Context) (err error) {
 
 	return c.JSON(http.StatusOK, result)
 }
-func (h *Handler) deleteRestaurant(c echo.Context) (err error) {
+func (h *Handler) handleFile(file *multipart.FileHeader, pid primitive.ObjectID) (err error) {
+	if err != nil {
+		log.Println(err)
+		return err
+	}
 
+	log.Println(file.Filename)
+
+	src, err := file.Open()
+	if err != nil {
+		log.Println(err)
+		return err
+	}
+	defer src.Close()
+
+	// Destination
+
+	dst, err := os.Create("./files/restaurants/" + pid.Hex() + ".png")
+	if err != nil {
+		log.Println(err)
+		return err
+	}
+	defer dst.Close()
+
+	// Copy
+	if _, err = io.Copy(dst, src); err != nil {
+		log.Println(err)
+		return err
+	}
+
+	if err != nil {
+		log.Println(err)
+		return err
+	}
+
+	return err
+}
+
+func (h *Handler) deleteRestaurant(c echo.Context) (err error) {
 	log.Println(c.QueryParam("id"))
 
 	a, err := h.store.DeleteRestaurant(c.QueryParam("id"))
@@ -126,7 +173,7 @@ func (h *Handler) getAllRegularRestaurants(c echo.Context) (err error) {
 	return h.getFiltered(c, h.store.GetAllRegularRestaurants)
 }
 
-//get Home
+// get Home
 func (h *Handler) getHomeMadeRestaurants(c echo.Context) (err error) {
 	return h.getFiltered(c, h.store.GetAllHomeMade)
 }

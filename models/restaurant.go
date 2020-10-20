@@ -30,7 +30,7 @@ func (r *Restaurant) GetModelData() string {
 }
 
 func (r *Restaurant) Validate() error {
-	if r.Name == "" || (len(r.Phone) < 10) || r.Address == "" {
+	if r.Name == "" || r.Location.Latitude == 0 || r.Location.Longitude == 0 || r.Address == "" {
 		return errors.New("NOT_VALIDATED")
 	}
 
