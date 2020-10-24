@@ -1,11 +1,11 @@
-package workers
+package workers_test
 
 import (
 	"log"
 	"testing"
 
-	"github.com/incrypt0/cokut-server/models"
 	"github.com/incrypt0/cokut-server/utils"
+	"github.com/incrypt0/cokut-server/workers"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -23,9 +23,9 @@ type Blah struct {
 }
 
 func TestDBHandler(t *testing.T) {
-	w := New()
+	w := workers.New()
 
-	a, err := w.Search("meals", models.Restaurant{}, "Night Arabian Bro")
+	a, err := w.PaginateOrders("orders")
 	if err != nil {
 		log.Println(err)
 	}

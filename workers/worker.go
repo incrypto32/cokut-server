@@ -9,6 +9,7 @@ import (
 	"reflect"
 
 	"github.com/incrypt0/cokut-server/brokers/myerrors"
+	"github.com/incrypt0/cokut-server/models"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -20,7 +21,7 @@ type Worker struct {
 	db *mongo.Database
 }
 
-// New Worker
+// New Worker .
 func New() *Worker {
 	var err error
 
@@ -41,7 +42,7 @@ func New() *Worker {
 	return &Worker{db: db}
 }
 
-// DropTest frop
+// DropTest frop.
 func (w *Worker) DropTest() error {
 	ctx := context.Background()
 
@@ -68,7 +69,7 @@ func (w *Worker) DropTest() error {
 	return nil
 }
 
-//Add Function to generally add anything to any collection
+// Add Function to generally add anything to any collection.
 func (w *Worker) Add(collectionName string, i interface{}) (id string, err error) {
 	ctx := context.Background()
 	c := w.db.Collection(collectionName)
@@ -76,6 +77,7 @@ func (w *Worker) Add(collectionName string, i interface{}) (id string, err error
 
 	if err != nil {
 		log.Println(err)
+
 		return id, errors.New("an error occurred please try again")
 	}
 
@@ -85,7 +87,7 @@ func (w *Worker) Add(collectionName string, i interface{}) (id string, err error
 	return id, err
 }
 
-//DeleteOne Function to generally add anything to any collection
+// DeleteOne Function to generally add anything to any collection.
 func (w *Worker) DeleteOne(collectionName string, i interface{}) (n int64, err error) {
 	c := w.db.Collection(collectionName)
 	ctx := context.Background()
@@ -93,6 +95,7 @@ func (w *Worker) DeleteOne(collectionName string, i interface{}) (n int64, err e
 
 	if err != nil {
 		log.Println(err)
+
 		return n, errors.New("an error occurred please try again")
 	}
 
@@ -107,7 +110,6 @@ func (w *Worker) DeleteOne(collectionName string, i interface{}) (n int64, err e
 
 // Get gets details from db with given filter
 func (w *Worker) Get(collectionName string, filter interface{}) (l []interface{}, err error) {
-	log.Println(collectionName)
 	c := w.db.Collection(collectionName)
 
 	ctx := context.Background()
@@ -126,6 +128,7 @@ func (w *Worker) Get(collectionName string, filter interface{}) (l []interface{}
 		// Remember dont use a pointer to l here by i
 		if err = cur.Decode(i); err != nil {
 			log.Println(err)
+
 			return l, err
 		}
 
@@ -156,6 +159,7 @@ func (w *Worker) Search(collectionName string, model interface{}, keyword string
 
 	if err != nil {
 		log.Println(err)
+
 		return nil, err
 	}
 
@@ -164,6 +168,7 @@ func (w *Worker) Search(collectionName string, model interface{}, keyword string
 		// Remember dont use a pointer to l here by i
 		if err = cur.Decode(i); err != nil {
 			log.Println(err)
+
 			return l, err
 		}
 
@@ -191,6 +196,7 @@ func (w *Worker) GetMultipleByID(collectionName string, model interface{}, ids [
 
 		if err != nil {
 			log.Println(err)
+
 			return nil, err
 		}
 	}
@@ -202,6 +208,7 @@ func (w *Worker) GetMultipleByID(collectionName string, model interface{}, ids [
 		// Remember dont use a pointer to l here by i
 		if err = cur.Decode(i); err != nil {
 			log.Println(err)
+
 			return nil, err
 		}
 
@@ -215,7 +222,6 @@ func (w *Worker) GetMultipleByID(collectionName string, model interface{}, ids [
 func (w *Worker) FindOneAndUpdate(collectionName string, filter interface{}, update interface{}) (
 	l interface{},
 	err error) {
-
 	return w.findOneAndUpdateHelper(collectionName, filter, update, "$set", "")
 }
 
@@ -304,7 +310,7 @@ func (w *Worker) FindOne(collectionName string, i interface{}) (l interface{}, e
 	r := c.FindOne(ctx, i)
 
 	if err := r.Err(); err != nil {
-		if err == mongo.ErrNoDocuments {
+		if errors.Is(err, mongo.ErrNoDocuments) {
 			return nil, myerrors.ErrNIL
 		}
 
@@ -316,6 +322,7 @@ func (w *Worker) FindOne(collectionName string, i interface{}) (l interface{}, e
 	// Remember dont use a pointer to l here
 	if err = r.Decode(l); err != nil {
 		log.Println(err)
+
 		return nil, err
 	}
 
@@ -341,7 +348,7 @@ func (w *Worker) FindOneWithOr(collectionName string, i ...interface{}) (l inter
 	r := c.FindOne(ctx, bson.D{{Key: "$or", Value: filters}})
 
 	if err := r.Err(); err != nil {
-		if err == mongo.ErrNoDocuments {
+		if errors.Is(err, mongo.ErrNoDocuments) {
 			return nil, myerrors.ErrNIL
 		}
 
@@ -353,10 +360,56 @@ func (w *Worker) FindOneWithOr(collectionName string, i ...interface{}) (l inter
 	// Remember dont use a pointer to l here
 	if err = r.Decode(l); err != nil {
 		log.Println(err)
+
 		return nil, err
 	}
 
 	return l, err
+}
+
+//
+func (w *Worker) PaginateOrders(collectionName string) (l []models.Order, err error) {
+	c := w.db.Collection(collectionName)
+	ctx := context.Background()
+
+	matchStage := bson.D{
+		{
+			Key: "$match", Value: bson.D{},
+		},
+	}
+
+	lookupStage := bson.D{
+		{
+			Key: "$lookup", Value: bson.D{
+				{Key: "from", Value: "users"},
+				{Key: "localField", Value: "uid"},
+				{Key: "foreignField", Value: "uid"},
+				{Key: "as", Value: "user"},
+			},
+		},
+	}
+
+	unwindStage := bson.D{
+		{
+			Key: "$unwind", Value: bson.D{
+				{Key: "path", Value: "$user"},
+				{Key: "preserveNullAndEmptyArrays", Value: false},
+			},
+		},
+	}
+
+	showLoadedStructCursor, err := c.Aggregate(ctx, mongo.Pipeline{matchStage, lookupStage, unwindStage})
+	if err != nil {
+		return nil, err
+	}
+
+	var showsLoadedStruct []models.Order
+
+	if err = showLoadedStructCursor.All(ctx, &showsLoadedStruct); err != nil {
+		panic(err)
+	}
+
+	return showsLoadedStruct, err
 }
 
 // ModelToString            ModelToString
