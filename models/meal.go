@@ -2,16 +2,17 @@ package models
 
 import (
 	"errors"
+	"log"
 
 	"github.com/incrypt0/cokut-server/utils"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type Meal struct {
-	IsVeg        bool               `json:"isVeg,omitempty" bson:"isVeg,omitempty"`
-	Special      bool               `json:"special,omitempty" bson:"special,omitempty"`
-	Spicey       bool               `json:"spicey,omitempty" bson:"spicey,omitempty"`
-	Available    bool               `json:"available,omitempty" bson:"available,omitempty"`
+	IsVeg        *bool              `json:"isVeg,omitempty" bson:"isVeg,omitempty"`
+	Special      *bool              `json:"special,omitempty" bson:"special,omitempty"`
+	Spicey       *bool              `json:"spicey,omitempty" bson:"spicey,omitempty"`
+	Available    *bool              `json:"available,omitempty" bson:"available,omitempty"`
 	ID           primitive.ObjectID `json:"id,omitempty" bson:"_id,omitempty"`
 	RID          string             `json:"rid,omitempty" bson:"rid,omitempty"`
 	Name         string             `json:"name,omitempty" bson:"name,omitempty" `
@@ -26,7 +27,8 @@ func (m *Meal) GetModelData() string {
 
 // Validate meal .
 func (m *Meal) Validate() error {
-	if m.Name == "" || (m.Price <= 0) || m.DisplayPrice <= 0 || m.RID == "" {
+	log.Println(m.GetModelData())
+	if m.Name == "" || (m.Price <= 0) || m.RID == "" {
 		return errors.New("NOT_VALIDATED")
 	}
 

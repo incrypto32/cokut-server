@@ -30,6 +30,7 @@ func New() *echo.Echo {
 
 	// Static files
 	e.Static("/static", "assets")
+	e.Static("/files", "files")
 
 	// Not found handler
 	echo.NotFoundHandler = func(c echo.Context) error {

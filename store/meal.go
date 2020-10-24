@@ -5,11 +5,11 @@ import (
 	"log"
 
 	"github.com/incrypt0/cokut-server/models"
-
+	"github.com/incrypt0/cokut-server/utils"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-//InsertMeal Function to insert Meals into meals collection.
+// InsertMeal Function to insert Meals into meals collection.
 func (s *Store) InsertMeal(m *models.Meal) (id string, err error) {
 	c := s.mc
 	rc := s.rc
@@ -30,6 +30,7 @@ func (s *Store) InsertMeal(m *models.Meal) (id string, err error) {
 	if err != nil {
 		if err.Error() == "NIL" {
 			log.Println("NIL ERROR")
+
 			return "", errors.New("restaurant doesn't exist")
 		}
 
@@ -53,7 +54,7 @@ func (s *Store) InsertSpecial(id string, value bool) (string, error) {
 	}
 
 	filter := models.Meal{ID: pid}
-	update := models.Meal{Special: value}
+	update := models.Meal{Special: utils.NewBool(value)}
 
 	r, err := s.w.FindOneAndUpdate(c, filter, update)
 
@@ -80,10 +81,15 @@ func (s *Store) GetMealsByRestaurant(rid string) (l []interface{}, err error) {
 
 // GetSpecialMeals .
 func (s *Store) GetSpecialMeals() (l []interface{}, err error) {
-	return s.w.Get(s.mc, models.Meal{Special: true})
+	return s.w.Get(s.mc, models.Meal{Special: utils.NewBool(true)})
 }
 
 // GetSpiceyMeals .
 func (s *Store) GetSpiceyMeals() (l []interface{}, err error) {
-	return s.w.Get(s.mc, models.Meal{Spicey: true})
+	return s.w.Get(s.mc, models.Meal{Spicey: utils.NewBool(true)})
+}
+
+// deleteMeal
+func (s *Store) DeleteMeal(id string) (int64, error) {
+	return s.w.DeleteOne(s.mc, models.Meal{})
 }

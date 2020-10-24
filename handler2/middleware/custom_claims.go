@@ -19,6 +19,7 @@ func CustomClaimRegister(app *firebase.App) func(string, map[string]interface{})
 
 		if err != nil {
 			log.Printf("error getting Auth client: %v\n", err)
+
 			return err
 		}
 
@@ -31,6 +32,7 @@ func CustomClaimRegister(app *firebase.App) func(string, map[string]interface{})
 
 		if err != nil {
 			log.Printf("error setting custom claims %v\n", err)
+
 			return err
 		}
 

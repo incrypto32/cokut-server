@@ -42,20 +42,22 @@ func (h *Handler) registerAPIV1(api *echo.Group) {
 
 	api.POST("/order", h.addOrder)
 
-	a := api.Group("/admin")
-	h.registerAdmin(a)
 }
 
-// The Admin Api
+// The Admin Api .
 func (h *Handler) registerAdmin(a *echo.Group) {
+	meal := a.Group("/meal")
+	meal.POST("", h.addMeal)
+	meal.DELETE("", h.deleteMeal)
+
 	a.GET("/test", h.routeTestAdmin)
 	a.GET("/orders", h.getOrders)
 	a.POST("/restaurant", h.addRestaurant)
-	a.POST("/meal", h.addMeal)
+
 	a.POST("/special", h.addSpecial)
 }
 
-// The Admin Api
+// The Admin Api .
 func (h *Handler) registerUtils(u *echo.Group) {
 	u.POST("/checkphone", h.checkUserPhoneExistence)
 	u.POST("/checkuser", h.checkUserExistence)
@@ -63,13 +65,13 @@ func (h *Handler) registerUtils(u *echo.Group) {
 	u.POST("/getuser", h.getUser)
 }
 
-// Register this method registers a new group with handler
+// Register this method registers a new group with handler .
 func (h *Handler) Register(e *echo.Echo) {
 	// Index Handler
 	e.Use(middleware.CORS())
 	e.GET("/", h.index)
 
-	// Groups
+	// Groups .
 	api := e.Group("/api")
 	admin := e.Group("/admin")
 	u := e.Group("/utils")

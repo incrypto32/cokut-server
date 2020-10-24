@@ -20,6 +20,7 @@ func FireAuthMiddleware(app *firebase.App) echo.MiddlewareFunc {
 
 			if err != nil {
 				log.Println(err)
+
 				return err
 			}
 
@@ -38,13 +39,14 @@ func FireAuthMiddleware(app *firebase.App) echo.MiddlewareFunc {
 
 			if idToken == "TEST_TOKEN" {
 				c.Set("uid", "TEST_USER")
+
 				return next(c)
 			}
 
 			token, err := client.VerifyIDToken(context.Background(), idToken)
-
 			if err != nil {
 				log.Println(err.Error())
+
 				return c.JSON(http.StatusExpectationFailed, echo.Map{"success": false, "msg": "ID Token Expired"})
 			}
 

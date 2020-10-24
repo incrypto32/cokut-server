@@ -58,13 +58,28 @@ func (h *Handler) getSpecials(c echo.Context) (err error) {
 	return h.getFiltered(c, h.store.GetSpecialMeals)
 }
 
-// getSpicey
+// getSpicey .
 func (h *Handler) getSpicey(c echo.Context) (err error) {
 	return h.getFiltered(c, h.store.GetSpiceyMeals)
 }
 
-// getSpicey
+// getSpicey.
 func (h *Handler) searchMeal(c echo.Context) (err error) {
 	keyword := c.QueryParam("keyword")
+
 	return h.getFiltered(c, func() ([]interface{}, error) { return h.store.SearchMeal(keyword) })
+}
+
+//  deleteMeal
+func (h *Handler) deleteMeal(c echo.Context) (err error) {
+	id := c.QueryParams().Get("id")
+
+	_, err = h.store.DeleteMeal(id)
+	if err != nil {
+		log.Println(err)
+
+		return h.sendError(c, err)
+	}
+
+	return c.JSON(http.StatusOK, echo.Map{"success": true})
 }

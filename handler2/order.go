@@ -5,7 +5,7 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-// Create a new order
+// Create a new order .
 func (h *Handler) addOrder(c echo.Context) (err error) {
 	r := new(models.Order)
 	r.UID = c.Get("uid").(string)
@@ -21,5 +21,6 @@ func (h *Handler) getOrders(c echo.Context) (err error) {
 
 func (h *Handler) getUserOrders(c echo.Context) (err error) {
 	c.QueryParams().Add("uid", c.Get("uid").(string))
+
 	return h.getBySpecificFilter(c, "uid", h.store.GetOrdersByUser)
 }

@@ -22,6 +22,7 @@ type CokutBroker interface {
 	GetAllRegularRestaurants() (l []interface{}, err error)
 	GetAllHomeMade() (l []interface{}, err error)
 	InsertMeal(m *models.Meal) (id string, err error)
+	DeleteMeal(id string) (int64, error)
 	InsertSpecial(id string, value bool) (string, error)
 	GetMealsByRestaurant(rid string) (l []interface{}, err error)
 	GetSpecialMeals() (l []interface{}, err error)

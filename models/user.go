@@ -15,17 +15,17 @@ type PlaceInfo struct {
 
 // Address
 type Address struct {
-	PlaceInfo    PlaceInfo `json:"place,omitempty" bson:"place,omitempty"`
-	Title        string    `json:"title,omitempty" bson:"title,omitempty"`
-	Zone         string    `json:"zone,omitempty" bson:"zone,omitempty"`
-	AddressLine1 string    `json:"adl1,omitempty" bson:"adl1,omitempty"`
-	AddressLine2 string    `json:"adl2,omitempty" bson:"adl2,omitempty"`
-	AddressLine3 string    `json:"adl3,omitempty" bson:"adl3,omitempty"`
+	PlaceInfo    *PlaceInfo `json:"place,omitempty" bson:"place,omitempty"`
+	Title        string     `json:"title,omitempty" bson:"title,omitempty"`
+	Zone         string     `json:"zone,omitempty" bson:"zone,omitempty"`
+	AddressLine1 string     `json:"adl1,omitempty" bson:"adl1,omitempty"`
+	AddressLine2 string     `json:"adl2,omitempty" bson:"adl2,omitempty"`
+	AddressLine3 string     `json:"adl3,omitempty" bson:"adl3,omitempty"`
 }
 
 // User struct
 type User struct {
-	Admin     bool               `json:"admin,omitempty" bson:"admin,omitempty"`
+	Admin     *bool              `json:"admin,omitempty" bson:"admin,omitempty"`
 	ID        string             `json:"id,omitempty" bson:"_id,omitempty"`
 	UID       string             `json:"uid,omitempty" bson:"uid,omitempty"`
 	GID       string             `json:"gid,omitempty" bson:"gid,omitempty"`

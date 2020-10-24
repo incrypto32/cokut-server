@@ -17,9 +17,10 @@ type Order struct {
 	ID             primitive.ObjectID `json:"id,omitempty" bson:"_id,omitempty"`
 	RID            string             `json:"rid,omitempty" bson:"rid,omitempty"`
 	UID            string             `json:"uid,omitempty" bson:"uid,omitempty"`
-	Address        Address            `json:"address,omitempty" bson:"address,omitempty"`
+	Address        *Address           `json:"address,omitempty" bson:"address,omitempty"`
 	Items          map[string]int     `json:"items,omitempty" bson:"items,omitempty"`
 	Summary        []Summary          `json:"summary,omitempty" bson:"summary,omitempty"`
+	User           *User              `json:"user,omitempty" bson:"user,omitempty"`
 	Time           primitive.DateTime `json:"time,omitempty" bson:"time,omitempty"`
 	Price          float64            `json:"price,omitempty" bson:"price,omitempty"`
 	Total          float64            `json:"total,omitempty" bson:"total,omitempty"`

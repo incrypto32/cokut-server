@@ -15,7 +15,6 @@ func TestUser1(t *testing.T) {
 	user := &models.User{
 		Name:  "Krish",
 		Email: "vpkrishnanand@gmail.com",
-		Admin: true,
 		Phone: "7034320441",
 		UID:   "1",
 		GID:   "g1",

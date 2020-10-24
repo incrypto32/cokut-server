@@ -9,7 +9,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-//InsertUser Function to insert users into userCollection
+// InsertUser Function to insert users into userCollection
 func (s *Store) InsertUser(u *models.User) (id string, err error) {
 	var l interface{}
 
@@ -29,6 +29,7 @@ func (s *Store) InsertUser(u *models.User) (id string, err error) {
 	if err != nil {
 		if err.Error() != "NIL" {
 			log.Println(err)
+
 			return id, errors.New("ERROR")
 		}
 	}
@@ -40,7 +41,7 @@ func (s *Store) InsertUser(u *models.User) (id string, err error) {
 	return s.w.Add(c, u)
 }
 
-//InsertUser Function to insert users into userCollection
+// InsertUser Function to insert users into userCollection
 func (s *Store) AddUserAddress(uid string, address models.Address) (user *models.User, err error) {
 	var i interface{}
 
@@ -54,6 +55,7 @@ func (s *Store) AddUserAddress(uid string, address models.Address) (user *models
 	if err != nil {
 		if err.Error() != "NIL" {
 			log.Println(err)
+
 			return user, errors.New("ERROR")
 		}
 	}
@@ -63,7 +65,7 @@ func (s *Store) AddUserAddress(uid string, address models.Address) (user *models
 	return user, err
 }
 
-//InsertUser Function to insert users into userCollection
+// InsertUser Function to insert users into userCollection
 func (s *Store) RemoveUserAddress(uid string, address models.Address) (user *models.User, err error) {
 	var i interface{}
 
@@ -78,6 +80,7 @@ func (s *Store) RemoveUserAddress(uid string, address models.Address) (user *mod
 	if err != nil {
 		if err.Error() != "NIL" {
 			log.Println(err)
+
 			return user, errors.New("ERROR")
 		}
 	}
@@ -92,7 +95,7 @@ func (s *Store) GetUser(uid string) (l interface{}, err error) {
 	return s.w.FindOne(s.uc, models.User{UID: uid})
 }
 
-//CheckUserPhoneExistence  checks whether the user exists with a phone
+// CheckUserPhoneExistence  checks whether the user exists with a phone
 func (s *Store) CheckUserPhoneExistence(phone string) (bool, error) {
 	var val bool = true
 
@@ -115,7 +118,7 @@ func (s *Store) CheckUserPhoneExistence(phone string) (bool, error) {
 	return val, nil
 }
 
-//CheckUserPhoneExistenceByGID  checks whether the user exists with a phone
+// CheckUserPhoneExistenceByGID  checks whether the user exists with a phone
 func (s *Store) CheckUserExistenceByGID(gid string) (bool, error) {
 	var val bool = true
 
@@ -138,7 +141,7 @@ func (s *Store) CheckUserExistenceByGID(gid string) (bool, error) {
 	return val, nil
 }
 
-//CheckUserExistence checks whether the user exists based on email and phone
+// CheckUserExistence checks whether the user exists based on email and phone
 func (s *Store) CheckUserExistence(phone string, email string) (bool, error) {
 	var val bool
 
@@ -170,7 +173,7 @@ func (s *Store) CheckUserExistence(phone string, email string) (bool, error) {
 	return val, err
 }
 
-//CheckUserExistenceByUID checks whether the user exists based on UID
+// CheckUserExistenceByUID checks whether the user exists based on UID
 func (s *Store) CheckUserExistenceByUID(uid string) (bool, error) {
 	var val bool
 

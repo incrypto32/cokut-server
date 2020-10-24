@@ -32,7 +32,7 @@ func main() {
 	r := router.New()
 
 	// Main Echo Handler
-	h := handler2.NewHandler(s, fireAuthMWare)
+	h := handler2.NewHandler(s, fireAuthMWare, "http://locahost:4000")
 	h.Register(r)
 
 	// Server Start

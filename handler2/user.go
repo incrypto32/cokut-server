@@ -24,6 +24,7 @@ func (h *Handler) registerUser(c echo.Context) (err error) {
 	r.UID = uid.(string)
 	if id, err = h.store.InsertUser(r); err != nil {
 		log.Println(err)
+
 		return h.sendMessageWithFailure(c, err.Error(), myerrors.ErrBasicCode)
 	}
 
@@ -64,6 +65,7 @@ func (h *Handler) addAddress(c echo.Context) (err error) {
 
 	if err := c.Bind(&a); err != nil {
 		log.Println(err)
+
 		return h.sendError(c, err)
 	}
 
@@ -139,6 +141,7 @@ func (h *Handler) checkUserExistence(c echo.Context) (err error) {
 	m := echo.Map{}
 	if err := c.Bind(&m); err != nil {
 		log.Println(err)
+
 		return h.sendError(c, err)
 	}
 
