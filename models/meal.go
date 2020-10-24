@@ -28,6 +28,7 @@ func (m *Meal) GetModelData() string {
 // Validate meal .
 func (m *Meal) Validate() error {
 	log.Println(m.GetModelData())
+
 	if m.Name == "" || (m.Price <= 0) || m.RID == "" {
 		return errors.New("NOT_VALIDATED")
 	}
