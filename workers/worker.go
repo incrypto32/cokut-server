@@ -9,7 +9,6 @@ import (
 	"reflect"
 
 	"github.com/incrypt0/cokut-server/brokers/myerrors"
-	"github.com/incrypt0/cokut-server/models"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -19,6 +18,17 @@ import (
 // Worker .
 type Worker struct {
 	db *mongo.Database
+	oh *orderAggregationHelper
+}
+
+type orderAggregationHelper struct {
+	idConversionStage     bson.D
+	matchStage            bson.D
+	mealsLookupStage      bson.D
+	userLookupStage       bson.D
+	restaurantLookupStage bson.D
+	userUnwindStage       bson.D
+	restaurantUnwindStage bson.D
 }
 
 // New Worker .
@@ -39,7 +49,94 @@ func New() *Worker {
 
 	db := client.Database("cokut")
 
-	return &Worker{db: db}
+	return &Worker{
+		db: db,
+		oh: NewOrderAggregationHelper(),
+	}
+}
+
+func NewOrderAggregationHelper() *orderAggregationHelper {
+	idConversionStage := bson.D{
+		{Key: "$addFields", Value: bson.M{"roid": bson.M{"$toObjectId": "$rid"}}},
+	}
+
+	matchStage := bson.D{{Key: "$match", Value: bson.D{}}}
+
+	userLookupStage := bson.D{
+		{
+			Key: "$lookup", Value: bson.M{
+				"from":         "users",
+				"localField":   "uid",
+				"foreignField": "uid",
+				"as":           "user",
+			},
+		},
+	}
+
+	pipeline := []bson.M{
+		{
+			"$match": bson.M{
+				"$expr": bson.M{
+					"$in": []interface{}{
+						bson.M{"$toString": "$_id"},
+						"$$meals.k",
+					},
+				},
+			},
+		},
+	}
+
+	mealsLookupStage := bson.D{
+		{
+			Key: "$lookup", Value: bson.M{
+				"from": "meals",
+				"let": bson.M{
+					"meals": bson.M{"$objectToArray": "$items"},
+				},
+				"pipeline": pipeline,
+				"as":       "meals",
+			},
+		},
+	}
+
+	restaurantLookupStage := bson.D{
+		{
+			Key: "$lookup", Value: bson.M{
+				"from":         "restaurants",
+				"localField":   "roid",
+				"foreignField": "_id",
+				"as":           "restaurant",
+			},
+		},
+	}
+
+	userUnwindStage := bson.D{
+		{
+			Key: "$unwind", Value: bson.D{
+				{Key: "path", Value: "$user"},
+				{Key: "preserveNullAndEmptyArrays", Value: false},
+			},
+		},
+	}
+
+	restaurantUnwindStage := bson.D{
+		{
+			Key: "$unwind", Value: bson.D{
+				{Key: "path", Value: "$restaurant"},
+				{Key: "preserveNullAndEmptyArrays", Value: false},
+			},
+		},
+	}
+
+	return &orderAggregationHelper{
+		idConversionStage:     idConversionStage,
+		matchStage:            matchStage,
+		mealsLookupStage:      mealsLookupStage,
+		restaurantLookupStage: restaurantLookupStage,
+		restaurantUnwindStage: restaurantUnwindStage,
+		userLookupStage:       userLookupStage,
+		userUnwindStage:       userUnwindStage,
+	}
 }
 
 // DropTest frop.
@@ -365,51 +462,6 @@ func (w *Worker) FindOneWithOr(collectionName string, i ...interface{}) (l inter
 	}
 
 	return l, err
-}
-
-//
-func (w *Worker) PaginateOrders(collectionName string) (l []models.Order, err error) {
-	c := w.db.Collection(collectionName)
-	ctx := context.Background()
-
-	matchStage := bson.D{
-		{
-			Key: "$match", Value: bson.D{},
-		},
-	}
-
-	lookupStage := bson.D{
-		{
-			Key: "$lookup", Value: bson.D{
-				{Key: "from", Value: "users"},
-				{Key: "localField", Value: "uid"},
-				{Key: "foreignField", Value: "uid"},
-				{Key: "as", Value: "user"},
-			},
-		},
-	}
-
-	unwindStage := bson.D{
-		{
-			Key: "$unwind", Value: bson.D{
-				{Key: "path", Value: "$user"},
-				{Key: "preserveNullAndEmptyArrays", Value: false},
-			},
-		},
-	}
-
-	showLoadedStructCursor, err := c.Aggregate(ctx, mongo.Pipeline{matchStage, lookupStage, unwindStage})
-	if err != nil {
-		return nil, err
-	}
-
-	var showsLoadedStruct []models.Order
-
-	if err = showLoadedStructCursor.All(ctx, &showsLoadedStruct); err != nil {
-		panic(err)
-	}
-
-	return showsLoadedStruct, err
 }
 
 // ModelToString            ModelToString

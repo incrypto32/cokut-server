@@ -72,7 +72,7 @@ func (s *Store) calculateOrderPrice(o *models.Order, l []interface{}) {
 		count := o.Items[meal.ID.Hex()]
 		price := meal.Price * float64(count)
 
-		o.Summary = append(o.Summary, models.Summary{Meal: *meal, Count: count, Price: price})
+		o.Summary = append(o.Summary, &models.Summary{Meal: *meal, Count: count, Price: price})
 		o.Price += price
 	}
 }

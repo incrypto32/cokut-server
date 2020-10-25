@@ -35,12 +35,12 @@ type User struct {
 	Addresses map[string]Address `json:"address,omitempty" bson:"address,omitempty"`
 }
 
-//GetModelData Prints Model Data in String
+// GetModelData Prints Model Data in String
 func (u *User) GetModelData() string {
 	return utils.ModelToString(u)
 }
 
-//Validate Real Validation
+// Validate Real Validation
 func (u *User) Validate() error {
 	if (u.Name == "") || (len(u.Phone) < 10) || u.UID == "" {
 		return errors.New("Not Validated")
@@ -49,7 +49,7 @@ func (u *User) Validate() error {
 	return nil
 }
 
-//ValidateBasic Basic Validate
+// ValidateBasic Basic Validate
 func (u *User) ValidateBasic() error {
 	if u.Name == "" {
 		return errors.New("Enter Valid Details")
@@ -62,7 +62,7 @@ func (u *User) ValidateBasic() error {
 	return nil
 }
 
-//ValidateEmail Basic Validate
+// ValidateEmail Basic Validate
 func (u *User) ValidateEmail() error {
 	if (u.Email == "") || (len(u.Email) < 5) {
 		return errors.New("Enter A Valid Email")
