@@ -29,18 +29,20 @@ type CokutBroker interface {
 	GetSpiceyMeals() (l []interface{}, err error)
 	CreateOrder(o *models.Order) (po *models.Order, err error)
 	GetAllOrders() (l []interface{}, err error)
+	GetPaginatedOrders(limit int, page int) (l []models.Order, err error)
 	GetOrdersByUser(uid string) (l []interface{}, err error)
 }
 
 // DbBroker is the interface whoch abstracts all the db functionalities
 // It acts as a mediator between actual db workers and the store object
-type DbBroker interface {
+type DBBroker interface {
 	DropTest() error
 	Add(collectionName string, i interface{}) (id string, err error)
 	DeleteOne(collectionName string, i interface{}) (n int64, err error)
 	Get(collectionName string, i interface{}) (l []interface{}, err error)
 	Search(collectionName string, model interface{}, keyword string) (l []interface{}, err error)
 	GetMultipleByID(collectionName string, model interface{}, ids []string) (l []interface{}, err error)
+	PaginatedOrders(collectionName string, limit int, page int) (l []models.Order, err error)
 	FindOneAndUpdate(collectionName string, filter interface{}, update interface{}) (l interface{}, err error)
 	FindOneAndUpdateMap(collectionName string, filter interface{}, update interface{}) (l interface{}, err error)
 	DeleteFromMap(collectionName string, filter interface{}, update interface{}) (l interface{}, err error)

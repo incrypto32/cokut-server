@@ -9,8 +9,92 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
+func NewOrderAggregationHelper() *orderAggregationHelper {
+	idConversionStage := bson.D{
+		{Key: "$addFields", Value: bson.M{"roid": bson.M{"$toObjectId": "$rid"}}},
+	}
+
+	matchStage := bson.D{{Key: "$match", Value: bson.D{}}}
+
+	userLookupStage := bson.D{
+		{
+			Key: "$lookup", Value: bson.M{
+				"from":         "users",
+				"localField":   "uid",
+				"foreignField": "uid",
+				"as":           "user",
+			},
+		},
+	}
+
+	pipeline := []bson.M{
+		{
+			"$match": bson.M{
+				"$expr": bson.M{
+					"$in": []interface{}{
+						bson.M{"$toString": "$_id"},
+						"$$meals.k",
+					},
+				},
+			},
+		},
+	}
+
+	mealsLookupStage := bson.D{
+		{
+			Key: "$lookup", Value: bson.M{
+				"from": "meals",
+				"let": bson.M{
+					"meals": bson.M{"$objectToArray": "$items"},
+				},
+				"pipeline": pipeline,
+				"as":       "meals",
+			},
+		},
+	}
+
+	restaurantLookupStage := bson.D{
+		{
+			Key: "$lookup", Value: bson.M{
+				"from":         "restaurants",
+				"localField":   "roid",
+				"foreignField": "_id",
+				"as":           "restaurant",
+			},
+		},
+	}
+
+	userUnwindStage := bson.D{
+		{
+			Key: "$unwind", Value: bson.D{
+				{Key: "path", Value: "$user"},
+				{Key: "preserveNullAndEmptyArrays", Value: false},
+			},
+		},
+	}
+
+	restaurantUnwindStage := bson.D{
+		{
+			Key: "$unwind", Value: bson.D{
+				{Key: "path", Value: "$restaurant"},
+				{Key: "preserveNullAndEmptyArrays", Value: false},
+			},
+		},
+	}
+
+	return &orderAggregationHelper{
+		idConversionStage:     idConversionStage,
+		matchStage:            matchStage,
+		mealsLookupStage:      mealsLookupStage,
+		restaurantLookupStage: restaurantLookupStage,
+		restaurantUnwindStage: restaurantUnwindStage,
+		userLookupStage:       userLookupStage,
+		userUnwindStage:       userUnwindStage,
+	}
+}
+
 // PaginateOrders
-func (w *Worker) PaginatedOrders(collectionName string) (l interface{}, err error) {
+func (w *Worker) PaginatedOrders(collectionName string, limit int, page int) (l []models.Order, err error) {
 	ctx := context.Background()
 
 	if err != nil {
@@ -19,7 +103,7 @@ func (w *Worker) PaginatedOrders(collectionName string) (l interface{}, err erro
 
 	var showsLoadedStruct []models.Order
 
-	showLoadedStructCursor, err := w.aggregateOrders(collectionName, 5, 1)
+	showLoadedStructCursor, err := w.aggregateOrders(collectionName, limit, page)
 
 	if err != nil {
 		log.Println(err)

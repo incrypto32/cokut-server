@@ -25,7 +25,7 @@ type Blah struct {
 func TestDBHandler(t *testing.T) {
 	w := workers.New()
 
-	a, err := w.PaginatedOrders("orders")
+	a, err := w.PaginatedOrders("orders", 5, 1)
 	if err != nil {
 		log.Println(err)
 	}

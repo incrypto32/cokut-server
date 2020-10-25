@@ -10,11 +10,11 @@ type Store struct {
 	uc     string
 	orders string
 	rc     string
-	w      brokers.DbBroker
+	w      brokers.DBBroker
 }
 
 // NewStore creates a new store
-func NewStore(mc string, uc string, orders string, rc string, w brokers.DbBroker) *Store {
+func NewStore(mc string, uc string, orders string, rc string, w brokers.DBBroker) *Store {
 	return &Store{
 		uc:     uc,
 		rc:     rc,

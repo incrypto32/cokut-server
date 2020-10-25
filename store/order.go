@@ -94,3 +94,8 @@ func (s *Store) GetAllOrders() (l []interface{}, err error) {
 func (s *Store) GetOrdersByUser(uid string) (l []interface{}, err error) {
 	return s.w.Get(s.orders, bson.M{"uid": uid})
 }
+
+// GetOrdersByUser user orders are returned
+func (s *Store) GetPaginatedOrders(limit int, page int) (l []models.Order, err error) {
+	return s.w.PaginatedOrders(s.orders, limit, page)
+}
