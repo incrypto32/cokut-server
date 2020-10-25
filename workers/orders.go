@@ -10,7 +10,7 @@ import (
 )
 
 // PaginateOrders
-func (w *Worker) PaginateOrders(collectionName string) (l interface{}, err error) {
+func (w *Worker) PaginatedOrders(collectionName string) (l interface{}, err error) {
 	ctx := context.Background()
 
 	if err != nil {
@@ -28,7 +28,9 @@ func (w *Worker) PaginateOrders(collectionName string) (l interface{}, err error
 	}
 
 	if err = showLoadedStructCursor.All(ctx, &showsLoadedStruct); err != nil {
-		panic(err)
+		log.Println(err)
+
+		return nil, err
 	}
 
 	return showsLoadedStruct, err
