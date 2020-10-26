@@ -94,5 +94,5 @@ func (h *Handler) routeTestV1(c echo.Context) error {
 }
 
 func (h *Handler) routeTestAPI(c echo.Context) error {
-	return c.JSON(http.StatusOK, echo.Map{"success": true, "msg": "V1 working fine"})
+	return c.JSON(http.StatusOK, echo.Map{"success": true, "msg": "HMM"})
 }
