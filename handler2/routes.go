@@ -48,7 +48,6 @@ func (h *Handler) registerAdmin(a *echo.Group) {
 	meal := a.Group("/meal")
 	meal.POST("", h.addMeal)
 	meal.DELETE("", h.deleteMeal)
-
 	a.GET("/test", h.routeTestAdmin)
 	a.GET("/orders", h.getOrdersPaginated)
 	a.POST("/restaurant", h.addRestaurant)
@@ -72,6 +71,8 @@ func (h *Handler) Register(e *echo.Echo) {
 
 	// Groups .
 	api := e.Group("/api")
+	api.GET("", h.routeTestAPI)
+
 	admin := e.Group("/admin")
 	u := e.Group("/utils")
 
@@ -89,5 +90,9 @@ func (h *Handler) routeTestAdmin(c echo.Context) error {
 }
 
 func (h *Handler) routeTestV1(c echo.Context) error {
+	return c.JSON(http.StatusOK, echo.Map{"success": true, "msg": "V1 working fine"})
+}
+
+func (h *Handler) routeTestAPI(c echo.Context) error {
 	return c.JSON(http.StatusOK, echo.Map{"success": true, "msg": "V1 working fine"})
 }
