@@ -4,6 +4,7 @@ import (
 	"errors"
 	"log"
 
+	"github.com/incrypt0/cokut-server/brokers/myerrors"
 	"github.com/incrypt0/cokut-server/models"
 	"github.com/incrypt0/cokut-server/utils"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -28,7 +29,7 @@ func (s *Store) InsertMeal(m *models.Meal) (id string, err error) {
 	r, err := s.w.FindOne(rc, models.Restaurant{ID: rid})
 
 	if err != nil {
-		if err.Error() == "NIL" {
+		if errors.Is(myerrors.ErrNIL, err) {
 			log.Println("NIL ERROR")
 
 			return "", errors.New("restaurant doesn't exist")

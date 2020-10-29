@@ -15,7 +15,7 @@ type CokutBroker interface {
 	CheckUserExistenceByUID(UID string) (bool, error)
 	InsertRestaurant(r *models.Restaurant) (id string, err error)
 	UpdateRestaurant(id string, restaurant models.Restaurant) (l interface{}, err error)
-	DeleteRestaurant(id string) (l interface{}, err error)
+	DeleteRestaurant(id string) (n int64, err error)
 	UpdateRestaurantStatus(id string, restaurant models.Restaurant) (l interface{}, err error)
 	SearchMeal(searchText string) (l []interface{}, err error)
 	GetAllRestaurants() (l []interface{}, err error)

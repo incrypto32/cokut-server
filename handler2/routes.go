@@ -50,7 +50,10 @@ func (h *Handler) registerAdmin(a *echo.Group) {
 	meal.DELETE("", h.deleteMeal)
 	a.GET("/test", h.routeTestAdmin)
 	a.GET("/orders", h.getOrdersPaginated)
-	a.POST("/restaurant", h.addRestaurant)
+
+	store := a.Group("/restaurant")
+	store.POST("", h.addRestaurant)
+	store.DELETE("", h.deleteRestaurant)
 
 	a.POST("/special", h.addSpecial)
 }
@@ -71,6 +74,7 @@ func (h *Handler) Register(e *echo.Echo) {
 
 	// Groups .
 	api := e.Group("/api")
+
 	api.GET("", h.routeTestAPI)
 
 	admin := e.Group("/admin")

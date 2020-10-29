@@ -1,11 +1,11 @@
 package store
 
 import (
-	"errors"
-	"log"
 	"time"
 
+	"github.com/incrypt0/cokut-server/brokers/myerrors"
 	"github.com/incrypt0/cokut-server/models"
+	"github.com/incrypt0/cokut-server/utils"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
@@ -17,11 +17,11 @@ func (s *Store) CreateOrder(o *models.Order) (po *models.Order, err error) {
 	o.Time = primitive.NewDateTimeFromTime(time.Now())
 
 	if err = o.Validate(); err != nil {
-		return po, err
+		return nil, err
 	}
 
 	if err = s.processOrder(o); err != nil {
-		return po, err
+		return nil, err
 	}
 
 	if id, err := s.w.Add(c, o); err != nil {
@@ -38,7 +38,6 @@ func (s *Store) processOrder(o *models.Order) error {
 	ids := make([]string, 0, len(o.Items))
 
 	for key := range o.Items {
-		log.Println(key, "_____", len(o.Items))
 		ids = append(ids, key)
 	}
 
@@ -50,13 +49,13 @@ func (s *Store) processOrder(o *models.Order) error {
 	if r, err := s.w.FindOne(s.rc, models.Restaurant{ID: rid}); err != nil {
 		return err
 	} else if *(r.(*models.Restaurant).Closed) {
-		return errors.New("RESTAURANT CLOSED")
+		return myerrors.ErrRestaurantClosed
 	}
 
 	l, err := s.w.GetMultipleByID(mealCollection, models.Meal{}, ids)
 
 	s.calculateOrderPrice(o, l)
-	s.calculateDeliveryCharge(o)
+	s.calculateDeliveryCharge(o, o.Restaurant.Location.Latitude, o.Restaurant.Location.Longitude)
 	s.calculateTotal(o)
 
 	if err != nil {
@@ -77,8 +76,14 @@ func (s *Store) calculateOrderPrice(o *models.Order, l []interface{}) {
 	}
 }
 
-func (s *Store) calculateDeliveryCharge(o *models.Order) {
-	o.DeliveryCharge = 20
+func (s *Store) calculateDeliveryCharge(o *models.Order, lat float64, long float64) float64 {
+	dist := utils.Distance(o.Address.PlaceInfo.Latitude, o.Address.PlaceInfo.Longitude, lat, long)
+
+	if dist <= 5000 {
+		return 30.0
+	}
+
+	return (dist / 1000) * 7
 }
 
 func (s *Store) calculateTotal(o *models.Order) {

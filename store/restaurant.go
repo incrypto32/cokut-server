@@ -52,11 +52,11 @@ func (s *Store) UpdateRestaurant(id string, restaurant models.Restaurant) (l int
 
 // Delete Restaurant
 
-func (s *Store) DeleteRestaurant(id string) (l interface{}, err error) {
+func (s *Store) DeleteRestaurant(id string) (n int64, err error) {
 	pid, err := primitive.ObjectIDFromHex(id)
 
 	if err != nil {
-		return nil, err
+		return 0, err
 	}
 
 	return s.w.DeleteOne(s.rc, models.Restaurant{ID: pid})

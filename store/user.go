@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/incrypt0/cokut-server/brokers/myerrors"
 	"github.com/incrypt0/cokut-server/models"
 	"go.mongodb.org/mongo-driver/bson"
 )
@@ -27,7 +28,7 @@ func (s *Store) InsertUser(u *models.User) (id string, err error) {
 		models.User{UID: u.UID})
 
 	if err != nil {
-		if err.Error() != "NIL" {
+		if errors.Is(err, myerrors.ErrNIL) {
 			log.Println(err)
 
 			return id, errors.New("ERROR")
@@ -53,7 +54,7 @@ func (s *Store) AddUserAddress(uid string, address models.Address) (user *models
 	i, err = s.w.FindOneAndUpdateMap(c, models.User{UID: uid}, update)
 
 	if err != nil {
-		if err.Error() != "NIL" {
+		if errors.Is(err, myerrors.ErrNIL) {
 			log.Println(err)
 
 			return user, errors.New("ERROR")
@@ -78,7 +79,7 @@ func (s *Store) RemoveUserAddress(uid string, address models.Address) (user *mod
 	i, err = s.w.DeleteFromMap(c, models.User{UID: uid}, update)
 
 	if err != nil {
-		if err.Error() != "NIL" {
+		if errors.Is(err, myerrors.ErrNIL) {
 			log.Println(err)
 
 			return user, errors.New("ERROR")
@@ -104,7 +105,7 @@ func (s *Store) CheckUserPhoneExistence(phone string) (bool, error) {
 	l, err := s.w.FindOne(c, filter)
 
 	if err != nil {
-		if err.Error() == "NIL" {
+		if errors.Is(err, myerrors.ErrNIL) {
 			val = false
 		} else {
 			return false, err
@@ -127,7 +128,7 @@ func (s *Store) CheckUserExistenceByGID(gid string) (bool, error) {
 	l, err := s.w.FindOne(c, filter)
 
 	if err != nil {
-		if err.Error() == "NIL" {
+		if errors.Is(err, myerrors.ErrNIL) {
 			val = false
 		} else {
 			return false, err
@@ -159,7 +160,7 @@ func (s *Store) CheckUserExistence(phone string, email string) (bool, error) {
 	}
 
 	if err != nil {
-		if err.Error() == "NIL" {
+		if errors.Is(err, myerrors.ErrNIL) {
 			val = false
 		} else {
 			log.Println(err)
@@ -186,7 +187,7 @@ func (s *Store) CheckUserExistenceByUID(uid string) (bool, error) {
 	l, err = s.w.FindOne(c, models.User{UID: uid})
 
 	if err != nil {
-		if err.Error() == "NIL" {
+		if errors.Is(err, myerrors.ErrNIL) {
 			err = nil
 			val = false
 		} else {

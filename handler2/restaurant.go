@@ -142,7 +142,10 @@ func (h *Handler) deleteRestaurant(c echo.Context) (err error) {
 		log.Println(err)
 	}
 
-	return c.JSON(http.StatusOK, a)
+	return c.JSON(http.StatusOK, echo.Map{
+		"success":  true,
+		"ndeleted": a,
+	})
 }
 
 // Get all restaurants in the db .

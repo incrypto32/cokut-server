@@ -1,8 +1,7 @@
 package models
 
 import (
-	"errors"
-
+	"github.com/incrypt0/cokut-server/brokers/myerrors"
 	"github.com/incrypt0/cokut-server/utils"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
@@ -37,8 +36,8 @@ func (o *Order) GetModelData() string {
 
 // Validate meal
 func (o *Order) Validate() error {
-	if o.UID == "" || o.RID == "" {
-		return errors.New("NOT_VALIDATED")
+	if o.UID == "" || o.RID == "" || o.Items == nil || o.Address == nil {
+		return myerrors.ErrOrderNotValidated
 	}
 
 	return nil
