@@ -11,13 +11,13 @@ import (
 type Meal struct {
 	IsVeg        *bool              `json:"isVeg,omitempty" bson:"isVeg,omitempty"`
 	Special      *bool              `json:"special,omitempty" bson:"special,omitempty"`
-	Spicey       *bool              `json:"spicey,omitempty" bson:"spicey,omitempty"`
+	Spice        *bool              `json:"spice,omitempty" bson:"spice,omitempty"`
 	Available    *bool              `json:"available,omitempty" bson:"available,omitempty"`
 	ID           primitive.ObjectID `json:"id,omitempty" bson:"_id,omitempty"`
 	RID          string             `json:"rid,omitempty" bson:"rid,omitempty"`
 	Name         string             `json:"name,omitempty" bson:"name,omitempty" `
 	Price        float64            `json:"price,omitempty" bson:"price,omitempty" `
-	DisplayPrice float64            `json:"display_price,omitempty" bson:"display_price,omitempty"`
+	StrikedPrice float64            `json:"strikedPrice,omitempty" bson:"strikedPrice,omitempty"`
 	Keywords     []string           `json:"keywords,omitempty" bson:"keywords,omitempty"`
 }
 

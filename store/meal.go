@@ -20,6 +20,8 @@ func (s *Store) InsertMeal(m *models.Meal) (id string, err error) {
 		return id, err
 	}
 
+	m.Available = utils.NewBool(true)
+
 	rid, err := primitive.ObjectIDFromHex(m.RID)
 
 	if err != nil {
@@ -87,7 +89,7 @@ func (s *Store) GetSpecialMeals() (l []interface{}, err error) {
 
 // GetSpiceyMeals .
 func (s *Store) GetSpiceyMeals() (l []interface{}, err error) {
-	return s.w.Get(s.mc, models.Meal{Spicey: utils.NewBool(true)})
+	return s.w.Get(s.mc, models.Meal{Spice: utils.NewBool(true)})
 }
 
 // deleteMeal

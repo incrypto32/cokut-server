@@ -25,6 +25,7 @@ func (h *Handler) addRestaurant(c echo.Context) (err error) {
 
 func (h *Handler) addRestaurantForm(c echo.Context) (err error) {
 	pid, r, err := h.parseRestaurantForm(c)
+
 	if err != nil {
 		log.Println(err)
 
@@ -74,7 +75,7 @@ func (h *Handler) changeRestaurantStatus(c echo.Context) (err error) {
 
 	r := models.Restaurant{Closed: utils.NewBool(value)}
 
-	result, err := h.store.UpdateRestaurantStatus(id, r)
+	result, err := h.store.UpdateRestaurant(id, r)
 
 	if err != nil {
 		log.Println(err)
@@ -82,7 +83,10 @@ func (h *Handler) changeRestaurantStatus(c echo.Context) (err error) {
 		return h.sendError(c, err)
 	}
 
-	return c.JSON(http.StatusOK, result)
+	return c.JSON(http.StatusOK, echo.Map{
+		"success":    true,
+		"restaurant": result,
+	})
 }
 func (h *Handler) handleFile(file *multipart.FileHeader, pid primitive.ObjectID) (err error) {
 	if err != nil {
@@ -90,8 +94,6 @@ func (h *Handler) handleFile(file *multipart.FileHeader, pid primitive.ObjectID)
 
 		return err
 	}
-
-	log.Println(file.Filename)
 
 	src, err := file.Open()
 	if err != nil {

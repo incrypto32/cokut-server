@@ -19,6 +19,7 @@ func Distance(lat1, lon1, lat2, lon2 float64) float64 {
 	// convert to radians
 	// must cast radius as float to multiply later
 	var la1, lo1, la2, lo2, r float64
+
 	la1 = lat1 * math.Pi / oneighty
 	lo1 = lon1 * math.Pi / oneighty
 	la2 = lat2 * math.Pi / oneighty

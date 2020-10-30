@@ -28,7 +28,7 @@ func (s *Store) InsertUser(u *models.User) (id string, err error) {
 		models.User{UID: u.UID})
 
 	if err != nil {
-		if errors.Is(err, myerrors.ErrNIL) {
+		if !errors.Is(err, myerrors.ErrNIL) {
 			log.Println(err)
 
 			return id, errors.New("ERROR")

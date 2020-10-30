@@ -94,14 +94,14 @@ func NewOrderAggregationHelper() *orderAggregationHelper {
 }
 
 // PaginateOrders
-func (w *Worker) PaginatedOrders(collectionName string, limit int, page int) (l []models.Order, err error) {
+func (w *Worker) PaginatedOrders(collectionName string, limit int, page int) (l []models.OrderSummary, err error) {
 	ctx := context.Background()
 
 	if err != nil {
 		return nil, err
 	}
 
-	var showsLoadedStruct []models.Order
+	var showsLoadedStruct []models.OrderSummary
 
 	showLoadedStructCursor, err := w.aggregateOrders(collectionName, limit, page)
 

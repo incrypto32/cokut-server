@@ -126,6 +126,7 @@ func (h *Handler) getBySpecificFilter(
 
 func (h *Handler) parseRestaurantForm(c echo.Context) (pid primitive.ObjectID, r models.Restaurant, err error) {
 	form, err := c.FormParams()
+
 	if err != nil {
 		log.Println(err)
 
@@ -159,11 +160,12 @@ func (h *Handler) parseRestaurantForm(c echo.Context) (pid primitive.ObjectID, r
 	location := models.Location{Latitude: latitude, Longitude: longitude}
 
 	r = models.Restaurant{ID: pid,
-		Name:     form["name"][0],
-		Address:  form["address"][0],
-		Type:     form["type"][0],
-		Closed:   utils.NewBool(true),
-		Location: &location}
+		Name:        form["name"][0],
+		Address:     form["address"][0],
+		Type:        form["type"][0],
+		Closed:      utils.NewBool(true),
+		LocationURL: form["locationUrl"][0],
+		Location:    &location}
 
 	return pid, r, err
 }

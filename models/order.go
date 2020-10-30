@@ -18,6 +18,19 @@ type Order struct {
 	UID            string             `json:"uid,omitempty" bson:"uid,omitempty"`
 	Address        *Address           `json:"address,omitempty" bson:"address,omitempty"`
 	Items          map[string]int     `json:"items,omitempty" bson:"items,omitempty"`
+	Summary        []*Summary         `json:"summary,omitempty" bson:"summary,omitempty"`
+	Time           primitive.DateTime `json:"time,omitempty" bson:"time,omitempty"`
+	Price          float64            `json:"price,omitempty" bson:"price,omitempty"`
+	Total          float64            `json:"total,omitempty" bson:"total,omitempty"`
+	DeliveryCharge float64            `json:"deliveryCharge,omitempty" bson:"deliveryCharge,omitempty"`
+}
+
+type OrderSummary struct {
+	ID             primitive.ObjectID `json:"id,omitempty" bson:"_id,omitempty"`
+	RID            string             `json:"rid,omitempty" bson:"rid,omitempty"`
+	UID            string             `json:"uid,omitempty" bson:"uid,omitempty"`
+	Address        *Address           `json:"address,omitempty" bson:"address,omitempty"`
+	Items          map[string]int     `json:"items,omitempty" bson:"items,omitempty"`
 	Meals          []*Meal            `json:"meals,omitempty" bson:"meals,omitempty"`
 	Summary        []*Summary         `json:"summary,omitempty" bson:"summary,omitempty"`
 	User           *User              `json:"user,omitempty" bson:"user,omitempty"`
@@ -25,9 +38,9 @@ type Order struct {
 	Time           primitive.DateTime `json:"time,omitempty" bson:"time,omitempty"`
 	Price          float64            `json:"price,omitempty" bson:"price,omitempty"`
 	Total          float64            `json:"total,omitempty" bson:"total,omitempty"`
-	DeliveryCharge float64            `json:"delivery_charge,omitempty" bson:"delivery_charge,omitempty"`
+	DeliveryCharge float64            `json:"deliveryCharge,omitempty" bson:"deliveryCharge,omitempty"`
 	Status         string             `json:"status,omitempty" bson:"status,omitempty"`
-	StatusCode     int                `json:"status_code,omitempty" bson:"status_code,omitempty"`
+	StatusCode     int                `json:"statusCode,omitempty" bson:"statusCode,omitempty"`
 }
 
 func (o *Order) GetModelData() string {

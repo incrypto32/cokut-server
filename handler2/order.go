@@ -14,6 +14,8 @@ func (h *Handler) addOrder(c echo.Context) (err error) {
 	r := new(models.Order)
 	r.UID = c.Get("uid").(string)
 
+	log.Println("1")
+
 	return h.AddOrder(c, r, func(r models.Model) (interface{}, error) {
 		return h.store.CreateOrder(r.(*models.Order))
 	})

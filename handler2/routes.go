@@ -45,14 +45,17 @@ func (h *Handler) registerAPIV1(api *echo.Group) {
 
 // The Admin Api .
 func (h *Handler) registerAdmin(a *echo.Group) {
-	meal := a.Group("/meal")
-	meal.POST("", h.addMeal)
-	meal.DELETE("", h.deleteMeal)
+
 	a.GET("/test", h.routeTestAdmin)
 	a.GET("/orders", h.getOrdersPaginated)
 
+	meal := a.Group("/meal")
+	meal.POST("", h.addMeal)
+	meal.DELETE("", h.deleteMeal)
+
 	store := a.Group("/restaurant")
-	store.POST("", h.addRestaurant)
+	store.POST("", h.addRestaurantForm)
+	store.POST("/status", h.changeRestaurantStatus)
 	store.DELETE("", h.deleteRestaurant)
 
 	a.POST("/special", h.addSpecial)
