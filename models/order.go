@@ -55,3 +55,12 @@ func (o *Order) Validate() error {
 
 	return nil
 }
+
+// Validate meal
+func (o *Order) ValidateBasic() error {
+	if o.UID == "" || o.RID == "" || o.Items == nil {
+		return myerrors.ErrOrderNotValidated
+	}
+
+	return nil
+}

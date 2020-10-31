@@ -12,23 +12,35 @@ import (
 )
 
 // CreateOrder creates a new order
-func (s *Store) CreateOrder(o *models.Order) (po *models.Order, err error) {
+func (s *Store) CreateOrder(o *models.Order, calculate bool) (po *models.Order, err error) {
 	c := s.orders // Basic Validation
-
-	log.Println("2")
 
 	o.Time = primitive.NewDateTimeFromTime(time.Now())
 
-	if err = o.Validate(); err != nil {
-		log.Println(err)
+	if calculate {
+		if err = o.ValidateBasic(); err != nil {
+			log.Println(err)
 
-		return nil, err
+			return nil, err
+		}
+	} else {
+		if err = o.Validate(); err != nil {
+			log.Println(err)
+
+			return nil, err
+		}
 	}
 
 	if err = s.processOrder(o); err != nil {
 		log.Println(err)
 
 		return nil, err
+	}
+
+	if calculate {
+		log.Println("calculated...")
+
+		return o, err
 	}
 
 	if id, err := s.w.Add(c, o); err != nil {
@@ -44,8 +56,6 @@ func (s *Store) processOrder(o *models.Order) error {
 	mealCollection := s.mc
 	ids := make([]string, 0, len(o.Items))
 
-	log.Println("3")
-
 	for key := range o.Items {
 		ids = append(ids, key)
 	}
@@ -54,8 +64,6 @@ func (s *Store) processOrder(o *models.Order) error {
 	if err != nil {
 		return err
 	}
-
-	log.Println("4")
 
 	result, err := s.w.FindOne(s.rc, models.Restaurant{ID: rid})
 	r := result.(*models.Restaurant)
@@ -102,6 +110,8 @@ func (s *Store) calculateDeliveryCharge(o *models.Order, lat float64, long float
 
 		return
 	}
+
+	log.Println(dist, dist/1000, (dist/1000)*7)
 
 	o.DeliveryCharge = (dist / 1000) * 7
 }

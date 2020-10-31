@@ -27,7 +27,7 @@ type CokutBroker interface {
 	GetMealsByRestaurant(rid string) (l []interface{}, err error)
 	GetSpecialMeals() (l []interface{}, err error)
 	GetSpiceyMeals() (l []interface{}, err error)
-	CreateOrder(o *models.Order) (po *models.Order, err error)
+	CreateOrder(o *models.Order, add bool) (po *models.Order, err error)
 	GetAllOrders() (l []interface{}, err error)
 	GetPaginatedOrders(limit int, page int) (l []models.OrderSummary, err error)
 	GetOrdersByUser(uid string) (l []interface{}, err error)

@@ -95,7 +95,6 @@ func (w *Worker) Add(collectionName string, i interface{}) (id string, err error
 	}
 
 	id = result.InsertedID.(primitive.ObjectID).Hex()
-	log.Println(result)
 
 	return id, err
 }
@@ -189,13 +188,11 @@ func (w *Worker) Search(collectionName string, model interface{}, keyword string
 	}
 
 	defer cur.Close(ctx)
-	log.Println(l)
 
 	return l, err
 }
 
 func (w *Worker) GetMultipleByID(collectionName string, model interface{}, ids []string) (l []interface{}, err error) {
-	log.Println(ids, len(ids))
 	pids := make([]primitive.ObjectID, len(ids))
 
 	ctx := context.Background()
@@ -204,7 +201,6 @@ func (w *Worker) GetMultipleByID(collectionName string, model interface{}, ids [
 	typ := reflect.TypeOf(model)
 
 	for i, b := range ids {
-		log.Println(i, "|", b, ids)
 		pids[i], err = primitive.ObjectIDFromHex(b)
 
 		if err != nil {
@@ -229,6 +225,16 @@ func (w *Worker) GetMultipleByID(collectionName string, model interface{}, ids [
 	}
 
 	return l, err
+}
+func (w *Worker) DeleteMultiple(collectionName string, filter interface{}, update interface{}) error {
+	c := w.db.Collection(collectionName)
+	ctx := context.Background()
+
+	result, err := c.DeleteMany(ctx, filter)
+
+	log.Println(result)
+
+	return err
 }
 
 // FindOneAndUpdate FindOneAndUpdate
@@ -285,8 +291,6 @@ func (w *Worker) findOneAndUpdateHelper(
 	}
 
 	after := options.After
-
-	log.Println(i, u)
 
 	r := c.FindOneAndUpdate(ctx, i, u, &options.FindOneAndUpdateOptions{
 		ReturnDocument: &after,

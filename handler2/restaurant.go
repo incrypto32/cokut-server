@@ -14,14 +14,14 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-// Add a single restaurant .
-func (h *Handler) addRestaurant(c echo.Context) (err error) {
-	r := new(models.Restaurant)
+// // Add a single restaurant .
+// func (h *Handler) addRestaurant(c echo.Context) (err error) {
+// 	r := new(models.Restaurant)
 
-	return h.Add(c, r, func(r models.Model) (interface{}, error) {
-		return h.store.InsertRestaurant(r.(*models.Restaurant))
-	})
-}
+// 	return h.Add(c, r, func(r models.Model) (interface{}, error) {
+// 		return h.store.InsertRestaurant(r.(*models.Restaurant))
+// 	})
+// }
 
 func (h *Handler) addRestaurantForm(c echo.Context) (err error) {
 	pid, r, err := h.parseRestaurantForm(c)
@@ -31,8 +31,6 @@ func (h *Handler) addRestaurantForm(c echo.Context) (err error) {
 
 		return h.sendError(c, err)
 	}
-
-	log.Println(r.GetModelData())
 
 	if err != nil {
 		log.Println(err)
@@ -130,8 +128,6 @@ func (h *Handler) handleFile(file *multipart.FileHeader, pid primitive.ObjectID)
 }
 
 func (h *Handler) deleteRestaurant(c echo.Context) (err error) {
-	log.Println(c.QueryParam("id"))
-
 	a, err := h.store.DeleteRestaurant(c.QueryParam("id"))
 
 	if err != nil {

@@ -2,7 +2,6 @@ package models
 
 import (
 	"errors"
-	"log"
 
 	"github.com/incrypt0/cokut-server/utils"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -27,7 +26,6 @@ func (m *Meal) GetModelData() string {
 
 // Validate meal .
 func (m *Meal) Validate() error {
-	log.Println(m.GetModelData())
 
 	if m.Name == "" || (m.Price <= 0) || m.RID == "" {
 		return errors.New("NOT_VALIDATED")
