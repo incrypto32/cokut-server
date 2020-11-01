@@ -1,6 +1,7 @@
 package handler2
 
 import (
+	"errors"
 	"fmt"
 	"log"
 	"net/http"
@@ -55,12 +56,23 @@ func (h *Handler) AddOrder(c echo.Context, r models.Model, f func(r models.Model
 	if err != nil {
 		log.Println(err)
 
+		if errors.Is(err, myerrors.ErrNotDeliverableArea) {
+			log.Println("____")
+
+			return c.JSON(http.StatusOK, echo.Map{
+				"success":     true,
+				"order":       nil,
+				"deliverable": false,
+			})
+		}
+
 		return h.sendMessageWithFailure(c, "Order Not Validated", myerrors.ErrOrderNotValidatedCode)
 	}
 
 	return c.JSON(http.StatusOK, echo.Map{
-		"success": true,
-		"order":   order,
+		"success":     true,
+		"order":       order,
+		"deliverable": true,
 	})
 }
 

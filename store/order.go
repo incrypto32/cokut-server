@@ -30,8 +30,6 @@ func (s *Store) CreateOrder(o *models.Order, calculate bool) (po *models.Order, 
 	}
 
 	if calculate {
-		log.Println("calculated...")
-
 		return o, err
 	}
 
@@ -70,50 +68,71 @@ func (s *Store) processOrder(o *models.Order) error {
 
 	l, err := s.w.GetMultipleByID(mealCollection, models.Meal{}, ids)
 
-	o.Restaurant = r
-
-	s.calculateOrderPrice(o, l)
-
-	s.calculateDeliveryCharge(o, r.Location.Latitude, r.Location.Longitude)
-
-	s.calculateTotal(o)
-
 	if err != nil {
 		return err
 	}
+
+	o.Restaurant = r
+
+	if err = s.calculateDeliveryCharge(o, r.Location.Latitude, r.Location.Longitude); err != nil {
+		return err
+	}
+
+	s.calculateOrderPrice(o, l)
+
+	s.calculateTotal(o)
+
+	s.calculateServiceCharge(o)
 
 	return err
 }
 
 func (s *Store) calculateOrderPrice(o *models.Order, l []interface{}) {
+	totalCount := 0
+
 	for _, item := range l {
 		meal := item.(*models.Meal)
 
 		count := o.Items[meal.ID.Hex()]
+		totalCount += count
 
 		price := meal.Price * float64(count)
 
 		o.Summary = append(o.Summary, &models.Summary{Meal: *meal, Count: count, Price: price})
 		o.Price += price
 	}
+
+	o.TotalCount = totalCount
 }
 
-func (s *Store) calculateDeliveryCharge(o *models.Order, lat float64, long float64) {
+func (s *Store) calculateDeliveryCharge(o *models.Order, lat float64, long float64) error {
 	dist := utils.Distance(o.Address.PlaceInfo.Latitude, o.Address.PlaceInfo.Longitude, lat, long)
+
+	if dist > 20000 {
+		return myerrors.ErrNotDeliverableArea
+	}
 
 	if dist <= 5000 {
 		o.DeliveryCharge = 30.0
 
-		return
+		return nil
 	}
 
-	log.Println(dist, dist/1000, (dist/1000)*7)
-
 	o.DeliveryCharge = (dist / 1000) * 7
+
+	return nil
+}
+
+func (s *Store) calculateServiceCharge(o *models.Order) {
+	if o.TotalCount <= 3 {
+		o.ServiceCharge = 0
+	} else {
+		o.ServiceCharge = float64(o.TotalCount * 5)
+	}
 }
 
 func (s *Store) calculateTotal(o *models.Order) {
-	o.Total = o.Price + o.DeliveryCharge
+	o.Total = o.Price + o.DeliveryCharge + o.ServiceCharge
 }
 
 // GetAllOrders Admin only function
