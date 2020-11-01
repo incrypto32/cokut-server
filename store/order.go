@@ -17,18 +17,10 @@ func (s *Store) CreateOrder(o *models.Order, calculate bool) (po *models.Order, 
 
 	o.Time = primitive.NewDateTimeFromTime(time.Now())
 
-	if calculate {
-		if err = o.ValidateBasic(); err != nil {
-			log.Println(err)
+	if err = o.Validate(); err != nil {
+		log.Println(err)
 
-			return nil, err
-		}
-	} else {
-		if err = o.Validate(); err != nil {
-			log.Println(err)
-
-			return nil, err
-		}
+		return nil, err
 	}
 
 	if err = s.processOrder(o); err != nil {
@@ -42,6 +34,8 @@ func (s *Store) CreateOrder(o *models.Order, calculate bool) (po *models.Order, 
 
 		return o, err
 	}
+
+	o.StatusCode = s.orderCodes.Placed
 
 	if id, err := s.w.Add(c, o); err != nil {
 		return nil, err

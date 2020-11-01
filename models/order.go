@@ -23,6 +23,8 @@ type Order struct {
 	Price          float64            `json:"price,omitempty" bson:"price,omitempty"`
 	Total          float64            `json:"total,omitempty" bson:"total,omitempty"`
 	DeliveryCharge float64            `json:"deliveryCharge,omitempty" bson:"deliveryCharge,omitempty"`
+	Status         string             `json:"status,omitempty" bson:"status,omitempty"`
+	StatusCode     int                `json:"statusCode,omitempty" bson:"statusCode,omitempty"`
 }
 
 type OrderSummary struct {

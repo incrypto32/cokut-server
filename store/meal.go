@@ -33,6 +33,7 @@ func (s *Store) InsertMeal(m *models.Meal) (id string, err error) {
 	if err != nil {
 		if errors.Is(myerrors.ErrNIL, err) {
 			log.Println("NIL ERROR")
+
 			return "", errors.New("restaurant doesn't exist")
 		}
 

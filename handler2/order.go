@@ -1,6 +1,7 @@
 package handler2
 
 import (
+	"log"
 	"net/http"
 	"strconv"
 
@@ -22,6 +23,8 @@ func (h *Handler) addOrder(c echo.Context) (err error) {
 func (h *Handler) calculateOrder(c echo.Context) (err error) {
 	o := new(models.Order)
 	o.UID = c.Get("uid").(string)
+
+	log.Println("1")
 
 	return h.AddOrder(c, o, func(r models.Model) (interface{}, error) {
 		return h.store.CreateOrder(r.(*models.Order), true)
