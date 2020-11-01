@@ -31,9 +31,32 @@ func (h *Handler) calculateOrder(c echo.Context) (err error) {
 	})
 }
 
-// func (h *Handler) getOrders(c echo.Context) (err error) {
-// 	return h.getFiltered(c, h.store.GetAllOrders)
-// }
+func (h *Handler) getOrders(c echo.Context) (err error) {
+	limit, err := strconv.ParseInt(c.QueryParam("limit"), 10, 64)
+
+	if err != nil {
+		limit = 500
+	}
+
+	page, err := strconv.ParseInt(c.QueryParam("page"), 10, 64)
+
+	if err != nil || page == 0 {
+		page = 1
+	}
+
+	orders, err := h.store.GetAllOrders(limit, page)
+
+	if err != nil {
+		return h.sendError(c, err)
+	}
+
+	return c.JSON(http.StatusOK, echo.Map{
+		"success": true,
+		"orders":  orders,
+		"limit":   limit,
+		"page":    page,
+	})
+}
 
 func (h *Handler) getUserOrders(c echo.Context) (err error) {
 	c.QueryParams().Add("uid", c.Get("uid").(string))

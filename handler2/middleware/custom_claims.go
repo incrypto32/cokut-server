@@ -9,9 +9,7 @@ import (
 
 // CustomClaimRegister middleware.
 func CustomClaimRegister(app *firebase.App) func(string, map[string]interface{}) error {
-
 	return func(uid string, claims map[string]interface{}) error {
-
 		ctx := context.Background()
 		client, err := app.Auth(ctx)
 

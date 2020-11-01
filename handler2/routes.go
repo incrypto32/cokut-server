@@ -59,7 +59,8 @@ func (h *Handler) registerAdmin(a *echo.Group) {
 	store.DELETE("", h.deleteRestaurant)
 
 	orders := a.Group("/orders")
-	orders.GET("", h.getOrdersPaginated)
+	orders.GET("/paginated", h.getOrdersPaginated)
+	orders.GET("", h.getOrders)
 
 	a.POST("/special", h.addSpecial)
 }

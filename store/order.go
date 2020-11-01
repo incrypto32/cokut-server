@@ -70,6 +70,8 @@ func (s *Store) processOrder(o *models.Order) error {
 
 	l, err := s.w.GetMultipleByID(mealCollection, models.Meal{}, ids)
 
+	o.Restaurant = r
+
 	s.calculateOrderPrice(o, l)
 
 	s.calculateDeliveryCharge(o, r.Location.Latitude, r.Location.Longitude)
@@ -115,8 +117,8 @@ func (s *Store) calculateTotal(o *models.Order) {
 }
 
 // GetAllOrders Admin only function
-func (s *Store) GetAllOrders() (l []interface{}, err error) {
-	return s.w.Get(s.orders, models.Order{})
+func (s *Store) GetAllOrders(limit int64, page int64) (l []models.Order, err error) {
+	return s.w.GetOrders(s.orders, limit, page)
 }
 
 // GetOrdersByUser user orders are returned
@@ -125,6 +127,6 @@ func (s *Store) GetOrdersByUser(uid string) (l []interface{}, err error) {
 }
 
 // GetOrdersByUser user orders are returned
-func (s *Store) GetPaginatedOrders(limit int, page int) (l []models.OrderSummary, err error) {
+func (s *Store) GetPaginatedOrders(limit int, page int) (l []models.Order, err error) {
 	return s.w.PaginatedOrders(s.orders, limit, page)
 }

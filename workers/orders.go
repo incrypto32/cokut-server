@@ -7,6 +7,7 @@ import (
 	"github.com/incrypt0/cokut-server/models"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 func NewOrderAggregationHelper() *orderAggregationHelper {
@@ -27,43 +28,51 @@ func NewOrderAggregationHelper() *orderAggregationHelper {
 		},
 	}
 
-	pipeline := []bson.M{
-		{
-			"$match": bson.M{
-				"$expr": bson.M{
-					"$in": []interface{}{
-						bson.M{"$toString": "$_id"},
-						"$$meals.k",
-					},
-				},
-			},
-		},
-	}
+	// pipeline := []bson.M{
+	// 	{
+	// 		"$match": bson.M{
+	// 			"$expr": bson.M{
+	// 				"$in": []interface{}{
+	// 					bson.M{"$toString": "$_id"},
+	// 					"$$meals.k",
+	// 				},
+	// 			},
+	// 		},
+	// 	},
+	// }
 
-	mealsLookupStage := bson.D{
-		{
-			Key: "$lookup", Value: bson.M{
-				"from": "meals",
-				"let": bson.M{
-					"meals": bson.M{"$objectToArray": "$items"},
-				},
-				"pipeline": pipeline,
-				"as":       "meals",
-			},
-		},
-	}
+	// mealsLookupStage := bson.D{
+	// 	{
+	// 		Key: "$lookup", Value: bson.M{
+	// 			"from": "meals",
+	// 			"let": bson.M{
+	// 				"meals": bson.M{"$objectToArray": "$items"},
+	// 			},
+	// 			"pipeline": pipeline,
+	// 			"as":       "meals",
+	// 		},
+	// 	},
+	// }
 
-	restaurantLookupStage := bson.D{
-		{
-			Key: "$lookup", Value: bson.M{
-				"from":         "restaurants",
-				"localField":   "roid",
-				"foreignField": "_id",
-				"as":           "restaurant",
-			},
-		},
-	}
+	// restaurantLookupStage := bson.D{
+	// 	{
+	// 		Key: "$lookup", Value: bson.M{
+	// 			"from":         "restaurants",
+	// 			"localField":   "roid",
+	// 			"foreignField": "_id",
+	// 			"as":           "restaurant",
+	// 		},
+	// 	},
+	// }
 
+	// restaurantUnwindStage := bson.D{
+	// 	{
+	// 		Key: "$unwind", Value: bson.D{
+	// 			{Key: "path", Value: "$restaurant"},
+	// 			{Key: "preserveNullAndEmptyArrays", Value: false},
+	// 		},
+	// 	},
+	// }
 	userUnwindStage := bson.D{
 		{
 			Key: "$unwind", Value: bson.D{
@@ -73,35 +82,26 @@ func NewOrderAggregationHelper() *orderAggregationHelper {
 		},
 	}
 
-	restaurantUnwindStage := bson.D{
-		{
-			Key: "$unwind", Value: bson.D{
-				{Key: "path", Value: "$restaurant"},
-				{Key: "preserveNullAndEmptyArrays", Value: false},
-			},
-		},
-	}
-
 	return &orderAggregationHelper{
-		idConversionStage:     idConversionStage,
-		matchStage:            matchStage,
-		mealsLookupStage:      mealsLookupStage,
-		restaurantLookupStage: restaurantLookupStage,
-		restaurantUnwindStage: restaurantUnwindStage,
-		userLookupStage:       userLookupStage,
-		userUnwindStage:       userUnwindStage,
+		idConversionStage: idConversionStage,
+		matchStage:        matchStage,
+		// mealsLookupStage:      mealsLookupStage,
+		// restaurantLookupStage: restaurantLookupStage,
+		// restaurantUnwindStage: restaurantUnwindStage,
+		userLookupStage: userLookupStage,
+		userUnwindStage: userUnwindStage,
 	}
 }
 
 // PaginateOrders
-func (w *Worker) PaginatedOrders(collectionName string, limit int, page int) (l []models.OrderSummary, err error) {
+func (w *Worker) PaginatedOrders(collectionName string, limit int, page int) (l []models.Order, err error) {
 	ctx := context.Background()
 
 	if err != nil {
 		return nil, err
 	}
 
-	var showsLoadedStruct []models.OrderSummary
+	var showsLoadedStruct []models.Order
 
 	showLoadedStructCursor, err := w.aggregateOrders(collectionName, limit, page)
 
@@ -130,10 +130,10 @@ func (w *Worker) aggregateOrders(collectionName string, limit int, page int) (*m
 			w.oh.idConversionStage,
 			w.oh.matchStage,
 			w.oh.userLookupStage,
-			w.oh.restaurantLookupStage,
-			w.oh.mealsLookupStage,
 			w.oh.userUnwindStage,
-			w.oh.restaurantUnwindStage,
+			// w.oh.restaurantLookupStage,
+			// w.oh.mealsLookupStage,
+			// w.oh.restaurantUnwindStage,
 			bson.D{
 				{Key: "$skip", Value: (page - 1) * limit},
 			},
@@ -144,4 +144,34 @@ func (w *Worker) aggregateOrders(collectionName string, limit int, page int) (*m
 	)
 
 	return showLoadedStructCursor, err
+}
+
+// Get gets details from db with given filter
+func (w *Worker) GetOrders(collectionName string, limit int64, page int64) (result []models.Order, err error) {
+	log.Println(limit, page)
+
+	c := w.db.Collection(collectionName)
+
+	options := options.Find()
+	options.SetLimit(limit)
+	options.SetSkip((page - 1) * limit)
+
+	ctx := context.Background()
+
+	cur, err := c.Find(ctx, bson.D{})
+	if err != nil {
+		log.Println(err)
+
+		return nil, err
+	}
+
+	if err = cur.All(ctx, &result); err != nil {
+		log.Println(err)
+
+		return nil, err
+	}
+
+	defer cur.Close(ctx)
+
+	return result, err
 }
