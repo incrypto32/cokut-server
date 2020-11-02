@@ -83,6 +83,7 @@ func (s *Store) processOrder(o *models.Order) error {
 	s.calculateServiceCharge(o)
 
 	s.calculateTotal(o)
+
 	return err
 }
 

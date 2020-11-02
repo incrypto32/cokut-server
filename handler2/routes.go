@@ -80,14 +80,16 @@ func (h *Handler) Register(e *echo.Echo) {
 	e.GET("/", h.index)
 	// middlewares
 	e.Use(middleware.CORS())
-	e.Use(h.fireAuthMWare)
 
 	// Groups .
 	api := e.Group("/api")
+	api.Use(h.fireAuthMWare)
 
 	api.GET("", h.routeTestAPI)
 
 	admin := e.Group("/admin")
+	admin.Use(h.fireAuthMWare)
+
 	u := e.Group("/utils")
 
 	// Register the routes
