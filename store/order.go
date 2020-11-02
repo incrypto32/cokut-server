@@ -80,10 +80,9 @@ func (s *Store) processOrder(o *models.Order) error {
 
 	s.calculateOrderPrice(o, l)
 
-	s.calculateTotal(o)
-
 	s.calculateServiceCharge(o)
 
+	s.calculateTotal(o)
 	return err
 }
 
