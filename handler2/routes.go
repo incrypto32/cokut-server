@@ -47,6 +47,7 @@ func (h *Handler) registerAPIV1(api *echo.Group) {
 
 // The Admin Api .
 func (h *Handler) registerAdmin(a *echo.Group) {
+	a.Use(h.adminChecker)
 	a.GET("/test", h.routeTestAdmin)
 
 	meal := a.Group("/meal")
@@ -76,8 +77,10 @@ func (h *Handler) registerUtils(u *echo.Group) {
 // Register this method registers a new group with handler .
 func (h *Handler) Register(e *echo.Echo) {
 	// Index Handler
-	e.Use(middleware.CORS())
 	e.GET("/", h.index)
+	// middlewares
+	e.Use(middleware.CORS())
+	e.Use(h.fireAuthMWare)
 
 	// Groups .
 	api := e.Group("/api")
@@ -86,9 +89,6 @@ func (h *Handler) Register(e *echo.Echo) {
 
 	admin := e.Group("/admin")
 	u := e.Group("/utils")
-
-	// middlewares
-	api.Use(h.fireAuthMWare)
 
 	// Register the routes
 	h.registerUtils(u)

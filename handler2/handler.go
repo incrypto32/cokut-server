@@ -9,6 +9,7 @@ import (
 type Handler struct {
 	store         brokers.CokutBroker
 	fireAuthMWare echo.MiddlewareFunc
+	adminChecker  echo.MiddlewareFunc
 	Domain        string
 }
 
@@ -17,10 +18,14 @@ type ManyResultFunc func() ([]interface{}, error)
 type FilteredManyResultFunc func(string) ([]interface{}, error)
 
 // NewHandler is creates a new Handler object.
-func NewHandler(store brokers.CokutBroker, fireAuthMWare echo.MiddlewareFunc, domain string) *Handler {
+func NewHandler(store brokers.CokutBroker,
+	fireAuthMWare echo.MiddlewareFunc,
+	adminChecker echo.MiddlewareFunc,
+	domain string) *Handler {
 	return &Handler{
 		store:         store,
 		fireAuthMWare: fireAuthMWare,
+		adminChecker:  adminChecker,
 		Domain:        domain,
 	}
 }

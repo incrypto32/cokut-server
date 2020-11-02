@@ -23,6 +23,7 @@ func main() {
 	}
 
 	fireAuthMWare := middleware.FireAuthMiddleware(app)
+	adminChecker := middleware.AdminCheckMiddleware()
 
 	// Connect to mongo
 	w := workers.New()
@@ -32,7 +33,7 @@ func main() {
 	r := router.New()
 
 	// Main Echo Handler
-	h := handler2.NewHandler(s, fireAuthMWare, "http://locahost:4000")
+	h := handler2.NewHandler(s, fireAuthMWare, adminChecker, "http://locahost:4000")
 	h.Register(r)
 
 	// Server Start

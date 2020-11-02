@@ -51,6 +51,7 @@ func FireAuthMiddleware(app *firebase.App) echo.MiddlewareFunc {
 			}
 
 			c.Set("uid", token.UID)
+			c.Set("admin", false)
 
 			return next(c)
 		}
