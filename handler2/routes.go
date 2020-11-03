@@ -61,7 +61,6 @@ func (h *Handler) registerAdmin(a *echo.Group) {
 
 	orders := a.Group("/orders")
 	orders.GET("", h.getOrdersPaginated)
-	orders.GET("/paginated", h.getOrders)
 
 	a.POST("/special", h.addSpecial)
 }

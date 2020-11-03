@@ -7,7 +7,6 @@ import (
 	"github.com/incrypt0/cokut-server/brokers/myerrors"
 	"github.com/incrypt0/cokut-server/models"
 	"github.com/incrypt0/cokut-server/utils"
-	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -40,6 +39,12 @@ func (s *Store) CreateOrder(o *models.Order, calculate bool) (po *models.Order, 
 	} else if o.ID, err = primitive.ObjectIDFromHex(id); err != nil {
 		return nil, err
 	}
+
+	u, err := s.w.FindOne(s.uc, models.User{UID: o.UID})
+
+	log.Println("________________________________", o.ToString(u.(*models.User)))
+
+	s.botChannel <- o.ToString(u.(*models.User))
 
 	return o, err
 }
@@ -135,14 +140,9 @@ func (s *Store) calculateTotal(o *models.Order) {
 	o.Total = o.Price + o.DeliveryCharge + o.ServiceCharge
 }
 
-// GetAllOrders Admin only function
-func (s *Store) GetAllOrders(limit int64, page int64) (l []models.Order, err error) {
-	return s.w.GetOrders(s.orders, limit, page)
-}
-
 // GetOrdersByUser user orders are returned
-func (s *Store) GetOrdersByUser(uid string) (l []interface{}, err error) {
-	return s.w.Get(s.orders, bson.M{"uid": uid})
+func (s *Store) GetOrdersByUser(uid string) (l []models.Order, err error) {
+	return s.w.GetOrdersByUser(s.orders, 10, 1, uid)
 }
 
 // GetOrdersByUser user orders are returned

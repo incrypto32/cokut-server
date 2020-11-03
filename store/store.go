@@ -12,11 +12,12 @@ type Store struct {
 	orders     string
 	rc         string
 	w          brokers.DBBroker
+	botChannel chan string
 	orderCodes common.OrderCodes
 }
 
 // NewStore creates a new store
-func NewStore(mc string, uc string, orders string, rc string, w brokers.DBBroker) *Store {
+func NewStore(mc string, uc string, orders string, rc string, w brokers.DBBroker, botChannel chan string) *Store {
 	return &Store{
 		uc:         uc,
 		rc:         rc,
@@ -24,5 +25,6 @@ func NewStore(mc string, uc string, orders string, rc string, w brokers.DBBroker
 		orders:     orders,
 		w:          w,
 		orderCodes: common.OrderCodes{Placed: 1, Delivered: 2, Canceled: 3},
+		botChannel: botChannel,
 	}
 }

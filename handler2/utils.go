@@ -17,7 +17,6 @@ import (
 
 // Add an item .
 func (h *Handler) Add(c echo.Context, r models.Model, f func(r models.Model) (interface{}, error)) (err error) {
-	log.Println(r.GetModelData())
 
 	if err = c.Bind(r); err != nil {
 		log.Println(err)

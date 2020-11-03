@@ -28,9 +28,8 @@ type CokutBroker interface {
 	GetSpecialMeals() (l []interface{}, err error)
 	GetSpiceyMeals() (l []interface{}, err error)
 	CreateOrder(o *models.Order, add bool) (po *models.Order, err error)
-	GetAllOrders(limit int64, page int64) (l []models.Order, err error)
 	GetPaginatedOrders(limit int, page int) (l []models.Order, err error)
-	GetOrdersByUser(uid string) (l []interface{}, err error)
+	GetOrdersByUser(uid string) (l []models.Order, err error)
 }
 
 // DbBroker is the interface whoch abstracts all the db functionalities
@@ -43,7 +42,7 @@ type DBBroker interface {
 	Search(collectionName string, model interface{}, keyword string) (l []interface{}, err error)
 	GetMultipleByID(collectionName string, model interface{}, ids []string) (l []interface{}, err error)
 	PaginatedOrders(collectionName string, limit int, page int) (l []models.Order, err error)
-	GetOrders(collectionName string, limit int64, page int64) (l []models.Order, err error)
+	GetOrdersByUser(collectionName string, limit int64, page int64, uid string) (result []models.Order, err error)
 	FindOneAndUpdate(collectionName string, filter interface{}, update interface{}) (l interface{}, err error)
 	FindOneAndUpdateMap(collectionName string, filter interface{}, update interface{}) (l interface{}, err error)
 	DeleteFromMap(collectionName string, filter interface{}, update interface{}) (l interface{}, err error)

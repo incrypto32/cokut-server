@@ -24,10 +24,11 @@ type Worker struct {
 type orderAggregationHelper struct {
 	idConversionStage     bson.D
 	matchStage            bson.D
-	mealsLookupStage      bson.D
+	sortStage             bson.D
 	userLookupStage       bson.D
-	restaurantLookupStage bson.D
 	userUnwindStage       bson.D
+	restaurantLookupStage bson.D
+	mealsLookupStage      bson.D
 	restaurantUnwindStage bson.D
 }
 

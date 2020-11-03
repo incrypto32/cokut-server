@@ -1,6 +1,8 @@
 package models
 
 import (
+	"fmt"
+
 	"github.com/incrypt0/cokut-server/brokers/myerrors"
 	"github.com/incrypt0/cokut-server/utils"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -51,4 +53,38 @@ func (o *Order) ValidateBasic() error {
 	}
 
 	return nil
+}
+
+func (o *Order) ToString(u *User) string {
+	result := fmt.Sprintf("\n     %s     \n", "NEW ORDER")
+	result += "\n"
+	result += fmt.Sprintf("%s : %s\n", u.Name, u.Phone)
+
+	result += fmt.Sprintf("%s\n%s\n%s\n%s\n",
+		"Address : ",
+		o.Address.AddressLine1,
+		o.Address.AddressLine2,
+		o.Address.PlaceInfo.Name)
+
+	result += "________________________\n"
+	result += "\n"
+
+	result += fmt.Sprintf("%s\n", o.Restaurant.Name)
+
+	for _, s := range o.Summary {
+		result += fmt.Sprintf("%s x %v = %v\n", s.Meal.Name, s.Count, s.Price)
+	}
+
+	result += "________________________\n"
+	result += "\n"
+
+	result += fmt.Sprintf("%s : %v \n", "Cart Total", o.Price)
+
+	result += fmt.Sprintf("%s : %v \n", "Delivery Charge", o.DeliveryCharge)
+
+	result += fmt.Sprintf("%s : %v \n", "Service Charge", o.ServiceCharge)
+
+	result += fmt.Sprintf("%s : %v \n", "Order Total", o.Total)
+
+	return result
 }

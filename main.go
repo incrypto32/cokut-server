@@ -4,6 +4,7 @@ import (
 	"log"
 	"os"
 
+	"github.com/incrypt0/cokut-server/cokutbot"
 	"github.com/incrypt0/cokut-server/fire"
 	"github.com/incrypt0/cokut-server/handler2"
 	"github.com/incrypt0/cokut-server/handler2/middleware"
@@ -24,10 +25,14 @@ func main() {
 
 	fireAuthMWare := middleware.FireAuthMiddleware(app)
 	adminChecker := middleware.AdminCheckMiddleware()
+	botChannel := make(chan string)
+
+	go cokutbot.RegisterNewBot(botChannel)
 
 	// Connect to mongo
 	w := workers.New()
-	s := store.NewStore("meals", "users", "orders", "restaurants", w)
+
+	s := store.NewStore("meals", "users", "orders", "restaurants", w, botChannel)
 
 	// echo instance
 	r := router.New()

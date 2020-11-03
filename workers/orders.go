@@ -17,6 +17,8 @@ func NewOrderAggregationHelper() *orderAggregationHelper {
 
 	matchStage := bson.D{{Key: "$match", Value: bson.D{}}}
 
+	sortStage := bson.D{{Key: "$sort", Value: bson.M{"time": -1}}}
+
 	userLookupStage := bson.D{
 		{
 			Key: "$lookup", Value: bson.M{
@@ -84,6 +86,7 @@ func NewOrderAggregationHelper() *orderAggregationHelper {
 
 	return &orderAggregationHelper{
 		idConversionStage: idConversionStage,
+		sortStage:         sortStage,
 		matchStage:        matchStage,
 		// mealsLookupStage:      mealsLookupStage,
 		// restaurantLookupStage: restaurantLookupStage,
@@ -129,6 +132,7 @@ func (w *Worker) aggregateOrders(collectionName string, limit int, page int) (*m
 		mongo.Pipeline{
 			w.oh.idConversionStage,
 			w.oh.matchStage,
+			w.oh.sortStage,
 			w.oh.userLookupStage,
 			w.oh.userUnwindStage,
 			// w.oh.restaurantLookupStage,
@@ -147,18 +151,43 @@ func (w *Worker) aggregateOrders(collectionName string, limit int, page int) (*m
 }
 
 // Get gets details from db with given filter
-func (w *Worker) GetOrders(collectionName string, limit int64, page int64) (result []models.Order, err error) {
-	log.Println(limit, page)
+func (w *Worker) GetAllOrders(collectionName string, limit int64, page int64) (result []models.Order, err error) {
+	c := w.db.Collection(collectionName)
+
+	options := options.Find()
+	options.SetSort(bson.D{{Key: "time", Value: -1}}).SetLimit(limit).SetSkip((page - 1) * limit)
+
+	ctx := context.Background()
+
+	cur, err := c.Find(ctx, bson.D{}, options)
+	if err != nil {
+		log.Println(err)
+
+		return nil, err
+	}
+
+	if err = cur.All(ctx, &result); err != nil {
+		log.Println(err)
+
+		return nil, err
+	}
+
+	defer cur.Close(ctx)
+
+	return result, err
+}
+
+// Get gets details from db with given filter
+func (w *Worker) GetOrdersByUser(collectionName string, limit int64, page int64, uid string) (result []models.Order, err error) {
 
 	c := w.db.Collection(collectionName)
 
 	options := options.Find()
-	options.SetLimit(limit)
-	options.SetSkip((page - 1) * limit)
+	options.SetSort(bson.D{{Key: "time", Value: -1}}).SetLimit(limit).SetSkip((page - 1) * limit)
 
 	ctx := context.Background()
 
-	cur, err := c.Find(ctx, bson.D{})
+	cur, err := c.Find(ctx, bson.D{{Key: "uid", Value: uid}}, options)
 	if err != nil {
 		log.Println(err)
 
