@@ -2,6 +2,7 @@ package store
 
 import (
 	"log"
+	"math"
 	"time"
 
 	"github.com/incrypt0/cokut-server/models"
@@ -120,7 +121,7 @@ func (s *Store) calculateDeliveryCharge(o *models.Order, lat float64, long float
 		return nil
 	}
 
-	o.DeliveryCharge = (dist / 1000) * 7
+	o.DeliveryCharge = math.Round((dist / 1000) * 7)
 
 	return nil
 }
