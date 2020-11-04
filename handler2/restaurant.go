@@ -7,7 +7,6 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/incrypt0/cokut-server/brokers/myerrors"
 	"github.com/incrypt0/cokut-server/models"
 	"github.com/incrypt0/cokut-server/utils"
 	"github.com/labstack/echo/v4"
@@ -40,11 +39,11 @@ func (h *Handler) addRestaurantForm(c echo.Context) (err error) {
 
 	file, err := c.FormFile("file")
 	if err != nil {
-		return h.sendMessageWithFailure(c, "Please upload a vallid file", myerrors.FileUploadErrorCode)
+		return h.sendMessageWithFailure(c, "Please upload a vallid file", h.myerrors.FileUploadErrorCode)
 	}
 
 	if err = h.handleFile(file, pid); err != nil {
-		return h.sendMessageWithFailure(c, "Please upload a vallid file", myerrors.FileUploadErrorCode)
+		return h.sendMessageWithFailure(c, "Please upload a vallid file", h.myerrors.FileUploadErrorCode)
 	}
 
 	var result string

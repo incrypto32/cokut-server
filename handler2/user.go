@@ -4,7 +4,6 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/incrypt0/cokut-server/brokers/myerrors"
 	"github.com/incrypt0/cokut-server/models"
 	"github.com/labstack/echo/v4"
 )
@@ -25,7 +24,7 @@ func (h *Handler) registerUser(c echo.Context) (err error) {
 	if id, err = h.store.InsertUser(r); err != nil {
 		log.Println(err)
 
-		return h.sendMessageWithFailure(c, err.Error(), myerrors.ErrBasicCode)
+		return h.sendMessageWithFailure(c, err.Error(), h.myerrors.ErrBasicCode)
 	}
 
 	return c.JSON(http.StatusOK, echo.Map{
@@ -89,78 +88,4 @@ func (h *Handler) removeAddress(c echo.Context) (err error) {
 	}
 
 	return c.JSON(http.StatusOK, echo.Map{"success": true, "user": user})
-}
-
-func (h *Handler) checkUserPhoneExistence(c echo.Context) (err error) {
-	m := echo.Map{}
-
-	if err := c.Bind(&m); err != nil {
-		return h.sendError(c, err)
-	}
-
-	if m["phone"] == nil || m["phone"] == "" {
-		return h.sendError(c, err)
-	}
-
-	exist, err := h.store.CheckUserPhoneExistence(m["phone"].(string))
-	if err != nil {
-		return h.sendError(c, err)
-	}
-
-	return c.JSON(http.StatusOK, echo.Map{
-		"success": true,
-		"exist":   exist,
-	})
-}
-
-// func (h *Handler) checkUserExistenceByGID(c echo.Context) (err error) {
-// 	m := echo.Map{}
-
-// 	if err := c.Bind(&m); err != nil {
-// 		log.Println(err)
-// 		return h.sendError(c,err)
-// 	}
-
-// 	if m["gid"] == nil || m["gid"] == "" {
-// 		return h.sendError(c,err)
-// 	}
-
-// 	exist, err := h.store.CheckUserPhoneExistenceByGID(m["gid"].(string))
-
-// 	if err != nil && err.Error() != "NIL" {
-// 		return h.sendError(c,err)
-// 	}
-
-// 	return c.JSON(http.StatusOK, echo.Map{
-// 		"success": true,
-// 		"exist":   exist,
-// 	})
-// }
-
-func (h *Handler) checkUserExistence(c echo.Context) (err error) {
-	m := echo.Map{}
-	if err := c.Bind(&m); err != nil {
-		log.Println(err)
-
-		return h.sendError(c, err)
-	}
-
-	if m["phone"] == nil || m["phone"] == "" {
-		return h.sendError(c, err)
-	}
-
-	if m["email"] == nil || m["email"] == "" {
-		return h.checkUserPhoneExistence(c)
-	}
-
-	exist, err := h.store.CheckUserExistence(m["phone"].(string), m["email"].(string))
-
-	if err != nil && err.Error() != "NIL" {
-		return h.sendError(c, err)
-	}
-
-	return c.JSON(http.StatusOK, echo.Map{
-		"success": true,
-		"exist":   exist,
-	})
 }

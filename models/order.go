@@ -3,7 +3,7 @@ package models
 import (
 	"fmt"
 
-	"github.com/incrypt0/cokut-server/brokers/myerrors"
+	"github.com/incrypt0/cokut-server/myerrors"
 	"github.com/incrypt0/cokut-server/utils"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
@@ -65,6 +65,12 @@ func (o *Order) ToString(u *User) string {
 		o.Address.AddressLine1,
 		o.Address.AddressLine2,
 		o.Address.PlaceInfo.Name)
+
+	result += fmt.Sprintf(
+		"https://www.google.com/maps/search/?api=1&query=%v,%v\n",
+		o.Address.PlaceInfo.Latitude,
+		o.Address.PlaceInfo.Longitude,
+	)
 
 	result += "________________________\n"
 	result += "\n"

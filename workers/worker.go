@@ -8,7 +8,7 @@ import (
 	"os"
 	"reflect"
 
-	"github.com/incrypt0/cokut-server/brokers/myerrors"
+	"github.com/incrypt0/cokut-server/myerrors"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -17,8 +17,9 @@ import (
 
 // Worker .
 type Worker struct {
-	db *mongo.Database
-	oh *orderAggregationHelper
+	db       *mongo.Database
+	oh       *orderAggregationHelper
+	myerrors myerrors.MyErrors
 }
 
 type orderAggregationHelper struct {
@@ -51,8 +52,9 @@ func New() *Worker {
 	db := client.Database("cokut")
 
 	return &Worker{
-		db: db,
-		oh: NewOrderAggregationHelper(),
+		db:       db,
+		oh:       NewOrderAggregationHelper(),
+		myerrors: myerrors.New(),
 	}
 }
 
@@ -113,7 +115,7 @@ func (w *Worker) DeleteOne(collectionName string, i interface{}) (n int64, err e
 	}
 
 	if result.DeletedCount == 0 {
-		return n, myerrors.ErrNoRecordsDeleted
+		return n, w.myerrors.ErrNoRecordsDeleted
 	}
 
 	n = result.DeletedCount
@@ -299,7 +301,7 @@ func (w *Worker) findOneAndUpdateHelper(
 
 	if r.Err() != nil {
 		if r.Err() == mongo.ErrNoDocuments {
-			return nil, myerrors.ErrNIL
+			return nil, w.myerrors.ErrNIL
 		}
 
 		log.Println(r.Err().Error())
@@ -329,7 +331,7 @@ func (w *Worker) FindOne(collectionName string, i interface{}) (l interface{}, e
 
 	if err := r.Err(); err != nil {
 		if errors.Is(err, mongo.ErrNoDocuments) {
-			return nil, myerrors.ErrNIL
+			return nil, w.myerrors.ErrNIL
 		}
 
 		log.Println(err)
@@ -367,7 +369,7 @@ func (w *Worker) FindOneWithOr(collectionName string, i ...interface{}) (l inter
 
 	if err := r.Err(); err != nil {
 		if errors.Is(err, mongo.ErrNoDocuments) {
-			return nil, myerrors.ErrNIL
+			return nil, w.myerrors.ErrNIL
 		}
 
 		log.Println(err)

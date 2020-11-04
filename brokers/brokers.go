@@ -28,6 +28,7 @@ type CokutBroker interface {
 	GetSpecialMeals() (l []interface{}, err error)
 	GetSpiceyMeals() (l []interface{}, err error)
 	CreateOrder(o *models.Order, add bool) (po *models.Order, err error)
+	ChangeOrderStatus(id string, statusCode int) (l *models.Order, err error)
 	GetPaginatedOrders(limit int, page int) (l []models.Order, err error)
 	GetOrdersByUser(uid string) (l []models.Order, err error)
 }

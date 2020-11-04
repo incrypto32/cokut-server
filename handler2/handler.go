@@ -2,6 +2,7 @@ package handler2
 
 import (
 	"github.com/incrypt0/cokut-server/brokers"
+	"github.com/incrypt0/cokut-server/myerrors"
 	"github.com/labstack/echo/v4"
 )
 
@@ -11,6 +12,7 @@ type Handler struct {
 	fireAuthMWare echo.MiddlewareFunc
 	adminChecker  echo.MiddlewareFunc
 	Domain        string
+	myerrors      myerrors.MyErrors
 }
 
 type ManyResultFunc func() ([]interface{}, error)
@@ -21,11 +23,13 @@ type FilteredManyResultFunc func(string) ([]interface{}, error)
 func NewHandler(store brokers.CokutBroker,
 	fireAuthMWare echo.MiddlewareFunc,
 	adminChecker echo.MiddlewareFunc,
-	domain string) *Handler {
+	domain string,
+	myerrors myerrors.MyErrors) *Handler {
 	return &Handler{
 		store:         store,
 		fireAuthMWare: fireAuthMWare,
 		adminChecker:  adminChecker,
 		Domain:        domain,
+		myerrors:      myerrors,
 	}
 }

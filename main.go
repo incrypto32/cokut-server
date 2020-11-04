@@ -8,6 +8,7 @@ import (
 	"github.com/incrypt0/cokut-server/fire"
 	"github.com/incrypt0/cokut-server/handler2"
 	"github.com/incrypt0/cokut-server/handler2/middleware"
+	"github.com/incrypt0/cokut-server/myerrors"
 	"github.com/incrypt0/cokut-server/router"
 	"github.com/incrypt0/cokut-server/store"
 	"github.com/incrypt0/cokut-server/workers"
@@ -25,20 +26,26 @@ func main() {
 
 	fireAuthMWare := middleware.FireAuthMiddleware(app)
 	adminChecker := middleware.AdminCheckMiddleware()
-	botChannel := make(chan string)
-
-	go cokutbot.RegisterNewBot(botChannel)
 
 	// Connect to mongo
 	w := workers.New()
 
-	s := store.NewStore("meals", "users", "orders", "restaurants", w, botChannel)
+	// New Cokut Bot
+	cbot, err := cokutbot.NewCokutBot()
+	if err != nil {
+		log.Panic("BOT FAILED")
+	}
+
+	s := store.NewStore("meals", "users", "orders", "restaurants", w, cbot)
 
 	// echo instance
 	r := router.New()
 
+	// New My Error
+	e := myerrors.New()
+
 	// Main Echo Handler
-	h := handler2.NewHandler(s, fireAuthMWare, adminChecker, "http://locahost:4000")
+	h := handler2.NewHandler(s, fireAuthMWare, adminChecker, "http://locahost:4000", e)
 	h.Register(r)
 
 	// Server Start

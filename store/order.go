@@ -4,7 +4,6 @@ import (
 	"log"
 	"time"
 
-	"github.com/incrypt0/cokut-server/brokers/myerrors"
 	"github.com/incrypt0/cokut-server/models"
 	"github.com/incrypt0/cokut-server/utils"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -42,9 +41,7 @@ func (s *Store) CreateOrder(o *models.Order, calculate bool) (po *models.Order, 
 
 	u, err := s.w.FindOne(s.uc, models.User{UID: o.UID})
 
-	log.Println("________________________________", o.ToString(u.(*models.User)))
-
-	s.botChannel <- o.ToString(u.(*models.User))
+	_ = s.bot.SendMessage(o.ToString(u.(*models.User)))
 
 	return o, err
 }
@@ -68,7 +65,7 @@ func (s *Store) processOrder(o *models.Order) error {
 	if err != nil {
 		return err
 	} else if *(r.Closed) {
-		return myerrors.ErrRestaurantClosed
+		return s.myerrors.ErrRestaurantClosed
 	}
 
 	l, err := s.w.GetMultipleByID(mealCollection, models.Meal{}, ids)
@@ -114,7 +111,7 @@ func (s *Store) calculateDeliveryCharge(o *models.Order, lat float64, long float
 	dist := utils.Distance(o.Address.PlaceInfo.Latitude, o.Address.PlaceInfo.Longitude, lat, long)
 
 	if dist > 20000 {
-		return myerrors.ErrNotDeliverableArea
+		return s.myerrors.ErrNotDeliverableArea
 	}
 
 	if dist <= 5000 {
@@ -148,4 +145,21 @@ func (s *Store) GetOrdersByUser(uid string) (l []models.Order, err error) {
 // GetOrdersByUser user orders are returned
 func (s *Store) GetPaginatedOrders(limit int, page int) (l []models.Order, err error) {
 	return s.w.PaginatedOrders(s.orders, limit, page)
+}
+
+func (s *Store) ChangeOrderStatus(id string, statusCode int) (l *models.Order, err error) {
+	pid, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		log.Println(err)
+	}
+
+	o, err := s.w.FindOneAndUpdate(s.orders, models.Order{ID: pid}, models.Order{StatusCode: statusCode})
+
+	if err != nil {
+		log.Println(err)
+
+		return nil, err
+	}
+
+	return o.(*models.Order), err
 }

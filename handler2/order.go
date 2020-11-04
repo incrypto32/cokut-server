@@ -30,6 +30,26 @@ func (h *Handler) calculateOrder(c echo.Context) (err error) {
 	})
 }
 
+// Change Order Status .
+func (h *Handler) changeOrderStatus(c echo.Context) (err error) {
+	params := make(map[string]interface{})
+
+	if err = c.Bind(&params); err != nil {
+		log.Println(err)
+
+		return h.sendError(c, err)
+	}
+
+	o, err := h.store.ChangeOrderStatus(params["id"].(string), int(params["statusCode"].(float64)))
+	if err != nil {
+		log.Println(err)
+
+		return h.sendError(c, err)
+	}
+
+	return c.JSON(http.StatusOK, echo.Map{"success": true, "order": o})
+}
+
 func (h *Handler) getUserOrders(c echo.Context) (err error) {
 	orders, err := h.store.GetOrdersByUser(c.Get("uid").(string))
 	if err != nil {

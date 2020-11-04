@@ -61,16 +61,9 @@ func (h *Handler) registerAdmin(a *echo.Group) {
 
 	orders := a.Group("/orders")
 	orders.GET("", h.getOrdersPaginated)
+	orders.POST("/status", h.changeOrderStatus)
 
 	a.POST("/special", h.addSpecial)
-}
-
-// The Admin Api .
-func (h *Handler) registerUtils(u *echo.Group) {
-	u.POST("/checkphone", h.checkUserPhoneExistence)
-	u.POST("/checkuser", h.checkUserExistence)
-	u.POST("/checkgid", h.checkUserExistence)
-	u.POST("/getuser", h.getUser)
 }
 
 // Register this method registers a new group with handler .
@@ -89,10 +82,7 @@ func (h *Handler) Register(e *echo.Echo) {
 	admin := e.Group("/admin")
 	admin.Use(h.fireAuthMWare)
 
-	u := e.Group("/utils")
-
 	// Register the routes
-	h.registerUtils(u)
 	h.registerAPI(api)
 	h.registerAdmin(admin)
 }

@@ -8,7 +8,6 @@ import (
 	"runtime"
 	"strconv"
 
-	"github.com/incrypt0/cokut-server/brokers/myerrors"
 	"github.com/incrypt0/cokut-server/models"
 	"github.com/incrypt0/cokut-server/utils"
 	"github.com/labstack/echo/v4"
@@ -17,7 +16,6 @@ import (
 
 // Add an item .
 func (h *Handler) Add(c echo.Context, r models.Model, f func(r models.Model) (interface{}, error)) (err error) {
-
 	if err = c.Bind(r); err != nil {
 		log.Println(err)
 
@@ -55,9 +53,7 @@ func (h *Handler) AddOrder(c echo.Context, r models.Model, f func(r models.Model
 	if err != nil {
 		log.Println(err)
 
-		if errors.Is(err, myerrors.ErrNotDeliverableArea) {
-			log.Println("____")
-
+		if errors.Is(err, h.myerrors.ErrNotDeliverableArea) {
 			return c.JSON(http.StatusOK, echo.Map{
 				"success":     true,
 				"order":       nil,
@@ -65,7 +61,7 @@ func (h *Handler) AddOrder(c echo.Context, r models.Model, f func(r models.Model
 			})
 		}
 
-		return h.sendMessageWithFailure(c, "Order Not Validated", myerrors.ErrOrderNotValidatedCode)
+		return h.sendMessageWithFailure(c, "Order Not Validated", h.myerrors.ErrOrderNotValidatedCode)
 	}
 
 	return c.JSON(http.StatusOK, echo.Map{
@@ -83,7 +79,7 @@ func (h *Handler) getFiltered(c echo.Context, f ManyResultFunc) (err error) {
 	}
 
 	if len(l) == 0 {
-		return h.sendMessageWithFailure(c, "Nothing Here :(", myerrors.ErrNoRecordsCode)
+		return h.sendMessageWithFailure(c, "Nothing Here :(", h.myerrors.ErrNoRecordsCode)
 	}
 
 	return c.JSON(http.StatusOK, l)
@@ -97,7 +93,7 @@ func (h *Handler) sendError(c echo.Context, err error) error {
 	return c.JSON(http.StatusExpectationFailed, echo.Map{
 		"success": false,
 		"error":   true,
-		"code":    myerrors.ErrBasicCode,
+		"code":    h.myerrors.ErrBasicCode,
 		"msg":     "An error occurred",
 	})
 }
@@ -129,7 +125,7 @@ func (h *Handler) getBySpecificFilter(
 	}
 
 	if len(l) == 0 {
-		return h.sendMessageWithFailure(c, "Nothing found there", myerrors.ErrNoRecordsCode)
+		return h.sendMessageWithFailure(c, "Nothing found there", h.myerrors.ErrNoRecordsCode)
 	}
 
 	return c.JSON(http.StatusOK, l)

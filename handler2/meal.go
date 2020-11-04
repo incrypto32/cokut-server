@@ -74,12 +74,12 @@ func (h *Handler) searchMeal(c echo.Context) (err error) {
 func (h *Handler) deleteMeal(c echo.Context) (err error) {
 	id := c.QueryParams().Get("id")
 
-	_, err = h.store.DeleteMeal(id)
+	n, err := h.store.DeleteMeal(id)
 	if err != nil {
 		log.Println(err)
 
 		return h.sendError(c, err)
 	}
 
-	return c.JSON(http.StatusOK, echo.Map{"success": true})
+	return c.JSON(http.StatusOK, echo.Map{"success": true, "n": n})
 }
