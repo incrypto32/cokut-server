@@ -34,7 +34,7 @@ type orderAggregationHelper struct {
 }
 
 // New Worker .
-func New() *Worker {
+func New(myerrors myerrors.MyErrors) *Worker {
 	var err error
 
 	var client *mongo.Client
@@ -54,7 +54,7 @@ func New() *Worker {
 	return &Worker{
 		db:       db,
 		oh:       NewOrderAggregationHelper(),
-		myerrors: myerrors.New(),
+		myerrors: myerrors,
 	}
 }
 

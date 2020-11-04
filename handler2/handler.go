@@ -23,13 +23,11 @@ type FilteredManyResultFunc func(string) ([]interface{}, error)
 func NewHandler(store brokers.CokutBroker,
 	fireAuthMWare echo.MiddlewareFunc,
 	adminChecker echo.MiddlewareFunc,
-	domain string,
 	myerrors myerrors.MyErrors) *Handler {
 	return &Handler{
 		store:         store,
 		fireAuthMWare: fireAuthMWare,
 		adminChecker:  adminChecker,
-		Domain:        domain,
 		myerrors:      myerrors,
 	}
 }

@@ -178,7 +178,11 @@ func (w *Worker) GetAllOrders(collectionName string, limit int64, page int64) (r
 }
 
 // Get gets details from db with given filter
-func (w *Worker) GetOrdersByUser(collectionName string, limit int64, page int64, uid string) (result []models.Order, err error) {
+func (w *Worker) GetOrdersByUser(
+	collectionName string,
+	limit int64,
+	page int64,
+	uid string) (result []models.Order, err error) {
 
 	c := w.db.Collection(collectionName)
 

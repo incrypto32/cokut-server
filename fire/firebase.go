@@ -2,13 +2,11 @@ package fire
 
 import (
 	"context"
-	"log"
-
 	"fmt"
+	"log"
 	"os"
 
 	firebase "firebase.google.com/go"
-
 	"google.golang.org/api/option"
 )
 
@@ -26,8 +24,8 @@ func InitFire() (*firebase.App, error) {
 
 	app, err := firebase.NewApp(context.Background(), nil, opt)
 	if err != nil {
-
 		return nil, fmt.Errorf("error initializing app: %v", err)
 	}
+
 	return app, err
 }

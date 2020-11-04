@@ -6,7 +6,6 @@ import (
 	"strconv"
 
 	"github.com/incrypt0/cokut-server/models"
-	"github.com/incrypt0/cokut-server/utils"
 	"github.com/labstack/echo/v4"
 )
 
@@ -55,8 +54,6 @@ func (h *Handler) getUserOrders(c echo.Context) (err error) {
 	if err != nil {
 		return h.sendError(c, err)
 	}
-
-	log.Println(utils.ModelToString(orders))
 
 	return c.JSON(http.StatusOK, echo.Map{
 		"success": true,

@@ -26,9 +26,10 @@ func main() {
 
 	fireAuthMWare := middleware.FireAuthMiddleware(app)
 	adminChecker := middleware.AdminCheckMiddleware()
-
+	// New My Error
+	e := myerrors.New()
 	// Connect to mongo
-	w := workers.New()
+	w := workers.New(e)
 
 	// New Cokut Bot
 	cbot, err := cokutbot.NewCokutBot()
@@ -36,22 +37,20 @@ func main() {
 		log.Panic("BOT FAILED")
 	}
 
-	s := store.NewStore("meals", "users", "orders", "restaurants", w, cbot)
+	s := store.NewStore("meals", "users", "orders", "restaurants", w, cbot, e)
 
 	// echo instance
 	r := router.New()
 
-	// New My Error
-	e := myerrors.New()
-
 	// Main Echo Handler
-	h := handler2.NewHandler(s, fireAuthMWare, adminChecker, "http://locahost:4000", e)
+	h := handler2.NewHandler(s, fireAuthMWare, adminChecker, e)
 	h.Register(r)
 
 	// Server Start
 	PORT := os.Getenv("PORT")
 	if PORT == "" {
 		log.Println("PORT is empty")
+
 		PORT = "4000"
 	}
 

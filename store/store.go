@@ -20,7 +20,11 @@ type Store struct {
 }
 
 // NewStore creates a new store
-func NewStore(mc string, uc string, orders string, rc string, w brokers.DBBroker, bot cokutbot.CokutBot) *Store {
+func NewStore(mc string, uc string, orders string, rc string,
+
+	w brokers.DBBroker,
+	bot cokutbot.CokutBot,
+	myerrors myerrors.MyErrors) *Store {
 	return &Store{
 		uc:         uc,
 		rc:         rc,
@@ -29,6 +33,6 @@ func NewStore(mc string, uc string, orders string, rc string, w brokers.DBBroker
 		w:          w,
 		bot:        bot,
 		orderCodes: common.OrderCodes{Placed: 1, Delivered: 2, Canceled: 3},
-		myerrors:   myerrors.New(),
+		myerrors:   myerrors,
 	}
 }
